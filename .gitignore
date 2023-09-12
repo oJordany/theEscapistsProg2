@@ -1,3 +1,2 @@
-.vscode
-**/*.vscode
-**/*.out
+/**/*.vscode
+/**/*.out
