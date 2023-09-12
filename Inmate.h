@@ -13,7 +13,8 @@ public:
             int = 100, 
             int = 40, 
             int = 40, 
-            int = 40 );
+            int = 40, 
+            double = 0.0);
     ~Inmate();
 
     string getName() const;
@@ -30,6 +31,7 @@ public:
     void setStrength(int);
     void setSpeed(int);
     void setIntelligence(int);
+    void setMoney(int);
 
     void viewProfile() const;
     void readBook(int = 1);

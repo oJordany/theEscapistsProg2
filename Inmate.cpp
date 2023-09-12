@@ -21,7 +21,7 @@ using std::setprecision;
 #define WHITE   "\033[37m" 
 
 Inmate::Inmate()
-:name("Player"), health(100), energy(100), strength(40), speed(40), intelligence(100), money(100){
+:name("Player"), health(100), energy(100), strength(40), speed(40), intelligence(40), money(0){
 
 }
 
@@ -30,14 +30,15 @@ Inmate::Inmate( string name,
                 int energy,
                 int strength,
                 int speed,
-                int intelligence ){
-    money = 0.0;
+                int intelligence ,
+                double money){
     setName(name);
     setHealth(health);
     setEnergy(energy);
     setStrength(strength);
     setSpeed(speed);
     setIntelligence(intelligence);
+    this->money = money < 0 ? this->money : money;
 }
 
 
@@ -158,17 +159,23 @@ void Inmate::setIntelligence(int intelligence){
     this->intelligence = 0;
 }
 
+void Inmate::setMoney(int money){
+    if (money >= 0){
+        this->money = money;
+    }
+}
+
 void Inmate::viewProfile() const{
     repeatCharacter("-", 57);
     cout << "\n";
     cout << "    ⢀⡀      |\n";
-    cout << BLACK << " ⣠⣶⣿⣿⣿⣿⣷⣄⠀  | " << RESET << CYAN << left << setw(11) << "👤 | NAME: " << RESET << right << setw(32) << this->name << "\n";
+    cout << BLACK << " ⣠⣶⣿⣿⣿⣿⣷⣄⠀  " << RESET << "| " << CYAN << left << setw(11) << "👤 | NAME: " << RESET << right << setw(32) << this->name << "\n";
     cout << "⢰⣿⣿⣿⣿⣿⣿⣿⣿⣆  |\n";
-    cout << BLACK << "⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿  |" << RESET;
+    cout << BLACK << "⣾⣿⣿⣿⣿⣿⣿⣿⣿⣿  " << RESET << "|";
     repeatCharacter("-", 44);
     cout << "\n";
     cout << "⣠⣴⣶⣦⣤⣤⣴⣶⣦⣄  |\n"; 
-    cout << "⢿⣧⣤⣼⣿⣿⣧⣤⣼⡿  | " GREEN << left << setw(11) << "💵 | MONEY: " << RESET << right << setw(31) << fixed << setprecision(2) << this->money << "\n";
+    cout << "⢿⣧⣤⣼⣿⣿⣧⣤⣼⡿  | " GREEN << left << setw(11) << "💲 | MONEY: " << RESET << right << setw(31) << fixed << setprecision(2) << this->money << "\n";
     cout << "⠀⠀⠉⠁⠀⠀⠈⠉    |\n";
     repeatCharacter("-", 57);
     cout << "\n";
@@ -185,9 +192,13 @@ void Inmate::viewProfile() const{
     cout << "\n";
 }
 
-void Inmate::readBook(int addition){
-    int newIntelligence = this->intelligence + addition;
-    setIntelligence(newIntelligence);
+void Inmate::readBook(int additionalIntelligence){
+    if (this->energy >= 5){
+        int newIntelligence = this->intelligence + additionalIntelligence;
+        int newEnergy = this->energy - 5;
+        setEnergy(newEnergy);
+        setIntelligence(newIntelligence);
+    }
 }
 
 Inmate::~Inmate(){
