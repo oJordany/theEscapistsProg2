@@ -31,7 +31,7 @@ public:
     void setStrength(int);
     void setSpeed(int);
     void setIntelligence(int);
-    void setMoney(int);
+    void setMoney(double);
 
     void viewProfile() const;
     void readBook(int = 1);

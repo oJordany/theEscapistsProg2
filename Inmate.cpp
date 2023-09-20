@@ -38,7 +38,7 @@ Inmate::Inmate( string name,
     setStrength(strength);
     setSpeed(speed);
     setIntelligence(intelligence);
-    this->money = money < 0 ? this->money : money;
+    setMoney(money);
 }
 
 
@@ -159,7 +159,7 @@ void Inmate::setIntelligence(int intelligence){
     this->intelligence = 0;
 }
 
-void Inmate::setMoney(int money){
+void Inmate::setMoney(double money){
     if (money >= 0){
         this->money = money;
     }
