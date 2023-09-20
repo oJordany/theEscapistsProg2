@@ -38,7 +38,11 @@ public:
 
 private:
     string name;
-    int health, energy, strength, speed, intelligence;
+    int health; 
+    int energy;
+    int strength;
+    int speed;
+    int intelligence;
     double money;
     void showPercentageBar(int) const;
     void repeatCharacter(string, int) const;
