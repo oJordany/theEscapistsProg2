@@ -15,6 +15,7 @@ public:
             int = 40, 
             int = 40, 
             double = 0.0);
+    Inmate(const Inmate &); 
     ~Inmate();
 
     string getName() const;
@@ -46,6 +47,7 @@ private:
     double money;
     void showPercentageBar(int) const;
     void repeatCharacter(string, int) const;
+    const int MAXSIZENAME = 10;
 };
 
 #endif

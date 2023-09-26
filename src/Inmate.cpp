@@ -41,6 +41,15 @@ Inmate::Inmate( string name,
     setMoney(money);
 }
 
+Inmate::Inmate( const Inmate& other ){
+    this->name = other.name;
+    this->health = other.health;
+    this->energy = other.energy;
+    this->strength = other.strength;
+    this->speed = other.speed;
+    this->intelligence = other.intelligence;
+    this->money = other.money;
+}
 
 void Inmate::showPercentageBar(int percentage) const{
     cout << "|";
@@ -96,6 +105,10 @@ double Inmate::getMoney() const{
 }
 
 void Inmate::setName(string name){
+    if (name.length() > MAXSIZENAME){
+        this->name = name.substr(0, MAXSIZENAME);
+        return;
+    }
     this->name = name;
 }
 

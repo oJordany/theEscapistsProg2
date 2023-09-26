@@ -1,0 +1,3 @@
+/home/jordany/Documentos/theEscapists/build/CMakeFiles/main.out.dir
+/home/jordany/Documentos/theEscapists/build/CMakeFiles/edit_cache.dir
+/home/jordany/Documentos/theEscapists/build/CMakeFiles/rebuild_cache.dir
