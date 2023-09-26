@@ -109,7 +109,11 @@ void Inmate::setName(string name){
         this->name = name.substr(0, MAXSIZENAME);
         return;
     }
-    this->name = name;
+    if (name != "") {
+        this->name = name;
+        return;
+    }
+    this->name = "Player";
 }
 
 void Inmate::setHealth(int health){

@@ -7,7 +7,7 @@ using std::cout;
 int main(){
 
     cout << "Utilizando Inmate definindo seus atributos\n";
-    Inmate Prisoner01("Kev", 100, 83, 71, 48, 26, 5.50);
+    Inmate Prisoner01("Lucivaldo Jr", 100, 83, 71, 48, 26, 5.50);
     cout << "Utilizando viewProfile() para visualizar o perfil de Prisoner01:\n";
     Prisoner01.viewProfile();
     cout << "Utilizando setEnergy(15) para alterar a energia do prisioneiro\n";

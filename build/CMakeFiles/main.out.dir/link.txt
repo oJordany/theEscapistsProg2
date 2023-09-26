@@ -1,1 +1,1 @@
-/usr/bin/c++ -rdynamic CMakeFiles/main.out.dir/src/Inmate.cpp.o CMakeFiles/main.out.dir/src/JobBoard.cpp.o CMakeFiles/main.out.dir/main.cpp.o -o main.out 
+/usr/bin/c++    -rdynamic CMakeFiles/main.out.dir/src/Inmate.cpp.o CMakeFiles/main.out.dir/src/JobBoard.cpp.o CMakeFiles/main.out.dir/main.cpp.o  -o main.out 
