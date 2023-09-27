@@ -41,7 +41,8 @@ Inmate::Inmate( string name,
     setMoney(money);
 }
 
-Inmate::Inmate( const Inmate& other ){
+Inmate::Inmate( const Inmate& other )
+:MAXSIZENAME(10){
     this->name = other.name;
     this->health = other.health;
     this->energy = other.energy;

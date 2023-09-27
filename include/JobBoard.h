@@ -17,6 +17,8 @@ public:
     void displayTasks() const;
     void viewTasksDetails(int) const;
     void assignTask(const Inmate &);
+    bool getIsAvailable() const;
+    void setIsAvailable(bool);
 
 private:
     struct Task
@@ -26,10 +28,12 @@ private:
         string inmateName;
     };
 
-    const int NUMTASKS = 5;
+    static const int NUMTASKS = 5;
     Task tasks[NUMTASKS];
+    bool isAvailable;
 
     void repeatCharacter(string, int) const;
+    void printFormatted(string, string, string, int=26, int=60) const;
     int findNextAvailableTasks() const;
 };
 
