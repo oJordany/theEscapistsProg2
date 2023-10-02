@@ -73,6 +73,7 @@ int main(){
     cout << "teste\n";
     Time::displayTime();
     Time time_1;
+    const Time TIME_COPY(time_1);
     while(option != 0){
         cin >> option;
     }

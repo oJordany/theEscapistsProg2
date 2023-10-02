@@ -26,7 +26,7 @@ int Time::hour = 0;
 int Time::minute = 0;
 int Time::dayCounter = 0;
 int Time::currentDay = 0;
-int Time::routinesNumber = MAXNUMROUTINE;
+int Time::routinesNumber = MAXNUMROUTINES;
 const string Time::daysOfWeek[MAXNUMDAYSOFWEEK] = { 
                                                     "Sunday", 
                                                     "Monday", 
@@ -36,7 +36,7 @@ const string Time::daysOfWeek[MAXNUMDAYSOFWEEK] = {
                                                     "Friday", 
                                                     "Saturday" 
                                                   };
-Routine Time::dailyRoutine[MAXNUMROUTINE] = {
+Routine Time::dailyRoutine[MAXNUMROUTINES] = {
                                             {0, 0, 0, 0, ""},
                                             {0, 0, 0, 0, ""},
                                             {0, 0, 0, 0, ""},
@@ -51,11 +51,13 @@ Routine Time::dailyRoutine[MAXNUMROUTINE] = {
                                             };
 
 Time::Time(){
-    printTime();
+    createTimeFile();
+    sleep_for(seconds(1));
 }
 
 Time::Time(const Time& other){
-    other.printTime();
+    other.createTimeFile();
+    sleep_for(seconds(1));
 }
 
 void Time::endTime(){
@@ -63,7 +65,7 @@ void Time::endTime(){
     sleep_for(seconds(1));
 }
 
-void Time::printTime() const{
+void Time::createTimeFile() const{
     string timeFileName = "Time_" + to_string(Time::getHour()) + to_string(Time::getMinute()) + to_string(Time::getDayCounter()) + ".txt"; 
     thread clockThread([timeFileName](){
         bool isRoutine = false;
@@ -116,7 +118,7 @@ void Time::displayTime(){
 }
 
 void Time::startTime(struct Routine dailyRoutine[], int routinesNumber){
-    if (routinesNumber <= Time::getMAXNUMROUTINE() && routinesNumber > 0){
+    if (routinesNumber <= Time::getMAXNUMROUTINES() && routinesNumber > 0){
         Time::setRoutinesNumber(routinesNumber);
         Time::setGameIsRunning(true);
         if (routinesNumber > 0){

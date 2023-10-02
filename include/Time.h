@@ -21,7 +21,7 @@ class Time{
         Time(const Time &);
         ~Time();
 
-        const static int MAXNUMROUTINE = 11;
+        const static int MAXNUMROUTINES = 11;
         static void displayTime();
         static void startTime(struct Routine [], int); // Tirar duvida com prof
         static void endTime();
@@ -47,7 +47,7 @@ class Time{
         inline static bool getDayCounter(){return dayCounter;}
         inline static int getRoutinesNumber(){return routinesNumber;}
         inline static bool getGameIsRunning(){return gameIsRunning;}
-        inline static int getMAXNUMROUTINE(){return MAXNUMROUTINE;}
+        inline static int getMAXNUMROUTINES(){return MAXNUMROUTINES;}
         inline static int getRoutineStartHour(int routineID){return dailyRoutine[routineID].startHour;}
         inline static int getRoutineStartMinute(int routineID){return dailyRoutine[routineID].startMinute;}
         inline static int getRoutineEndHour(int routineID){return dailyRoutine[routineID].endHour;}
@@ -61,11 +61,11 @@ class Time{
         static int hour;            // Usar Time::hour
         static int minute;          // Usar Time::minute
         const static int MAXNUMDAYSOFWEEK = 7;
-        static Routine dailyRoutine[MAXNUMROUTINE]; 
+        static Routine dailyRoutine[MAXNUMROUTINES]; 
         const static string daysOfWeek[MAXNUMDAYSOFWEEK];
         static int dayCounter;
         static int currentDay;
-        void printTime() const;
+        void createTimeFile() const;
 };
 
 #endif
