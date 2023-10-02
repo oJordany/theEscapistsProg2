@@ -25,6 +25,7 @@ class Time{
         static void startTime(const Routine (&)[], int);
         static void endTime();
 
+        // métodos inline usados para incrementar hora, minuto, contador de dias e dia atual
         inline static void incrementHour(){Time::hour++;}
         inline static void incrementMinute(){Time::minute++;}
         inline static void incrementDayCounter(){Time::dayCounter++;}
