@@ -57,7 +57,7 @@ int main(){
     // cout << "Utilizando displayTasks() para ver as tasks do quadro de trabalho de JOBBOARD02\n";
     // JOBBOARD02.displayTasks();
     Routine dailyRoutinePrison1[11] = {
-        {5, 0, 5, 59, "Wake Up Call, Roll Call"},
+        {23, 30, 1, 59, "Wake Up Call, Roll Call"},
         {6, 0, 6, 59, "Breakfast Time"},
         {7, 0, 8, 59, "Job Time"},
         {9, 0, 9, 59, "Exercise Time"},
@@ -69,8 +69,9 @@ int main(){
         {17, 0, 17, 59, "Dinner Time"},
         {18, 0, 18, 59, "Free Time"},
     };
+
     Time::startTime(dailyRoutinePrison1, 11);
-    cout << "teste\n";
+    // cout << 
     Time::displayTime();
     Time time_1;
     const Time TIME_COPY(time_1);

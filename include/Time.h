@@ -21,7 +21,6 @@ class Time{
         Time(const Time &);
         ~Time();
 
-        const static int MAXNUMROUTINES = 11;
         static void displayTime();
         static void startTime(const Routine (&)[], int); // Tirar duvida com prof
         static void endTime();
@@ -61,6 +60,7 @@ class Time{
         static int hour;            // Usar Time::hour
         static int minute;          // Usar Time::minute
         const static int MAXNUMDAYSOFWEEK = 7;
+        const static int MAXNUMROUTINES = 11;
         static Routine dailyRoutine[MAXNUMROUTINES]; 
         const static string daysOfWeek[MAXNUMDAYSOFWEEK];
         static int dayCounter;

@@ -52,12 +52,12 @@ Routine Time::dailyRoutine[MAXNUMROUTINES] = {
 
 Time::Time(){
     createTimeFile();
-    sleep_for(seconds(1));
+    sleep_for(seconds(2));
 }
 
 Time::Time(const Time& other){
     other.createTimeFile();
-    sleep_for(seconds(1));
+    sleep_for(seconds(2));
 }
 
 void Time::endTime(){
