@@ -22,7 +22,7 @@ class Time{
         ~Time();
 
         static void displayTime();
-        static void startTime(const Routine (&)[], int); // Tirar duvida com prof
+        static void startTime(const Routine (&)[], int);
         static void endTime();
 
         inline static void incrementHour(){Time::hour++;}
@@ -57,12 +57,12 @@ class Time{
     private:
         static int routinesNumber;
         static bool gameIsRunning;
-        static int hour;            // Usar Time::hour
-        static int minute;          // Usar Time::minute
+        static int hour;            
+        static int minute;          
         const static int MAXNUMDAYSOFWEEK = 7;
         const static int MAXNUMROUTINES = 11;
-        static Routine dailyRoutine[MAXNUMROUTINES]; 
-        const static string daysOfWeek[MAXNUMDAYSOFWEEK];
+        static Routine dailyRoutine[MAXNUMROUTINES];        // Array static para guardar a rotina diária na prisão
+        const static string daysOfWeek[MAXNUMDAYSOFWEEK];   // Array const static para guardar o nome de cada dia da semana
         static int dayCounter;
         static int currentDay;
         void createTimeFile() const;

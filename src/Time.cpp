@@ -125,6 +125,8 @@ void Time::startTime(const Routine (&dailyRoutine)[], int routinesNumber){
             Time::setHour(dailyRoutine[0].startHour);
             Time::setMinute(dailyRoutine[0].startMinute);
         }
+        // loop for usando para iterar sobre o array de Routine
+        // Ele faz a cópia do array dailyRoutine (parâmetro) para o array Time::dailyRoutine (atributo) 
         for (int i = 0; i < Time::getRoutinesNumber(); i++){
             Time::setRoutineStartHour(i, dailyRoutine[i].startHour); 
             Time::setRoutineStartMinute(i, dailyRoutine[i].startMinute); 
@@ -134,16 +136,22 @@ void Time::startTime(const Routine (&dailyRoutine)[], int routinesNumber){
         }
         // cout << Time::getRoutinesNumber() << "\n";
         thread clockThread([](){
+            // usando loop while que fica rodando enquanto o jogo estiver rodando
+            // esse loop é responsável por incrementar o tempo do jogo em uma thread que opera em segundo plano
             while (Time::getGameIsRunning()){
                 sleep_for(seconds(1));
+                // método inline para incrementar os minutos
                 Time::incrementMinute();
                 if (Time::getMinute() >= 60){
                     Time::setMinute(0);
+                    // método inline para incrementar as horas
                     Time::incrementHour();
                     if (Time::getHour() >= 24){
                         Time::setHour(0);
                         // Avanca para o proximo dia
+                        // método inline para incrementar o contador de dias
                         Time::incrementDayCounter();
+                        // método inline para incrementar o dia atual (dia da semana)
                         Time::incrementCurrentDay();
                         if (Time::getCurrentDay() >= 6){
                             Time::setCurrentDay(0);
