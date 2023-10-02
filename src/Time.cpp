@@ -117,7 +117,7 @@ void Time::displayTime(){
     cout << " ( Day " << Time::getDayCounter() << " ) \n";
 }
 
-void Time::startTime(struct Routine dailyRoutine[], int routinesNumber){
+void Time::startTime(const Routine (&dailyRoutine)[], int routinesNumber){
     if (routinesNumber <= Time::getMAXNUMROUTINES() && routinesNumber > 0){
         Time::setRoutinesNumber(routinesNumber);
         Time::setGameIsRunning(true);

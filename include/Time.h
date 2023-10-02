@@ -23,7 +23,7 @@ class Time{
 
         const static int MAXNUMROUTINES = 11;
         static void displayTime();
-        static void startTime(struct Routine [], int); // Tirar duvida com prof
+        static void startTime(const Routine (&)[], int); // Tirar duvida com prof
         static void endTime();
 
         inline static void incrementHour(){Time::hour++;}
