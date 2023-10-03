@@ -23,7 +23,7 @@ int main(){
         {17, 0, 17, 59, "Dinner Time"},
         {18, 0, 18, 59, "Free Time"},
     };
-    cout << "usando método static void startTime(const Routine (&)[], int) para iniciar o tempo do jogo\n";
+    cout << "usando método static void startTime(Routine [], int) para iniciar o tempo do jogo\n";
     Time::startTime(dailyRoutinePrison1, 11);
     cout << "atributo static bool gameIsRunning: " << Time::getGameIsRunning() << "\n";
     cout << "atribuito static int hour: " << Time::getHour() << "\n";

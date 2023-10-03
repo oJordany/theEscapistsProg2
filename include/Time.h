@@ -22,7 +22,7 @@ class Time{
         ~Time();
 
         static void displayTime();
-        static void startTime(const Routine (&)[], int);
+        static void startTime(Routine [], int);
         static void endTime();
 
         // métodos inline usados para incrementar hora, minuto, contador de dias e dia atual
@@ -30,7 +30,8 @@ class Time{
         inline static void incrementMinute(){Time::minute++;}
         inline static void incrementDayCounter(){Time::dayCounter++;}
         inline static void incrementCurrentDay(){Time::currentDay++;}
-
+        
+        //sets e gets
         inline static void setHour(int hour){Time::hour = (hour <= 24 && hour >= 0) ? hour : 0;}
         inline static void setMinute(int minute){Time::minute = (minute <= 60 && minute >= 0) ? minute : 0;}
         inline static void setCurrentDay(int currentDay){Time::currentDay = (currentDay >= 0) ? currentDay : 0;}

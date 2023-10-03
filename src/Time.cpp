@@ -62,7 +62,7 @@ Time::Time(const Time& other){
 
 void Time::endTime(){
     Time::setGameIsRunning(false);
-    sleep_for(seconds(1));
+    sleep_for(seconds(1)); // Esse sleep_for é para garantir que o programa apague os arquivos .txt de tempo criados antes de finalizar
 }
 
 void Time::createTimeFile() const{
@@ -117,7 +117,7 @@ void Time::displayTime(){
     cout << " ( Day " << Time::getDayCounter() << " ) \n";
 }
 
-void Time::startTime(const Routine (&dailyRoutine)[], int routinesNumber){
+void Time::startTime(Routine dailyRoutine[], int routinesNumber){
     if (routinesNumber <= Time::getMAXNUMROUTINES() && routinesNumber > 0){
         Time::setRoutinesNumber(routinesNumber);
         Time::setGameIsRunning(true);
