@@ -44,17 +44,17 @@ class Time{
         inline static int getRoutineEndHour(int routineID){return dailyRoutine[routineID].endHour;}
         inline static int getRoutineEndMinute(int routineID){return dailyRoutine[routineID].endMinute;}
         inline static string getRoutineName(int routineID){return dailyRoutine[routineID].routineName;}
-        inline static string getDayOfWeek(int currentDay){return Time::daysOfWeek[currentDay];}
+        inline static string getDAYSOFTHEWEEK(int currentDay){return Time::DAYSOFTHEWEEK[currentDay];}
 
     private:
         static int routinesNumber;
         static bool gameIsRunning;
         static int hour;            
         static int minute;          
-        const static int MAXNUMDAYSOFWEEK = 7;
+        const static int MAXNUMDAYSOFTHEWEEK = 7;
         const static int MAXNUMROUTINES = 11;
         static Routine dailyRoutine[MAXNUMROUTINES];        // Array static para guardar a rotina diária na prisão
-        const static string daysOfWeek[MAXNUMDAYSOFWEEK];   // Array const static para guardar o nome de cada dia da semana
+        const static string DAYSOFTHEWEEK[MAXNUMDAYSOFTHEWEEK];   // Array const static para guardar o nome de cada dia da semana
         static int dayCounter;
         static int currentDay;
         void createTimeFile() const;

@@ -27,7 +27,7 @@ int Time::minute = 0;
 int Time::dayCounter = 0;
 int Time::currentDay = 0;
 int Time::routinesNumber = MAXNUMROUTINES;
-const string Time::daysOfWeek[MAXNUMDAYSOFWEEK] = { 
+const string Time::DAYSOFTHEWEEK[MAXNUMDAYSOFTHEWEEK] = { 
                                                     "Sunday", 
                                                     "Monday", 
                                                     "Tuesday", 
@@ -81,13 +81,13 @@ void Time::createTimeFile() const{
             for (int i = 0; i <= routinesNumber; i++){
                 if (hour >= dailyRoutine[i].startHour && hour <= dailyRoutine[i].endHour &&
                     minute >= dailyRoutine[i].startMinute && minute <= dailyRoutine[i].endMinute){
-                    file << daysOfWeek[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " ) - [ " << Time::dailyRoutine[i].routineName << " ] \n";
+                    file << DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " ) - [ " << Time::dailyRoutine[i].routineName << " ] \n";
                     isRoutine = true;
                     break;
                 }
             }
             if (!isRoutine){
-                file << Time::daysOfWeek[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " )\n";
+                file << Time::DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " )\n";
             }
             file.flush();
             sleep_for(seconds(1));
@@ -106,13 +106,13 @@ void Time::displayTime(){
     for (int i = 0; i <= routinesNumber; i++){
         if  (hour >= dailyRoutine[i].startHour && hour <= dailyRoutine[i].endHour &&
             minute >= dailyRoutine[i].startMinute && minute <= dailyRoutine[i].endMinute){
-            cout << daysOfWeek[currentDay] << " - ";
+            cout << DAYSOFTHEWEEK[currentDay] << " - ";
             cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
             cout << " ( Day " << dayCounter << " ) - [ " << dailyRoutine[i].routineName << " ] \n";
             return;
         }
     }
-    cout << daysOfWeek[currentDay] << " - ";
+    cout << DAYSOFTHEWEEK[currentDay] << " - ";
     cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
     cout << " ( Day " << dayCounter << " ) \n";
 }
