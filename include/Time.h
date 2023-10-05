@@ -31,17 +31,7 @@ class Time{
         inline static void incrementDayCounter(){Time::dayCounter++;}
         inline static void incrementCurrentDay(){Time::currentDay++;}
         
-        //sets e gets
-        inline static void setHour(int hour){Time::hour = (hour <= 24 && hour >= 0) ? hour : 0;}
-        inline static void setMinute(int minute){Time::minute = (minute <= 60 && minute >= 0) ? minute : 0;}
-        inline static void setCurrentDay(int currentDay){Time::currentDay = (currentDay >= 0) ? currentDay : 0;}
-        inline static void setRoutinesNumber(int routinesNumber){Time::routinesNumber = routinesNumber;}
-        inline static void setGameIsRunning(bool gameIsRunning){Time::gameIsRunning = gameIsRunning;}
-        inline static void setRoutineStartHour(int routineID, int startHour){Time::dailyRoutine[routineID].startHour = startHour;}
-        inline static void setRoutineStartMinute(int routineID, int startMinute){Time::dailyRoutine[routineID].startMinute = startMinute;}
-        inline static void setRoutineEndHour(int routineID, int endHour){Time::dailyRoutine[routineID].endHour = endHour;}
-        inline static void setRoutineEndMinute(int routineID, int endMinute){Time::dailyRoutine[routineID].endMinute = endMinute;}
-        inline static void setRoutineName(int routineID, string routineName){Time::dailyRoutine[routineID].routineName = routineName;}
+        //gets
         inline static int getHour(){return hour;}
         inline static int getMinute(){return minute;}
         inline static bool getCurrentDay(){return currentDay;}

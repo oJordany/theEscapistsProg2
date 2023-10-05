@@ -61,15 +61,15 @@ Time::Time(const Time& other){
 }
 
 void Time::endTime(){
-    Time::setGameIsRunning(false);
+    Time::gameIsRunning= false;
     sleep_for(seconds(1)); // Esse sleep_for é para garantir que o programa apague os arquivos .txt de tempo criados antes de finalizar
 }
 
 void Time::createTimeFile() const{
-    string timeFileName = "Time_" + to_string(Time::getHour()) + to_string(Time::getMinute()) + to_string(Time::getDayCounter()) + ".txt"; 
+    string timeFileName = "Time_" + to_string(hour) + to_string(minute) + to_string(dayCounter) + ".txt"; 
     thread clockThread([timeFileName](){
         bool isRoutine = false;
-        while (Time::getGameIsRunning())
+        while (gameIsRunning)
         {   
             // cout << timeFileName;
             ofstream file(timeFileName, ios::out);
@@ -78,16 +78,16 @@ void Time::createTimeFile() const{
                 return;
             }
             isRoutine = false;
-            for (int i = 0; i <= Time::getRoutinesNumber(); i++){
-                if (Time::getHour() >= Time::getRoutineStartHour(i) && Time::getHour() <= Time::getRoutineEndHour(i) &&
-                    Time::getMinute() >= Time::getRoutineStartMinute(i) && Time::getMinute() <= Time::getRoutineEndMinute(i)){
-                    file << Time::getDayOfWeek(Time::getCurrentDay()) << " - " << setfill('0') << setw(2) << Time::getHour() << ":" << setfill('0') << setw(2) << Time::getMinute() << " ( Day " << Time::getDayCounter() << " ) - [ " << Time::getRoutineName(i) << " ] \n";
+            for (int i = 0; i <= routinesNumber; i++){
+                if (hour >= dailyRoutine[i].startHour && hour <= dailyRoutine[i].endHour &&
+                    minute >= dailyRoutine[i].startMinute && minute <= dailyRoutine[i].endMinute){
+                    file << daysOfWeek[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " ) - [ " << Time::dailyRoutine[i].routineName << " ] \n";
                     isRoutine = true;
                     break;
                 }
             }
             if (!isRoutine){
-                file << Time::getDayOfWeek(Time::getCurrentDay()) << " - " << setfill('0') << setw(2) << Time::getHour() << ":" << setfill('0') << setw(2) << Time::getMinute() << " ( Day " << Time::getDayCounter() << " )\n";
+                file << Time::daysOfWeek[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " )\n";
             }
             file.flush();
             sleep_for(seconds(1));
@@ -103,58 +103,58 @@ void Time::createTimeFile() const{
 }
 
 void Time::displayTime(){ 
-    for (int i = 0; i <= Time::getRoutinesNumber(); i++){
-        if  (Time::getHour() >= Time::getRoutineStartHour(i) && Time::getHour() <= Time::getRoutineEndHour(i) &&
-            Time::getMinute() >= Time::getRoutineStartMinute(i) && Time::getMinute() <= Time::getRoutineEndMinute(i)){
-            cout << Time::getDayOfWeek(Time::getCurrentDay()) << " - ";
-            cout << setfill('0') << setw(2) << Time::getHour() << ":" << setfill('0') << setw(2) << Time::getMinute();
-            cout << " ( Day " << Time::getDayCounter() << " ) - [ " << Time::getRoutineName(i) << " ] \n";
+    for (int i = 0; i <= routinesNumber; i++){
+        if  (hour >= dailyRoutine[i].startHour && hour <= dailyRoutine[i].endHour &&
+            minute >= dailyRoutine[i].startMinute && minute <= dailyRoutine[i].endMinute){
+            cout << daysOfWeek[currentDay] << " - ";
+            cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
+            cout << " ( Day " << dayCounter << " ) - [ " << dailyRoutine[i].routineName << " ] \n";
             return;
         }
     }
-    cout << Time::getDayOfWeek(Time::getCurrentDay()) << " - ";
-    cout << setfill('0') << setw(2) << Time::getHour() << ":" << setfill('0') << setw(2) << Time::getMinute();
-    cout << " ( Day " << Time::getDayCounter() << " ) \n";
+    cout << daysOfWeek[currentDay] << " - ";
+    cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
+    cout << " ( Day " << dayCounter << " ) \n";
 }
 
 void Time::startTime(Routine dailyRoutine[], int routinesNumber){
-    if (routinesNumber <= Time::getMAXNUMROUTINES() && routinesNumber > 0){
-        Time::setRoutinesNumber(routinesNumber);
-        Time::setGameIsRunning(true);
+    if (routinesNumber <= MAXNUMROUTINES && routinesNumber > 0){
+        Time::routinesNumber = routinesNumber;
+        Time::gameIsRunning = true;
         if (routinesNumber > 0){
-            Time::setHour(dailyRoutine[0].startHour);
-            Time::setMinute(dailyRoutine[0].startMinute);
+            Time::hour = dailyRoutine[0].startHour;
+            Time::minute = dailyRoutine[0].startMinute;
         }
         // loop for usando para iterar sobre o array de Routine
         // Ele faz a cópia do array dailyRoutine (parâmetro) para o array Time::dailyRoutine (atributo) 
-        for (int i = 0; i < Time::getRoutinesNumber(); i++){
-            Time::setRoutineStartHour(i, dailyRoutine[i].startHour); 
-            Time::setRoutineStartMinute(i, dailyRoutine[i].startMinute); 
-            Time::setRoutineEndHour(i, dailyRoutine[i].endHour); 
-            Time::setRoutineEndMinute(i, dailyRoutine[i].endMinute); 
-            Time::setRoutineName(i, dailyRoutine[i].routineName); 
+        for (int i = 0; i < routinesNumber; i++){
+            Time::dailyRoutine[i].startHour = dailyRoutine[i].startHour;
+            Time::dailyRoutine[i].startMinute = dailyRoutine[i].startMinute;
+            Time::dailyRoutine[i].endHour = dailyRoutine[i].endHour; 
+            Time::dailyRoutine[i].endMinute = dailyRoutine[i].endMinute;
+            Time::dailyRoutine[i].routineName = dailyRoutine[i].routineName;
         }
-        // cout << Time::getRoutinesNumber() << "\n";
+        // cout << routinesNumber << "\n";
         thread clockThread([](){
             // usando loop while que fica rodando enquanto o jogo estiver rodando
             // esse loop é responsável por incrementar o tempo do jogo em uma thread que opera em segundo plano
-            while (Time::getGameIsRunning()){
+            while (gameIsRunning){
                 sleep_for(seconds(1));
                 // método inline para incrementar os minutos
                 Time::incrementMinute();
-                if (Time::getMinute() >= 60){
-                    Time::setMinute(0);
+                if (minute >= 60){
+                    Time::minute = 0;
                     // método inline para incrementar as horas
                     Time::incrementHour();
-                    if (Time::getHour() >= 24){
-                        Time::setHour(0);
+                    if (hour >= 24){
+                        Time::hour = 0;
                         // Avanca para o proximo dia
                         // método inline para incrementar o contador de dias
                         Time::incrementDayCounter();
                         // método inline para incrementar o dia atual (dia da semana)
                         Time::incrementCurrentDay();
-                        if (Time::getCurrentDay() >= 6){
-                            Time::setCurrentDay(0);
+                        if (currentDay >= 6){
+                            Time::currentDay = 0;
                         }
                     }
                 }
