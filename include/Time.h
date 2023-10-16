@@ -1,11 +1,8 @@
 #ifndef TIME_H
 #define TIME_H
 
-#include "string"
+#include <string>
 using std::string;
-
-#include <fstream>
-using std::ofstream;
 
 struct Routine {
     int startHour;
@@ -46,7 +43,7 @@ class Time{
         inline static string getRoutineName(int routineID){return dailyRoutine[routineID].routineName;}
         inline static string getDAYSOFTHEWEEK(int currentDay){return Time::DAYSOFTHEWEEK[currentDay];}
 
-    private:
+    private: 
         static int routinesNumber;
         static bool gameIsRunning;
         static int hour;            
@@ -60,4 +57,4 @@ class Time{
         void createTimeFile() const;
 };
 
-#endif
+#endif //TIME_H
