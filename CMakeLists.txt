@@ -7,3 +7,6 @@ set(CMAKE_CXX_STANDARD 11)
 include_directories(include)
 
 add_executable(main.out src/Time.cpp src/Inmate.cpp src/JobBoard.cpp src/Prison.cpp main.cpp)
+
+find_package(Threads REQUIRED)
+target_link_libraries(main.out PRIVATE Threads::Threads)
