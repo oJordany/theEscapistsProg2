@@ -219,6 +219,69 @@ void Inmate::readBook(int additionalIntelligence){
     }
 }
 
+ostream &operator<<(ostream &out, const Inmate &inmate){
+    out << "Name: " << inmate.getName() << "\n";
+    out << "Health: " << inmate.getHealth() << "\n";
+    out << "Energy: " << inmate.getEnergy() << "\n";
+    out << "Strength: " << inmate.getStrength() << "\n";
+    out << "Speed: " << inmate.getSpeed() << "\n";
+    out << "Intelligence: " << inmate.getIntelligence() << "\n";
+    out << "Money: " << inmate.getIntelligence() << "\n";
+
+    return out;
+}
+
+const Inmate & Inmate::operator=(const Inmate &inmateOnTheRight){
+    if (this != &inmateOnTheRight){
+        this->name = inmateOnTheRight.name;
+        this->health = inmateOnTheRight.health;
+        this->energy = inmateOnTheRight.energy;
+        this->strength = inmateOnTheRight.strength;
+        this->speed = inmateOnTheRight.speed;
+        this->intelligence = inmateOnTheRight.intelligence;
+        this->money = inmateOnTheRight.money;
+    }
+
+    return *this;
+}
+
+bool Inmate::operator==(const Inmate &inmateOnTheRight) const{
+    if (this->MAXSIZENAME != inmateOnTheRight.MAXSIZENAME){
+        return false;
+    }
+    if (this->name != inmateOnTheRight.name){
+        return false;
+    }
+    if (this->health != inmateOnTheRight.health){
+        return false;
+    }
+    if (this->energy != inmateOnTheRight.energy){
+        return false;
+    }
+    if (this->strength != inmateOnTheRight.strength){
+        return false;
+    }
+    if (this->speed != inmateOnTheRight.speed){
+        return false;
+    }
+    if (this->intelligence != inmateOnTheRight.intelligence){
+        return false;
+    }
+    if (this->money != inmateOnTheRight.money){
+        return false;
+    }
+
+    return true; 
+}
+
+bool Inmate::operator!=(const Inmate &inmateOnTheRight) const{
+    return ! (*this == inmateOnTheRight);
+}
+
+bool Inmate::operator!() const{
+    return this->energy < 5;
+}
+
 Inmate::~Inmate(){
     //...
 }

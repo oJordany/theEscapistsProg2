@@ -357,4 +357,4 @@ Prison::~Prison(){
     delete [] dailyRoutinePtr;
     delete [] registeredInmatesPtr;
     delete [] locationsPtr;
-};
+}

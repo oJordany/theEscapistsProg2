@@ -33,7 +33,7 @@ JobBoard::JobBoard(const JobBoard& other){
     for (int i = 0; i < this->NUMTASKS; i++) {
         this->tasks[i].taskName = other.tasks[i].taskName;
         this->tasks[i].taskDetails = other.tasks[i].taskDetails;
-        this->tasks[i].inmateName = other.tasks[i].inmateName;
+        this->tasks[i].inmateName= other.tasks[i].inmateName;
     }
 }
 
@@ -147,6 +147,38 @@ void JobBoard::setIsAvailable(bool state){
 
 bool JobBoard::getIsAvailable() const {
     return this->isAvailable;
+}
+
+ostream & operator<<(ostream &out, const JobBoard &jobBoard){
+    for (int i=0; i < jobBoard.NUMTASKS; i++){
+        out << "Task name: " << jobBoard.tasks[i].taskName << "\n";
+        out << "Assigned prisoner: " << jobBoard.tasks[i].inmateName << "\n"; 
+    }
+    return out;
+}
+
+bool JobBoard::operator==(const JobBoard &jobBoard) const{
+    for (int i=0; i < NUMTASKS; i++){
+        if (this->tasks[i].taskName != jobBoard.tasks[i].taskName){
+            return false;
+        }
+        if (this->tasks[i].taskDetails != jobBoard.tasks[i].taskDetails){
+            return false;
+        }
+        if (this->tasks[i].inmateName != jobBoard.tasks[i].inmateName){
+            return false;
+        }
+
+    }
+    return true;
+}
+
+bool JobBoard::operator!=(const JobBoard &jobBoard) const{
+    return !(*this == jobBoard);
+}
+
+bool JobBoard::operator!() const{
+    return isAvailable;
 }
 
 JobBoard::~JobBoard(){

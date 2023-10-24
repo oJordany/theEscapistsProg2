@@ -6,9 +6,16 @@
 
 using std::string;
 
+struct Task
+{
+    string taskName;
+    string taskDetails;
+    string inmateName;
+};
 
 class JobBoard
 {
+    friend ostream & operator<<(ostream &, const JobBoard &);
 public:
     JobBoard();
     JobBoard(const JobBoard &);
@@ -20,13 +27,12 @@ public:
     bool getIsAvailable() const;
     void setIsAvailable(bool);
 
+    const JobBoard & operator=(const JobBoard &);
+    bool operator==(const JobBoard &) const;
+    bool operator!=(const JobBoard &) const;
+    bool operator!() const;
+
 private:
-    struct Task
-    {
-        string taskName;
-        string taskDetails;
-        string inmateName;
-    };
 
     static const int NUMTASKS = 5;
     Task tasks[NUMTASKS];
