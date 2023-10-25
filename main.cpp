@@ -11,7 +11,6 @@ int main(){
     int option = -1;
     // CRIANDO PONTEIRO E FAZENDO ELE APONTAR PARA UMA PRISÃO
     Prison *prisonPtr = new Prison;
-
     // CRIANDO 10 PRISIONEIROS E CADASTRANDO ELES NA PRISÃO 
     const Inmate KEV("KEV");
     prisonPtr->registerInmateInPrison(KEV);
@@ -22,6 +21,18 @@ int main(){
     const Inmate BURNSIDE("BURNSIDE");
     prisonPtr->registerInmateInPrison(BURNSIDE);
     const Inmate NICK("NICK");
+    Task teste[4] = {
+        {"teste1", "teste1...", &KEV},
+        {"teste2", "teste2...", &KELAUCE},
+        {"teste3", "teste3...", &CLIVE},
+        {"teste4", "teste4...", nullptr},
+    };
+    JobBoard jb(teste, 4);
+    jb.unassignTaskTo(KELAUCE);
+    jb.displayTasks();
+    jb.assignTaskTo(KELAUCE);
+    jb.displayTasks();
+
     prisonPtr->registerInmateInPrison(NICK);
     const Inmate CAMEO("CAMEO");
     prisonPtr->registerInmateInPrison(CAMEO);
@@ -33,6 +44,8 @@ int main(){
     prisonPtr->registerInmateInPrison(KRIMEWAVE);
     const Inmate DOGEKIT("DOGEKIT");
     prisonPtr->registerInmateInPrison(DOGEKIT);
+
+    // JobBoard()
 
     // // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
     // prisonPtr->registerDailyPrisonRoutine({ 8, 0, 9, 0, "Breakfast" });

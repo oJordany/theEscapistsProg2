@@ -35,6 +35,7 @@ public:
     int getSpeed() const;
     int getIntelligence() const;
     double getMoney() const;
+    inline bool isNull() const { return this == nullptr; }
 
     void setName(string);
     void setHealth(int);
