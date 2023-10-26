@@ -12,38 +12,33 @@ int main(){
     // CRIANDO PONTEIRO E FAZENDO ELE APONTAR PARA UMA PRISÃO
     Prison *prisonPtr = new Prison;
     // CRIANDO 10 PRISIONEIROS E CADASTRANDO ELES NA PRISÃO 
-    const Inmate KEV("KEV");
-    prisonPtr->registerInmateInPrison(KEV);
-    const Inmate KELAUCE("KELAUCE");
-    prisonPtr->registerInmateInPrison(KELAUCE);
-    const Inmate CLIVE("CLIVE");
-    prisonPtr->registerInmateInPrison(CLIVE);
-    const Inmate BURNSIDE("BURNSIDE");
-    prisonPtr->registerInmateInPrison(BURNSIDE);
-    const Inmate NICK("NICK");
+    Inmate Kev("Kev");
+    Inmate Kelauce("KELAUCE");
+    Inmate Clive("CLIVE");
+
     Task teste[4] = {
-        {"teste1", "teste1...", &KEV},
-        {"teste2", "teste2...", &KELAUCE},
-        {"teste3", "teste3...", &CLIVE},
+        {"teste1", "teste1...", &Kev},
+        {"teste2", "teste2...", &Kelauce},
+        {"teste3", "teste3...", &Clive},
         {"teste4", "teste4...", nullptr},
     };
     JobBoard jb(teste, 4);
-    jb.unassignTaskTo(KELAUCE);
+    jb.unassignTask(1);
     jb.displayTasks();
-    jb.assignTaskTo(KELAUCE);
+    jb.assignTaskTo(Kelauce);
     jb.displayTasks();
 
-    prisonPtr->registerInmateInPrison(NICK);
-    const Inmate CAMEO("CAMEO");
-    prisonPtr->registerInmateInPrison(CAMEO);
-    const Inmate JACKALL("JACKALL");
-    prisonPtr->registerInmateInPrison(JACKALL);
-    const Inmate ARNIE("ARNIE");
-    prisonPtr->registerInmateInPrison(ARNIE);
-    const Inmate KRIMEWAVE("KRIMEWAVE");
-    prisonPtr->registerInmateInPrison(KRIMEWAVE);
-    const Inmate DOGEKIT("DOGEKIT");
-    prisonPtr->registerInmateInPrison(DOGEKIT);
+    // prisonPtr->registerInmateInPrison(NICK);
+    // const Inmate CAMEO("CAMEO");
+    // prisonPtr->registerInmateInPrison(CAMEO);
+    // const Inmate JACKALL("JACKALL");
+    // prisonPtr->registerInmateInPrison(JACKALL);
+    // const Inmate ARNIE("ARNIE");
+    // prisonPtr->registerInmateInPrison(ARNIE);
+    // const Inmate KRIMEWAVE("KRIMEWAVE");
+    // prisonPtr->registerInmateInPrison(KRIMEWAVE);
+    // const Inmate DOGEKIT("DOGEKIT");
+    // prisonPtr->registerInmateInPrison(DOGEKIT);
 
     // JobBoard()
 

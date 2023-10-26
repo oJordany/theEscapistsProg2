@@ -70,18 +70,24 @@ int JobBoard::findNextAvailableTasks() const{
 void JobBoard::assignTaskTo(const Inmate& other){
     int taskIndex = findNextAvailableTasks();
     if (taskIndex != -1){
-        tasksPtr[taskIndex].inmate = &other;
+        if (tasksPtr[taskIndex].inmate != nullptr) {
+            delete tasksPtr[taskIndex].inmate; // Libera a memória do objeto Inmate anterior
+        }
+        tasksPtr[taskIndex].inmate = new Inmate(other);
     }else{
         setIsAvailable(false);
     }
 }
 
-void JobBoard::unassignTaskTo(const Inmate& other){
-    for (int i = 0; i < nextEntrieInTasks; i++){
-        if (tasksPtr[i].inmate == &other){
-            // delete tasksPtr[i].inmate;
-            tasksPtr[i].inmate = nullptr;
+void JobBoard::unassignTask(int taskIndex){
+    if (taskIndex >= 0 && taskIndex < tasksSize) {
+        if (tasksPtr[taskIndex].inmate != nullptr) {
+            // delete &*tasksPtr[taskIndex].inmate;
+            tasksPtr[taskIndex].inmate = nullptr; // Define o ponteiro como nulo após a desalocação
         }
+    } else {
+        // Trate o caso em que o índice está fora do intervalo válido
+        // (por exemplo, imprima uma mensagem de erro ou tome outra ação apropriada)
     }
 }
 

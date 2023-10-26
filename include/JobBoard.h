@@ -10,7 +10,7 @@ struct Task
 {
     string taskName;
     string taskDetails;
-    const Inmate *inmate;
+    Inmate *inmate;
 };
 
 class JobBoard
@@ -25,7 +25,7 @@ public:
     void displayTasks() const;
     void viewTasksDetails(int) const;
     void assignTaskTo(const Inmate &);
-    void unassignTaskTo(const Inmate &);
+    void unassignTask(int);
     bool getIsAvailable() const;
     void setIsAvailable(bool);
     void registerTask(Task);
