@@ -31,8 +31,6 @@ class Prison{
         inline int getNextEntrieInDailyRoutine() const {return nextEntrieInDailyRoutine;}
 
     private:
-        const int MAXSIZENAMELOCATION = 50;
-
         Routine *dailyRoutinePtr;
         string *registeredInmatesPtr;
         string *locationsPtr;

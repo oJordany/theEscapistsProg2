@@ -1,11 +1,17 @@
 #ifndef INMATE_H
 #define INMATE_H
-#include <string>
 
+#include <string>
 using std::string;
+
+#include <iostream>
+using std::cout;
+using std::ostream;
 
 class Inmate
 {
+    friend ostream &operator<<(ostream &, const Inmate &);
+
 public:
     Inmate();
     Inmate( string, 
@@ -17,6 +23,10 @@ public:
             double = 0.0);
     Inmate(const Inmate &); 
     ~Inmate();
+    const Inmate & operator=(const Inmate &);   // operador de atribuição
+    bool operator==(const Inmate &) const;      // operador de igualdade
+    bool operator!=(const Inmate &) const;      // operador de diferença
+    bool operator!() const;                     // operador de negação
 
     string getName() const;
     int getHealth() const;
@@ -25,6 +35,7 @@ public:
     int getSpeed() const;
     int getIntelligence() const;
     double getMoney() const;
+    inline bool isNull() const { return this == nullptr; }
 
     void setName(string);
     void setHealth(int);
