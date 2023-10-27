@@ -28,6 +28,7 @@ public:
     void unassignTask(int);
     bool getIsAvailable() const;
     void setIsAvailable(bool);
+    void setTasksSize(int);
     void registerTask(Task);
 
     const JobBoard & operator=(const JobBoard &);

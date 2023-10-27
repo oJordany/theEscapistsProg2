@@ -244,9 +244,7 @@ void Prison::setDailyRoutineSize(int dailyRoutineSize){
         return;
     }
 
-    int size = (dailyRoutineSize < this->dailyRoutineSize) ? dailyRoutineSize : this->dailyRoutineSize;
-
-    Routine *dailyRoutineTempPtr = new Routine[size];
+    Routine *dailyRoutineTempPtr = new Routine[dailyRoutineSize];
 
     int endOfDailyRoutine = (dailyRoutineSize < this->dailyRoutineSize) ? dailyRoutineSize : nextEntrieInDailyRoutine;
 
@@ -256,7 +254,7 @@ void Prison::setDailyRoutineSize(int dailyRoutineSize){
     
     delete [] dailyRoutinePtr;
 
-    nextEntrieInDailyRoutine =  (dailyRoutineSize < this->dailyRoutineSize) ? dailyRoutineSize : nextEntrieInDailyRoutine;
+    nextEntrieInDailyRoutine = endOfDailyRoutine;
     this->dailyRoutineSize = dailyRoutineSize;
 
     dailyRoutinePtr = new Routine[dailyRoutineSize];
@@ -283,9 +281,7 @@ void Prison::setRegisteredInmatesSize(int registeredInmatesSize){
         return;
     }
 
-    int size = (registeredInmatesSize < this->registeredInmatesSize) ? registeredInmatesSize : this->registeredInmatesSize;
-
-    string *registeredInmatesTempPtr = new string[size];
+    string *registeredInmatesTempPtr = new string[registeredInmatesSize];
 
     int endOfRegisteredInmates = (registeredInmatesSize < this->registeredInmatesSize) ? registeredInmatesSize : nextEntrieInRegisteredInmates;
 
@@ -295,7 +291,7 @@ void Prison::setRegisteredInmatesSize(int registeredInmatesSize){
 
     delete [] registeredInmatesPtr;
 
-    nextEntrieInRegisteredInmates = (registeredInmatesSize < this->registeredInmatesSize) ? registeredInmatesSize : nextEntrieInRegisteredInmates;
+    nextEntrieInRegisteredInmates = endOfRegisteredInmates;
     this->registeredInmatesSize = registeredInmatesSize;
 
     registeredInmatesPtr = new string[registeredInmatesSize];
@@ -322,9 +318,7 @@ void Prison::setLocationsSize(int locationsSize){
         return;
     }
 
-    int size = (locationsSize < this->locationsSize) ? locationsSize : this->locationsSize;
-
-    string *locationsTempPtr = new string[size];
+    string *locationsTempPtr = new string[locationsSize];
 
     int endOflocations = (locationsSize < this->locationsSize) ? locationsSize : nextEntrieInLocations;
 
@@ -334,7 +328,7 @@ void Prison::setLocationsSize(int locationsSize){
 
     delete [] locationsPtr;
 
-    nextEntrieInLocations = (locationsSize < this->locationsSize) ? locationsSize : nextEntrieInLocations;
+    nextEntrieInLocations = endOflocations;
     this->locationsSize = locationsSize;
 
     locationsPtr = new string[locationsSize];

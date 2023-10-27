@@ -82,7 +82,7 @@ void JobBoard::assignTaskTo(const Inmate& other){
 void JobBoard::unassignTask(int taskIndex){
     if (taskIndex >= 0 && taskIndex < tasksSize) {
         if (tasksPtr[taskIndex].inmate != nullptr) {
-            // delete &*tasksPtr[taskIndex].inmate;
+            delete tasksPtr[taskIndex].inmate;
             tasksPtr[taskIndex].inmate = nullptr; // Define o ponteiro como nulo após a desalocação
         }
     } else {
@@ -244,17 +244,62 @@ bool JobBoard::getIsAvailable() const {
     return this->isAvailable;
 }
 
+void JobBoard::setTasksSize(int tasksSize) {
+    if (tasksSize <= 0){
+        this->tasksSize = 0;
+        delete [] tasksPtr;
+        tasksPtr = 0;
+        nextEntrieInTasks = 0;
+        return;
+    }
+
+    if (this->tasksSize == 0){
+        this->tasksSize = tasksSize;
+        tasksPtr = new Task[tasksSize];
+        return;
+    }
+
+    Task *tasksTempPtr = new Task[tasksSize];
+
+    int endOfTasks = (tasksSize < this->tasksSize) ? tasksSize : nextEntrieInTasks;
+
+    for (int i = 0; i < endOfTasks; i++){
+        tasksTempPtr[i].taskName = tasksPtr[i].taskName;
+        tasksTempPtr[i].taskDetails = tasksPtr[i].taskDetails;
+        tasksTempPtr[i].inmate = tasksPtr[i].inmate;
+    }
+
+    delete [] tasksPtr;
+
+    nextEntrieInTasks = endOfTasks;
+    this->tasksSize = tasksSize;
+
+    tasksPtr = new Task[tasksSize];
+
+    for (int i=0; i < endOfTasks; i++){
+        tasksPtr[i].taskName = tasksTempPtr[i].taskName;
+        tasksPtr[i].taskDetails = tasksTempPtr[i].taskDetails;
+        tasksPtr[i].inmate = tasksTempPtr[i].inmate;
+    }
+
+    delete [] tasksTempPtr;
+}
+
 ostream & operator<<(ostream &out, const JobBoard &jobBoard){
+    if (!jobBoard.nextEntrieInTasks){
+        out << "\n";
+    } 
     for (int i=0; i < jobBoard.nextEntrieInTasks; i++){
+        string assignedInmate = jobBoard.tasksPtr[i].inmate->isNull() ? "" : jobBoard.tasksPtr[i].inmate->getName();
         out << "Task name: " << jobBoard.tasksPtr[i].taskName << "\n";
-        out << "Assigned prisoner: " << jobBoard.tasksPtr[i].inmate->getName() << "\n"; 
+        out << "Assigned inmate: " << assignedInmate << "\n\n"; 
     }
     return out;
 }
 
 const JobBoard &JobBoard::operator=(const JobBoard &jobBoard){
     this->isAvailable = jobBoard.isAvailable;
-    this->tasksSize = jobBoard.tasksSize;
+    setTasksSize(jobBoard.tasksSize);
     this->nextEntrieInTasks = jobBoard.nextEntrieInTasks;
     for (int i=0; i < jobBoard.nextEntrieInTasks; i++){
         this->tasksPtr[i].taskName = jobBoard.tasksPtr[i].taskName;
@@ -274,16 +319,16 @@ bool JobBoard::operator==(const JobBoard &jobBoard) const{
     if (jobBoard.tasksSize != this->tasksSize)
         return false;
     
-    for (int i=0; i < nextEntrieInTasks; i++){
-        if (this->tasksPtr[i].taskName != jobBoard.tasksPtr[i].taskName)
-            return false;
+    // for (int i=0; i < nextEntrieInTasks; i++){
+    //     if (this->tasksPtr[i].taskName != jobBoard.tasksPtr[i].taskName)
+    //         return false;
 
-        if (this->tasksPtr[i].taskDetails != jobBoard.tasksPtr[i].taskDetails)
-            return false;
+    //     if (this->tasksPtr[i].taskDetails != jobBoard.tasksPtr[i].taskDetails)
+    //         return false;
 
-        if (this->tasksPtr[i].inmate != jobBoard.tasksPtr[i].inmate)
-            return false;
-    }
+    //     if (*this->tasksPtr[i].inmate != *jobBoard.tasksPtr[i].inmate)
+    //         return false;
+    // }
     return true;
 }
 

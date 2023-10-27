@@ -28,6 +28,31 @@ int main(){
     jb.assignTaskTo(Kelauce);
     jb.displayTasks();
 
+    Task teste2[2] = {
+        {"teste1", "teste1...", &Kev},
+        {"teste2", "teste2...", &Kelauce},
+    };
+    JobBoard jb2(teste2, 2);
+
+    jb2.displayTasks();
+
+    cout << jb;
+
+    jb2 = jb;
+    
+    jb2.displayTasks();
+
+    cout << "jb2 == jb : " << (jb2 == jb) << "\n"; 
+    cout << "jb2 != jb : " << (jb2 != jb) << "\n"; 
+    cout << "!jb2 : " << !jb2 << "\n";
+    cout << "Apos zerar o jb2: \n";
+    jb2.setTasksSize(0);
+    cout << "jb2 == jb : " << (jb2 == jb) << "\n"; 
+    cout << "jb2 != jb : " << (jb2 != jb) << "\n"; 
+    cout << "!jb2 :" << !jb2 << "\n";
+
+    cout << jb2;
+    jb2.displayTasks();
     // prisonPtr->registerInmateInPrison(NICK);
     // const Inmate CAMEO("CAMEO");
     // prisonPtr->registerInmateInPrison(CAMEO);
@@ -58,7 +83,7 @@ int main(){
     // prisonPtr->registerDailyPrisonRoutine({ 21, 0, 22, 0, "Bedtime" });
     // prisonPtr->registerDailyPrisonRoutine({ 22, 0, 24, 0, "Lights Out" });
 
-    // prisonPtr->setLevel(3);
+    prisonPtr->setLevel(3);
 
     // cout << "DADOS DA NOVA PRISÃO\n";
     // prisonPtr->displayDailyRoutine();
