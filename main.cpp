@@ -20,7 +20,7 @@ int main(){
         {"teste1", "teste1...", &Kev},
         {"teste2", "teste2...", &Kelauce},
         {"teste3", "teste3...", &Clive},
-        {"teste4", "teste4...", nullptr},
+        {"teste4", "teste4...", 0},
     };
     JobBoard jb(teste, 4);
     jb.unassignTask(1);

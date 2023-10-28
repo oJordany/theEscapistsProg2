@@ -41,7 +41,7 @@ JobBoard::JobBoard(Task tasks[], int size)
         tasksPtr[i].taskDetails = tasks[i].taskDetails;
         if (!isAvailable && tasks[i].inmate->isNull())
             isAvailable = true;
-        tasksPtr[i].inmate = tasks[i].inmate;
+        tasksPtr[i].inmate = (tasks[i].inmate->isNull()) ? 0 : new Inmate(*tasks[i].inmate);
         nextEntrieInTasks++;
     }
 }
@@ -70,7 +70,7 @@ int JobBoard::findNextAvailableTasks() const{
 void JobBoard::assignTaskTo(const Inmate& other){
     int taskIndex = findNextAvailableTasks();
     if (taskIndex != -1){
-        if (tasksPtr[taskIndex].inmate != nullptr) {
+        if (tasksPtr[taskIndex].inmate != 0) {
             delete tasksPtr[taskIndex].inmate; // Libera a memória do objeto Inmate anterior
         }
         tasksPtr[taskIndex].inmate = new Inmate(other);
@@ -81,13 +81,12 @@ void JobBoard::assignTaskTo(const Inmate& other){
 
 void JobBoard::unassignTask(int taskIndex){
     if (taskIndex >= 0 && taskIndex < tasksSize) {
-        if (tasksPtr[taskIndex].inmate != nullptr) {
+        if (tasksPtr[taskIndex].inmate != 0) {
             delete tasksPtr[taskIndex].inmate;
-            tasksPtr[taskIndex].inmate = nullptr; // Define o ponteiro como nulo após a desalocação
+            tasksPtr[taskIndex].inmate = 0; // Define o ponteiro como nulo após a desalocação
         }
     } else {
-        // Trate o caso em que o índice está fora do intervalo válido
-        // (por exemplo, imprima uma mensagem de erro ou tome outra ação apropriada)
+        cout << "non-existent task index\n";
     }
 }
 
