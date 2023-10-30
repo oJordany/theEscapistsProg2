@@ -20,9 +20,12 @@ using std::setprecision;
 #define CYAN    "\033[36m"      
 #define WHITE   "\033[37m" 
 
+int Inmate::nextId = 1;
+map <int, string> Inmate::inmateMap;
+
 Inmate::Inmate()
 :name("Player"), health(100), energy(100), strength(40), speed(40), intelligence(40), money(0){
-
+    Inmate::inmateMap[nextId++] = name;
 }
 
 Inmate::Inmate( string name,
@@ -39,6 +42,7 @@ Inmate::Inmate( string name,
     setSpeed(speed);
     setIntelligence(intelligence);
     setMoney(money);
+    Inmate::inmateMap[nextId++] = this->name;
 }
 
 Inmate::Inmate( const Inmate& other )
@@ -50,6 +54,7 @@ Inmate::Inmate( const Inmate& other )
     this->speed = other.speed;
     this->intelligence = other.intelligence;
     this->money = other.money;
+    Inmate::inmateMap[nextId++] = this->name;
 }
 
 void Inmate::showPercentageBar(int percentage) const{
@@ -282,6 +287,20 @@ bool Inmate::operator!() const{
     return this->energy < 5;
 }
 
+string Inmate::getInmateNameByID(int id){
+    if (id > 0 && id <= Inmate::nextId)
+        return Inmate::inmateMap[id];
+    return "";
+}
+
+void Inmate::viewAllInmates(){
+    cout << "ID" << "\t" << "INMATE NAME" << "\n";
+    for (auto pair : Inmate::inmateMap){
+        cout << pair.first << "\t" << pair.second << "\n";
+    }
+    cout << "\n";
+}
+
 Inmate::~Inmate(){
-    //...
+    //..
 }

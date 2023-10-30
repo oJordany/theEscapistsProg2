@@ -3,6 +3,7 @@ using std::cout;
 
 #include <iomanip>
 using std::setw;
+using std::setfill;
 using std::left;
 using std::right;
 
@@ -68,8 +69,15 @@ int JobBoard::findNextAvailableTasks() const{
 }
 
 void JobBoard::assignTaskTo(const Inmate& other){
+    if (other.isNull())
+        return;
+
     int taskIndex = findNextAvailableTasks();
     if (taskIndex != -1){
+        for (int i = 0; i < nextEntrieInTasks; i++){
+            if(tasksPtr[i].inmate != 0 && *tasksPtr[i].inmate == other){
+                return;}
+        }
         if (tasksPtr[taskIndex].inmate != 0) {
             delete tasksPtr[taskIndex].inmate; // Libera a memória do objeto Inmate anterior
         }
@@ -84,9 +92,10 @@ void JobBoard::unassignTask(int taskIndex){
         if (tasksPtr[taskIndex].inmate != 0) {
             delete tasksPtr[taskIndex].inmate;
             tasksPtr[taskIndex].inmate = 0; // Define o ponteiro como nulo após a desalocação
+            setIsAvailable(true);
         }
     } else {
-        cout << "non-existent task index\n";
+        cout << RED << "non-existent task index" << RESET << "\n";
     }
 }
 
@@ -143,6 +152,7 @@ void JobBoard::repeatCharacter(string character, int amount) const{
 }
 
 void JobBoard::displayTasks() const{
+    setfill(' ');
     cout << " __| |";
     repeatCharacter("_", 72);
     cout << "| |__\n";
@@ -157,13 +167,13 @@ void JobBoard::displayTasks() const{
     int i;
     for (i = 0; i < nextEntrieInTasks; i++){
         if ((i+1)%2 != 0){
-            cout << "   | |" << RED << "  " << i << "." << left << setw(19) << tasksPtr[i].taskName << ": " << left << setw(11);
+            cout << "   | |" << RED << "  " << i+1 << "." << left << setw(19) << tasksPtr[i].taskName << ": " << left << setw(11);
             if (!tasksPtr[i].inmate->isNull())
                 cout << tasksPtr[i].inmate->getName();
             else
                 cout << "";
         }else if((i+1)%2 == 0){
-            cout << i << "." << left << setw(19) << tasksPtr[i].taskName << ": " << left << setw(13);
+            cout << i+1 << "." << left << setw(19) << tasksPtr[i].taskName << ": " << left << setw(13);
             if (!tasksPtr[i].inmate->isNull())
                 cout << tasksPtr[i].inmate->getName() << RESET <<"| |\n";
             else
@@ -218,22 +228,28 @@ void JobBoard::printFormatted(  string text,
 
 
 void JobBoard::viewTasksDetails(int taskIndex) const{
-cout << right << setw(62) << "   __________________________________\n";
-cout << right << setw(64) << "/ \\                                 \\.\n";
-cout << right << setw(35) << "|   |      ";
-cout << BLUE << left << setw(19) << tasksPtr[taskIndex-1].taskName << RESET << "       |.\n";
-cout << right << setw(64) << " \\_ |                                |.\n";
-printFormatted(tasksPtr[taskIndex-1].taskDetails, "    | ",  " |.", 30, 30);
-cout << right << setw(66) << "    |   _____________________________|___\n";
-cout << right << setw(67) << "    |  /                                /.\n";
-cout << right << setw(66) << "    \\_/________________________________/.\n";
+    setfill(' ');
+    if (taskIndex > nextEntrieInTasks){
+        cout << RED << "non-existent task index" << RESET << "\n";
+        return;
+    }
+
+    cout << right << setw(62) << "   __________________________________\n";
+    cout << right << setw(64) << "/ \\                                 \\.\n";
+    cout << right << setw(35) << "|   |      ";
+    cout << BLUE << left << setw(19) << tasksPtr[taskIndex-1].taskName << RESET << "       |.\n";
+    cout << right << setw(64) << " \\_ |                                |.\n";
+    printFormatted(tasksPtr[taskIndex-1].taskDetails, "    | ",  " |.", 30, 30);
+    cout << right << setw(66) << "    |   _____________________________|___\n";
+    cout << right << setw(67) << "    |  /                                /.\n";
+    cout << right << setw(66) << "    \\_/________________________________/.\n";
 }
 
 void JobBoard::setIsAvailable(bool state){
     int taskIndex = findNextAvailableTasks();
-
     if (taskIndex == -1 && state == false){
         this->isAvailable = state;
+        return;
     }
 
     this->isAvailable = true;
@@ -335,8 +351,8 @@ bool JobBoard::operator!=(const JobBoard &jobBoard) const{
     return !(*this == jobBoard);
 }
 
-bool JobBoard::operator!() const{
-    return tasksSize != 0;
+int JobBoard::operator!() const{
+    return nextEntrieInTasks;
 }
 
 JobBoard::~JobBoard(){

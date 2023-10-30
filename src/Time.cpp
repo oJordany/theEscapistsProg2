@@ -16,8 +16,10 @@ using std::thread;
 #include <iomanip>
 using std::setw;
 using std::setfill;
-
 using std::to_string;
+
+#include <algorithm>
+using std::for_each;
 
 #include "Time.h"
 
@@ -26,7 +28,7 @@ int Time::hour = 0;
 int Time::minute = 0;
 int Time::dayCounter = 0;
 int Time::currentDay = 0;
-int Time::routinesNumber = MAXNUMROUTINES;
+int Time::routinesNumber = 0;
 const string Time::DAYSOFTHEWEEK[MAXNUMDAYSOFTHEWEEK] = { 
                                                     "Sunday", 
                                                     "Monday", 
@@ -36,67 +38,111 @@ const string Time::DAYSOFTHEWEEK[MAXNUMDAYSOFTHEWEEK] = {
                                                     "Friday", 
                                                     "Saturday" 
                                                   };
-Routine Time::dailyRoutine[MAXNUMROUTINES] = {
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            {0, 0, 0, 0, ""},
-                                            };
+Routine *Time::dailyRoutinePtr = 0;
+vector<string> Time::createdTimes;
+vector<string> Time::filesInUse;
+Data *Time::prisonDatePtr = 0;
 
 Time::Time(){
+    timeName = "Time_" + to_string(hour) + to_string(minute) + to_string(dayCounter);
+    int differentiator = 0;
+    for (auto createdTimeName : createdTimes){
+        if (timeName == createdTimeName){
+            differentiator++;
+            timeName += to_string(differentiator);
+        }
+    }
+    createdTimes.push_back(timeName);
     createTimeFile();
-    sleep_for(seconds(2));
+}
+
+Time::Time(string timeName){
+    this->timeName = timeName;
+    int differentiator = 0;
+    for (auto createdTimeName : createdTimes){
+        if (this->timeName == createdTimeName){
+            differentiator++;
+            this->timeName += to_string(differentiator);
+        }
+    }
+    createdTimes.push_back(this->timeName);
+    createTimeFile();
 }
 
 Time::Time(const Time& other){
-    other.createTimeFile();
-    sleep_for(seconds(2));
+    timeName = other.timeName + "_copy";
+    int differentiator = 0;
+    for (auto createdTimeName : createdTimes){
+        if (timeName == createdTimeName){
+            differentiator++;
+            timeName += to_string(differentiator);
+        }
+    }
+    createdTimes.push_back(timeName);
+    createTimeFile();
 }
 
 void Time::endTime(){
     Time::gameIsRunning= false;
-    sleep_for(seconds(1)); // Esse sleep_for é para garantir que o programa apague os arquivos .txt de tempo criados antes de finalizar
 }
 
-void Time::createTimeFile() const{
-    string timeFileName = "Time_" + to_string(hour) + to_string(minute) + to_string(dayCounter) + ".txt"; 
-    thread clockThread([timeFileName](){
+void Time::useTime(const Time &time){
+    if (!(!time))
+        filesInUse.push_back(time.timeName);
+}
+
+void Time::releaseTime(string timeName){
+    int i = 0;
+    for (auto timeNameInUse : filesInUse){
+        if (timeName == timeNameInUse)
+            break;
+        i++;
+    }
+    filesInUse.erase(filesInUse.begin() + i);
+}
+
+void Time::releaseAllTimes(){
+    for_each(Time::filesInUse.begin(), Time::filesInUse.end(), Time::releaseTime);
+}
+
+void Time::createTimeFile() const{ 
+    gameIsRunning = true;
+    string timeNameTxt = timeName + ".txt";
+    thread clockThread([timeNameTxt, this](){
         bool isRoutine = false;
         while (gameIsRunning)
         {   
-            // cout << timeFileName;
-            ofstream file(timeFileName, ios::out);
+            ofstream file(timeNameTxt, ios::out);
             if (!file.is_open()){
                 cout << "Erro ao tentar abrir o arquivo\n";
                 return;
             }
-            isRoutine = false;
-            for (int i = 0; i <= routinesNumber; i++){
-                if (hour >= dailyRoutine[i].startHour && hour <= dailyRoutine[i].endHour &&
-                    minute >= dailyRoutine[i].startMinute && minute <= dailyRoutine[i].endMinute){
-                    file << DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " ) - [ " << Time::dailyRoutine[i].routineName << " ] \n";
-                    isRoutine = true;
+            bool fileFound = false;
+            for (auto file : filesInUse){
+                if (timeName == file){
+                    fileFound = true;
                     break;
                 }
             }
-            if (!isRoutine){
-                file << Time::DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " )\n";
+            if (fileFound){
+                isRoutine = false;
+                for (int i = 0; i <= routinesNumber; i++){
+                    if (hour >= dailyRoutinePtr[i].startHour && hour <= dailyRoutinePtr[i].endHour &&
+                        minute >= dailyRoutinePtr[i].startMinute && minute <= dailyRoutinePtr[i].endMinute){
+                        file << DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *prisonDatePtr << " ) - [ " << Time::dailyRoutinePtr[i].routineName << " ] \n";
+                        isRoutine = true;
+                        break;
+                    }
+                }
+                if (!isRoutine){
+                    file << Time::DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *prisonDatePtr << " )\n";
+                }
+            }else{
+                file << " ";
             }
             file.flush();
             sleep_for(seconds(1));
             file.close();
-        }
-        if (remove(timeFileName.c_str()) != 0) {
-            cout << "Erro ao deletar o arquivo\n";
-        } else {
-            cout << "Arquivo deletado com sucesso!\n";
         }
     });
     clockThread.detach();
@@ -104,36 +150,44 @@ void Time::createTimeFile() const{
 
 void Time::displayTime(){ 
     for (int i = 0; i <= routinesNumber; i++){
-        if  (hour >= dailyRoutine[i].startHour && hour <= dailyRoutine[i].endHour &&
-            minute >= dailyRoutine[i].startMinute && minute <= dailyRoutine[i].endMinute){
+        if  (dailyRoutinePtr != 0 && hour >= dailyRoutinePtr[i].startHour && hour <= dailyRoutinePtr[i].endHour &&
+            minute >= dailyRoutinePtr[i].startMinute && minute <= dailyRoutinePtr[i].endMinute){
             cout << DAYSOFTHEWEEK[currentDay] << " - ";
             cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
-            cout << " ( Day " << dayCounter << " ) - [ " << dailyRoutine[i].routineName << " ] \n";
+            cout << " ( Day " << dayCounter << " - " << *prisonDatePtr << " ) - [ " << dailyRoutinePtr[i].routineName << " ] \n" << setfill(' ');
             return;
         }
     }
+    if (prisonDatePtr != 0){
+        cout << DAYSOFTHEWEEK[currentDay] << " - ";
+        cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
+        cout << " ( Day " << dayCounter << " - " << *prisonDatePtr << " ) \n" << setfill(' ');
+        return;
+    }
     cout << DAYSOFTHEWEEK[currentDay] << " - ";
     cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
-    cout << " ( Day " << dayCounter << " ) \n";
+    cout << " ( Day " << dayCounter << " ) \n" << setfill(' ');
 }
 
-void Time::startTime(Routine dailyRoutine[], int routinesNumber){
-    if (routinesNumber <= MAXNUMROUTINES && routinesNumber > 0){
+void Time::startTime(Routine dailyRoutinePtr[], int routinesNumber, const Data &data){
+    prisonDatePtr = new Data(data);
+    if (routinesNumber > 0){
         Time::routinesNumber = routinesNumber;
+        Time::dailyRoutinePtr = new Routine[routinesNumber]; 
         Time::gameIsRunning = true;
-        if (routinesNumber > 0){
-            Time::hour = dailyRoutine[0].startHour;
-            Time::minute = dailyRoutine[0].startMinute;
-        }
+        Time::hour = dailyRoutinePtr[0].startHour;
+        Time::minute = dailyRoutinePtr[0].startMinute;
+
         // loop for usando para iterar sobre o array de Routine
         // Ele faz a cópia do array dailyRoutine (parâmetro) para o array Time::dailyRoutine (atributo) 
         for (int i = 0; i < routinesNumber; i++){
-            Time::dailyRoutine[i].startHour = dailyRoutine[i].startHour;
-            Time::dailyRoutine[i].startMinute = dailyRoutine[i].startMinute;
-            Time::dailyRoutine[i].endHour = dailyRoutine[i].endHour; 
-            Time::dailyRoutine[i].endMinute = dailyRoutine[i].endMinute;
-            Time::dailyRoutine[i].routineName = dailyRoutine[i].routineName;
+            Time::dailyRoutinePtr[i].startHour = dailyRoutinePtr[i].startHour;
+            Time::dailyRoutinePtr[i].startMinute = dailyRoutinePtr[i].startMinute;
+            Time::dailyRoutinePtr[i].endHour = dailyRoutinePtr[i].endHour; 
+            Time::dailyRoutinePtr[i].endMinute = dailyRoutinePtr[i].endMinute;
+            Time::dailyRoutinePtr[i].routineName = dailyRoutinePtr[i].routineName;
         }
+
         // cout << routinesNumber << "\n";
         thread clockThread([](){
             // usando loop while que fica rodando enquanto o jogo estiver rodando
@@ -156,9 +210,9 @@ void Time::startTime(Routine dailyRoutine[], int routinesNumber){
                         if (currentDay >= 6){
                             Time::currentDay = 0;
                         }
+                        prisonDatePtr->incrementaData();
                     }
                 }
-                // sleep_for(seconds(1));
             }
         });
         clockThread.detach();
@@ -167,6 +221,95 @@ void Time::startTime(Routine dailyRoutine[], int routinesNumber){
     }
 }
 
-Time::~Time(){
+void Time::skipTime(int hour, int minute){
+    if (hour >= 0 && hour < 24){
+        Time::hour = hour;
+    }
+    if (minute >= 0 && minute <= 60){
+        Time::minute = minute;
+    }
+}
 
+ostream &operator<<(ostream &out, const Time &time){
+    out << setfill('-') << setw(36) << time.timeName << setfill('-') << setw(36) << "\n";
+
+    for (int i = 0; i <= Time::routinesNumber; i++){
+        if  (Time::hour >= Time::dailyRoutinePtr[i].startHour && Time::hour <= Time::dailyRoutinePtr[i].endHour &&
+            Time::minute >= Time::dailyRoutinePtr[i].startMinute && Time::minute <= Time::dailyRoutinePtr[i].endMinute){
+            out << Time::DAYSOFTHEWEEK[Time::currentDay] << " - ";
+            out << setfill('0') << setw(2) << Time::hour << ":" << setfill('0') << setw(2) << Time::minute;
+            out << " ( Day " << Time::dayCounter << " - " << *Time::prisonDatePtr<< " ) - [ " << Time::dailyRoutinePtr[i].routineName << " ] \n";
+            out << "File is in use: " << !time << "\n";
+            out << setfill('-') << setw(time.timeName.length() + 65) << "\n";
+            return out;
+        }
+    }
+    out << Time::DAYSOFTHEWEEK[Time::currentDay] << " - ";
+    out << setfill('0') << setw(2) << Time::hour << ":" << setfill('0') << setw(2) << Time::minute;
+    out << " ( Day " << Time::dayCounter << " - " << *Time::prisonDatePtr << " ) \n";
+
+    out << setfill(' ');
+    out << "File is in use: " << !time << "\n";
+    return out;
+}
+
+const Time & Time::operator=(const Time &time){
+    this->timeName = time.timeName;
+    int differentiator = 0;
+    for (auto createdTimeName : createdTimes){
+        if (this->timeName == createdTimeName){
+            differentiator++;
+            this->timeName += to_string(differentiator);
+        }
+    }
+    createdTimes.push_back(this->timeName);
+    createTimeFile();
+    if (!time)
+        Time::useTime(*this);
+
+    return *this;
+}
+
+bool Time::operator==(const Time &time) const{
+    return (!*this && !time) || (!(!*this) && !(!time)); // Se e somente se (só retorna true se ambos estiverem em uso OU se ambos não tiverem em uso)
+}
+
+bool Time::operator!=(const Time &time) const{
+    return !(*this == time);
+}
+
+bool Time::operator!() const{
+    bool fileIsInUse = false;
+    for (auto fileInUse : Time::filesInUse){
+        if (fileInUse == this->timeName){
+            fileIsInUse = true;
+            break;
+        }
+    }
+    return fileIsInUse;
+}
+
+Time::~Time(){
+    if (Time::gameIsRunning){
+        gameIsRunning = false;
+        string timeNameTxt = timeName + ".txt";
+        if (remove(timeNameTxt.c_str()) != 0) {
+            cout << "Erro ao deletar o arquivo\n";
+        } else {
+            int i = 0;
+            for (auto createdTimeName : createdTimes){
+                if (this->timeName == createdTimeName)
+                    break;
+                i++;
+            }
+            createdTimes.erase(createdTimes.begin() + i);
+            cout << "Arquivo deletado com sucesso!\n";
+        }
+    }
+
+    if (!Time::gameIsRunning && createdTimes.empty()) {
+        delete [] dailyRoutinePtr;
+        delete prisonDatePtr;
+    }else
+        gameIsRunning = true;
 }

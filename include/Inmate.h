@@ -8,6 +8,9 @@ using std::string;
 using std::cout;
 using std::ostream;
 
+#include <map>
+using std::map;
+
 class Inmate
 {
     friend ostream &operator<<(ostream &, const Inmate &);
@@ -44,6 +47,8 @@ public:
     void setSpeed(int);
     void setIntelligence(int);
     void setMoney(double);
+    static string getInmateNameByID(int);
+    static void viewAllInmates();
 
     void viewProfile() const;
     void readBook(int = 1);
@@ -59,6 +64,8 @@ private:
     void showPercentageBar(int) const;
     void repeatCharacter(string, int) const;
     const int MAXSIZENAME = 10;
+    static map<int, string> inmateMap;
+    static int nextId;
 };
 
 #endif

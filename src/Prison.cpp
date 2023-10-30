@@ -10,52 +10,112 @@ using std::right;
 #include <cmath>
 using std::ceil;
 
+#include <cstdlib>
+using std::srand;
+using std::rand;
+
+#include <ctime>
+using std::time;
+
+#define UNDERLINED "\x1b[4m"
+#define RESETSTYLE "\x1b[0m"
+#define RESET   "\033[0m"
+#define BLUE    "\033[34m"    
+
 #include "Prison.h"
 
-Prison::Prison()
-:dailyRoutinePtr(0), registeredInmatesPtr(0), locationsPtr(0), level(0)
+Prison::Prison(string prisonName, const JobBoard &jobBoard)
+:dailyRoutinePtr(0), locationsPtr(0), level(0), prisonDate(), prisonJobBoard(jobBoard)
 {
     dailyRoutineSize = 0;
-    registeredInmatesSize = 0;
+    // registeredInmatesSize = 0;
     locationsSize = 0;
     nextEntrieInDailyRoutine = 0;
     nextEntrieInLocations = 0;
-    nextEntrieInRegisteredInmates = 0;
+    // nextEntrieInRegisteredInmates = 0;
+    this->prisonName = prisonName;
+    prisonTimePtr = new Time("Time_" + prisonName);
 }
 
-Prison::Prison(int level, int dailyRoutineSize, int registeredInmatesSize, int locationsSize)
-{
+Prison::Prison( string prisonName, 
+                int level,
+                const JobBoard &jobBoard, 
+                const Data &date, 
+                int dailyRoutineSize, 
+                int locationsSize)
+:prisonDate(date), prisonJobBoard(jobBoard){
     setLevel(level);
     setDailyRoutineSize(dailyRoutineSize);
-    setRegisteredInmatesSize(registeredInmatesSize);
     setLocationsSize(locationsSize);
     nextEntrieInDailyRoutine = 0;
     nextEntrieInLocations = 0;
-    nextEntrieInRegisteredInmates = 0;
+    // nextEntrieInRegisteredInmates = 0;
+    this->prisonName = prisonName;
+    prisonTimePtr = new Time("Time_" + prisonName);
 }
 
 Prison::Prison(const Prison &other)
-:level(other.level)
+:level(other.level), prisonDate(other.prisonDate), prisonJobBoard(other.prisonJobBoard)
 {   
+    this->prisonName = other.prisonName;
+    if (prisonTimePtr != 0)
+        delete prisonTimePtr;
+    this->prisonTimePtr = (other.prisonTimePtr == 0) ? new Time(*other.prisonTimePtr) : 0;
     this->dailyRoutineSize = other.dailyRoutineSize;
-    this->registeredInmatesSize = other.registeredInmatesSize;
+    // this->registeredInmatesSize = other.registeredInmatesSize;
     this->locationsSize = other.locationsSize;
     this->nextEntrieInDailyRoutine = other.nextEntrieInDailyRoutine;
     this->nextEntrieInLocations = other.nextEntrieInLocations;
-    this->nextEntrieInRegisteredInmates = other.nextEntrieInRegisteredInmates;
+    // this->nextEntrieInRegisteredInmates = other.nextEntrieInRegisteredInmates;
     //PASSAR OS PONTEIROS ...
     this->dailyRoutinePtr = new Routine[this->dailyRoutineSize];
     for (int i=0; i < nextEntrieInDailyRoutine; i++){
         this->dailyRoutinePtr[i] = other.dailyRoutinePtr[i];
     }
-    this->registeredInmatesPtr = new string[this->registeredInmatesSize];
-    for (int i=0; i < nextEntrieInRegisteredInmates; i++){
-        this->registeredInmatesPtr[i] = other.registeredInmatesPtr[i];
+    this->registeredInmates.resize(other.registeredInmates.size());
+    for (int i=0; i < registeredInmates.size(); i++){
+        this->registeredInmates[i] = new Inmate(*other.registeredInmates[i]);
     }
     this->locationsPtr = new string[this->locationsSize];
     for (int i=0; i < nextEntrieInLocations; i++){
         this->locationsPtr[i] = other.locationsPtr[i];
     }
+}
+
+void Prison::startPrisonTime(){
+    Time::releaseAllTimes();
+    Time::useTime(*prisonTimePtr);
+    Time::startTime(dailyRoutinePtr, dailyRoutineSize, prisonDate);
+}
+
+void Prison::assignTasksToInmates(){
+    // Inicializa a semente para a função rand()
+    srand(time(0));
+
+    for (int i = 0; i < prisonJobBoard.getNextEntrieInTasks(); i++){
+        prisonJobBoard.unassignTask(i);
+    }
+
+    if (!prisonJobBoard > registeredInmates.size()){
+        prisonJobBoard.setTasksSize(registeredInmates.size());
+    }
+
+    int randomIndex;
+
+    while (prisonJobBoard.getIsAvailable()){
+        // Gera um índice aleatório do vetor de Inmates
+        randomIndex = rand() % registeredInmates.size();
+        // cout << "ri: " << randomIndex << "\n" << *registeredInmates[randomIndex];
+        prisonJobBoard.assignTaskTo(*registeredInmates[randomIndex]);
+    }
+}
+
+void Prison::displayPrisonJobBoard() const{
+    prisonJobBoard.displayTasks();
+}
+
+void Prison::viewPrisonTaskDetails(int taskIndex) const{
+    prisonJobBoard.viewTasksDetails(taskIndex);
 }
 
 int Prison::searchInsertIndex(Routine routine){
@@ -134,44 +194,32 @@ void Prison::registerInmateInPrison(const Inmate &inmate){
     string inmateName = inmate.getName();
     string inmateRoomName = inmateName + "'s" + " room";
     registerLocationInPrison(inmateRoomName);
-    if (nextEntrieInRegisteredInmates < registeredInmatesSize){
-        registeredInmatesPtr[ nextEntrieInRegisteredInmates++ ] = inmateName;
-        return;
-    }
-
-    if (registeredInmatesSize == 0){
-        registeredInmatesSize = 1;
-        registeredInmatesPtr = new string[registeredInmatesSize];
-        registeredInmatesPtr[ nextEntrieInRegisteredInmates++ ] = inmateName;
-        return;
-    }
-
-    allocateInmateInPrison(inmate);
+    registeredInmates.push_back(new Inmate(inmate));
 }
 
-void Prison::allocateInmateInPrison(const Inmate& inmate){
-    string *registeredInmatesTempPtr = new string[registeredInmatesSize];
+// void Prison::allocateInmateInPrison(const Inmate& inmate){
+//     string *registeredInmatesTempPtr = new string[registeredInmatesSize];
 
-    for (int i = 0; i < nextEntrieInRegisteredInmates; i++){
-        registeredInmatesTempPtr[i] = registeredInmatesPtr[i];
-    }
+//     for (int i = 0; i < nextEntrieInRegisteredInmates; i++){
+//         registeredInmatesTempPtr[i] = registeredInmates[i];
+//     }
 
-    delete [] registeredInmatesPtr;
+//     delete [] registeredInmates;
 
-    registeredInmatesSize = int(ceil(registeredInmatesSize * 1.5));
+//     registeredInmatesSize = int(ceil(registeredInmatesSize * 1.5));
 
-    registeredInmatesPtr = new string[registeredInmatesSize];
-    for (int i = 0; i < nextEntrieInRegisteredInmates; i++){
-        registeredInmatesPtr[i] = registeredInmatesTempPtr[i];
-    }
-    registeredInmatesPtr[nextEntrieInRegisteredInmates++] = inmate.getName();
+//     registeredInmates = new string[registeredInmatesSize];
+//     for (int i = 0; i < nextEntrieInRegisteredInmates; i++){
+//         registeredInmates[i] = registeredInmatesTempPtr[i];
+//     }
+//     registeredInmates[nextEntrieInRegisteredInmates++] = inmate.getName();
 
-    delete [] registeredInmatesTempPtr;    
-}
+//     delete [] registeredInmatesTempPtr;    
+// }
 
-void Prison::displayAllRegisteredInmates() const{
-    for (int i=0; i < nextEntrieInRegisteredInmates; i++){
-        cout << "Inmate " << i << ": " << registeredInmatesPtr[i] << "\n";
+void Prison::displayAllRegisteredInmates() const {
+    for (int i=0; i < registeredInmates.size(); i++){
+        cout << "Inmate " << i << ": " << registeredInmates[i]->getName() << "\n";
     }
 }
 
@@ -266,43 +314,6 @@ void Prison::setDailyRoutineSize(int dailyRoutineSize){
     delete [] dailyRoutineTempPtr;
 }
 
-void Prison::setRegisteredInmatesSize(int registeredInmatesSize){
-    if (registeredInmatesSize <= 0){
-        this->registeredInmatesSize = 0;
-        delete [] registeredInmatesPtr;
-        registeredInmatesPtr = 0;
-        nextEntrieInRegisteredInmates = 0;
-        return;
-    }
-
-    if (this->registeredInmatesSize == 0){
-        this->registeredInmatesSize = registeredInmatesSize;
-        registeredInmatesPtr = new string[registeredInmatesSize];
-        return;
-    }
-
-    string *registeredInmatesTempPtr = new string[registeredInmatesSize];
-
-    int endOfRegisteredInmates = (registeredInmatesSize < this->registeredInmatesSize) ? registeredInmatesSize : nextEntrieInRegisteredInmates;
-
-    for (int i = 0; i < endOfRegisteredInmates; i++){
-        registeredInmatesTempPtr[i] = registeredInmatesPtr[i];
-    }
-
-    delete [] registeredInmatesPtr;
-
-    nextEntrieInRegisteredInmates = endOfRegisteredInmates;
-    this->registeredInmatesSize = registeredInmatesSize;
-
-    registeredInmatesPtr = new string[registeredInmatesSize];
-
-    for (int i = 0; i < endOfRegisteredInmates; i++){
-        registeredInmatesPtr[i] = registeredInmatesTempPtr[i];
-    }
-
-    delete [] registeredInmatesTempPtr;    
-}
-
 void Prison::setLocationsSize(int locationsSize){
     if (locationsSize <= 0){
         this->locationsSize = 0;
@@ -341,14 +352,120 @@ void Prison::setLocationsSize(int locationsSize){
 }
 
 Routine Prison::getDailyRoutineAtIndex(int index) const{
-    if (index >= 0 && index < registeredInmatesSize){
+    if (index >= 0 && index < dailyRoutineSize){
         return dailyRoutinePtr[index];
     }
     return {};
 }
 
+ostream &operator<<(ostream &out, const Prison &prison){
+    out << BLUE << UNDERLINED << "Prison Name:" << RESET << RESETSTYLE << " " << prison.prisonName << "\n";
+    out << BLUE << UNDERLINED << "\nDaily Prison Routine:\n" << RESET << RESETSTYLE;
+    prison.displayDailyRoutine();
+    out << BLUE << UNDERLINED << "\nInmates Registered in Prison:\n" << RESET << RESETSTYLE;
+    prison.displayAllRegisteredInmates();
+    out << BLUE << UNDERLINED << "\nPrison Locations:\n" << RESET << RESETSTYLE;
+    prison.displayAllPrisonLocations();
+    out << BLUE << UNDERLINED << "\nPrison time:\n" << RESET << RESETSTYLE;
+    prison.prisonTimePtr->displayTime();
+    out << BLUE << UNDERLINED << "\nPrison Date:\n" << RESET << RESETSTYLE;
+    out << prison.prisonDate << "\n";
+    out << BLUE << UNDERLINED << "\nPrison Job Board:\n" << RESET << RESETSTYLE;
+    prison.displayPrisonJobBoard();
+    return out;
+}
+
+const Prison & Prison::operator=(const Prison &prison){
+    this->prisonName = prison.prisonName;
+    this->level = prison.level;
+    this->prisonDate = prison.prisonDate;
+    this->prisonJobBoard = prison.prisonJobBoard;
+    if (prisonTimePtr != 0)
+        delete prisonTimePtr;
+    this->prisonTimePtr = (prison.prisonTimePtr == 0) ? new Time(*prison.prisonTimePtr) : 0;
+    this->dailyRoutineSize = prison.dailyRoutineSize;
+    this->locationsSize = prison.locationsSize;
+    this->nextEntrieInDailyRoutine = prison.nextEntrieInDailyRoutine;
+    this->nextEntrieInLocations = prison.nextEntrieInLocations;
+    this->dailyRoutinePtr = new Routine[this->dailyRoutineSize];
+    for (int i=0; i < nextEntrieInDailyRoutine; i++){
+        this->dailyRoutinePtr[i] = prison.dailyRoutinePtr[i];
+    }
+    this->registeredInmates.resize(prison.registeredInmates.size());
+    for (int i=0; i < registeredInmates.size(); i++){
+        if (this->registeredInmates[i] != 0)
+            delete this->registeredInmates[i];
+        this->registeredInmates[i] = new Inmate(*prison.registeredInmates[i]);
+    }
+    this->locationsPtr = new string[this->locationsSize];
+    for (int i=0; i < nextEntrieInLocations; i++){
+        this->locationsPtr[i] = prison.locationsPtr[i];
+    }
+    
+    return *this;
+}
+
+bool Prison::operator==(const Prison &prison) const{
+    if (this->prisonName != prison.prisonName)
+        return false;
+    if (this->level != prison.level)
+        return false;
+    if (this->prisonDate != prison.prisonDate)
+        return false;
+    if (this->prisonJobBoard != prison.prisonJobBoard)
+        return false;
+    if ((this->prisonTimePtr == 0 && prison.prisonTimePtr != 0) || (this->prisonTimePtr != 0 && prison.prisonTimePtr == 0))
+        return false;
+    if (*this->prisonTimePtr != *prison.prisonTimePtr)
+        return false;
+    if (this->dailyRoutineSize != prison.dailyRoutineSize)
+        return false;
+    if (this->locationsSize != prison.locationsSize)
+        return false;
+    if (this->nextEntrieInDailyRoutine != prison.nextEntrieInDailyRoutine)
+        return false;
+    if (this->nextEntrieInLocations != prison.nextEntrieInLocations)
+        return false;
+    for (int i=0; i < this->nextEntrieInDailyRoutine; i++){
+        if (this->dailyRoutinePtr[i].startHour != prison.dailyRoutinePtr[i].startHour)
+            return false;
+        if (this->dailyRoutinePtr[i].startMinute != prison.dailyRoutinePtr[i].startMinute)
+            return false;
+        if (this->dailyRoutinePtr[i].endHour != prison.dailyRoutinePtr[i].endHour)
+            return false;
+        if (this->dailyRoutinePtr[i].endMinute != prison.dailyRoutinePtr[i].endMinute)
+            return false;
+        if (this->dailyRoutinePtr[i].routineName != prison.dailyRoutinePtr[i].routineName)
+            return false;
+    }
+    for (int i=0; i < registeredInmates.size(); i++){
+        if (*this->registeredInmates[i] != *prison.registeredInmates[i] )
+            return false;
+    }
+    for (int i=0; i < nextEntrieInLocations; i++){
+        if (this->locationsPtr[i] != prison.locationsPtr[i])
+            return false;
+    }
+        
+    return true;
+}
+
+bool Prison::operator!=(const Prison &prison) const{
+    return (*this == prison);
+}
+
+bool Prison::operator!() const{
+    return ( !this->prisonJobBoard && 
+            this->registeredInmates.size() &&
+            this->nextEntrieInDailyRoutine &&
+            this->nextEntrieInLocations);
+}
+
 Prison::~Prison(){
     delete [] dailyRoutinePtr;
-    delete [] registeredInmatesPtr;
     delete [] locationsPtr;
+    delete prisonTimePtr;
+    for (int i=0; i < registeredInmates.size(); i++){
+        delete registeredInmates[i];
+    }
 }
