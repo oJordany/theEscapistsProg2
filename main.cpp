@@ -27,6 +27,8 @@ int main(){
     vector<Inmate *> inmates;
     for (int i=0; i<10; i++){
         inmates.push_back(new Inmate(inmateNames[i]));
+        Inmate::viewAllInmates(); // método que usa o stl Map para printar as informacoes ID e INMATE NAME
+        cout << "\n\n";
     }
 
     // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
@@ -39,12 +41,14 @@ int main(){
         tasks[i].inmate = 0;
         i++;
     }
-    // CRIANDO UM JOBBOARD
+    // CRIANDO JOBBOARD
     JobBoard jobBoard(tasks, tasksInfos.size());
+    JobBoard jobBoardSF(jobBoard); // Usando o construtor de copia
+    cout << "jobBoardSF == jobBoard --> " << (jobBoardSF == jobBoard) << "\n";
 
     // CRIANDO DUAS PRISOES COM O MESMO JOBBOARD
+    Prison stalagFlucht("stalag flucht", jobBoardSF);
     Prison centerPerks("center perks", 0, jobBoard, Data(31, 12, 2023));
-    Prison stalagFlucht("stalag flucht", jobBoard);
 
     // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
     // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
@@ -84,9 +88,16 @@ int main(){
         stalagFlucht.registerLocationInPrison(location);
         centerPerks.registerLocationInPrison(location);
     }
-
+    Time time_1;
+    cout << "!time_1 -->"<< !time_1 << "\n"; 
     cout << centerPerks;
     cout << stalagFlucht;
+    cout << "centerPerks == stalagFlucht --> ";
+    cout << (centerPerks == stalagFlucht) << "\n";
+    cout << "centerPerks != stalagFlucht --> ";
+    cout << (centerPerks != stalagFlucht) << "\n";
+    cout << "!inmates[0] --> ";
+    cout << !inmates[0] << "\n";
 
     while(option != 0){
         cout << "Simulando a execução do programa...\n";

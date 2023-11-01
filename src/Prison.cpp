@@ -28,11 +28,9 @@ Prison::Prison(string prisonName, const JobBoard &jobBoard)
 :dailyRoutinePtr(0), locationsPtr(0), level(0), prisonDate(), prisonJobBoard(jobBoard)
 {
     dailyRoutineSize = 0;
-    // registeredInmatesSize = 0;
     locationsSize = 0;
     nextEntrieInDailyRoutine = 0;
     nextEntrieInLocations = 0;
-    // nextEntrieInRegisteredInmates = 0;
     this->prisonName = prisonName;
     prisonTimePtr = new Time("Time_" + prisonName);
 }
@@ -40,13 +38,12 @@ Prison::Prison(string prisonName, const JobBoard &jobBoard)
 Prison::Prison( string prisonName, 
                 int level,
                 const JobBoard &jobBoard, 
-                const Data &date, 
-                int dailyRoutineSize, 
-                int locationsSize)
-:prisonDate(date), prisonJobBoard(jobBoard){
+                const Data &date
+                )
+:prisonDate(date), prisonJobBoard(jobBoard), dailyRoutinePtr(0), locationsPtr(0){
     setLevel(level);
-    setDailyRoutineSize(dailyRoutineSize);
-    setLocationsSize(locationsSize);
+    dailyRoutineSize = 0;
+    locationsSize = 0;
     nextEntrieInDailyRoutine = 0;
     nextEntrieInLocations = 0;
     // nextEntrieInRegisteredInmates = 0;
@@ -451,7 +448,7 @@ bool Prison::operator==(const Prison &prison) const{
 }
 
 bool Prison::operator!=(const Prison &prison) const{
-    return (*this == prison);
+    return !(*this == prison);
 }
 
 bool Prison::operator!() const{

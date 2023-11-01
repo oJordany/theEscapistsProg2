@@ -26,12 +26,6 @@ using std::ceil;
 
 JobBoard::JobBoard()
 :nextEntrieInTasks(0), tasksSize(0), tasksPtr(0){
-    // Initializing tasks
-    // tasks[0] = {"Laundry position", "Your criminal attitude stinks, and so do your overalls! Phew! The only thing I want to smell on you inmates is the fresh scent of justice.Take dirty outfits from the bin and place them into the washer. Once spun, take them out and put them into the clean outfit container.The washing machines flash a yellow colour and make a noise when they have finished washing the outfit you put in.", ""};
-    // tasks[1] = {"Janitor position", "Clean up your act and clean up our floors whilst you're at it! I want you to make those floors, the foundations of YOUR reform, look the best", ""};
-    // tasks[2] = {"Mail man position", "I hate to be the bearer of bad news, which is why I'm asking you to do it for me. Collect mail from the mail room and deliver it to the inmates it's addressed to.", ""};
-    // tasks[3] = {"Metal shop position", "The automotive industry is booming! The only booming you will hear is the sound of license plates being pressed. The harder you work, the sooner I get my sporty little convertible.Take metal sheets from the container in the metalshop and use them on the presses to create license plates. Put the finished plates in the relevant container.", ""};
-    // tasks[4] = {"Kitchen position", "The inspectors call it hazardous, I call it \"rustic\". A sense of taste and/or smell is not essential. Don't worry about washing your hands.Take uncooked food from the freezer in the kitchen and place them in the ovens. Once cooked, take them out and put them on the serving trays in the diner.", ""};
 }
 
 JobBoard::JobBoard(Task tasks[], int size)

@@ -22,10 +22,8 @@ class Prison{
         Prison(string, const JobBoard &);
         Prison( string, 
                 int, 
-                const JobBoard &jobBoard, 
-                const Data & = Data(29, 10, 2023), 
-                int=11, 
-                int=24 );
+                const JobBoard &, 
+                const Data & = Data(29, 10, 2023));
         Prison(const Prison &);
         ~Prison();
 
