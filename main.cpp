@@ -169,6 +169,10 @@ int main(){
             Time::skipTime(hour, minute);
             break;
 
+        case 10:
+            cout << centerPerks.toJson();
+            break;
+
         default:
             cout << "Insira uma opção válida!\n";
             break;

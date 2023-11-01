@@ -15,6 +15,9 @@ using std::vector;
 #include <iostream>
 using std::ostream;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 class Prison{
     friend ostream &operator<<(ostream &, const Prison&);
 
@@ -25,7 +28,10 @@ class Prison{
                 const JobBoard &, 
                 const Data & = Data(29, 10, 2023));
         Prison(const Prison &);
+        // Prison(const json&);
         ~Prison();
+
+        json toJson() const;
 
         void registerDailyPrisonRoutine(Routine);
         void registerInmateInPrison(const Inmate &);
@@ -68,16 +74,11 @@ class Prison{
         int dailyRoutineSize;
         int nextEntrieInDailyRoutine;
 
-        // int registeredInmatesSize;
-        // int nextEntrieInRegisteredInmates;
-
         int locationsSize;
         int nextEntrieInLocations;
 
         void allocateDailyPrisonRoutine(Routine);
-        // void allocateInmateInPrison(const Inmate &);
         void allocateLocationInPrison(string);
-
         int searchInsertIndex(Routine);
 };
 

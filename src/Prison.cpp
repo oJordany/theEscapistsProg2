@@ -194,25 +194,6 @@ void Prison::registerInmateInPrison(const Inmate &inmate){
     registeredInmates.push_back(new Inmate(inmate));
 }
 
-// void Prison::allocateInmateInPrison(const Inmate& inmate){
-//     string *registeredInmatesTempPtr = new string[registeredInmatesSize];
-
-//     for (int i = 0; i < nextEntrieInRegisteredInmates; i++){
-//         registeredInmatesTempPtr[i] = registeredInmates[i];
-//     }
-
-//     delete [] registeredInmates;
-
-//     registeredInmatesSize = int(ceil(registeredInmatesSize * 1.5));
-
-//     registeredInmates = new string[registeredInmatesSize];
-//     for (int i = 0; i < nextEntrieInRegisteredInmates; i++){
-//         registeredInmates[i] = registeredInmatesTempPtr[i];
-//     }
-//     registeredInmates[nextEntrieInRegisteredInmates++] = inmate.getName();
-
-//     delete [] registeredInmatesTempPtr;    
-// }
 
 void Prison::displayAllRegisteredInmates() const {
     for (int i=0; i < registeredInmates.size(); i++){
@@ -353,6 +334,19 @@ Routine Prison::getDailyRoutineAtIndex(int index) const{
         return dailyRoutinePtr[index];
     }
     return {};
+}
+
+json Prison::toJson() const{
+    json prisonJson;
+    
+    prisonJson["prisonName"] = prisonName;
+
+    // Saving Inmates vector
+    for (const auto& inmate : registeredInmates) {
+        prisonJson["registeredInmates"].push_back(inmate->toJson());
+    } 
+
+    return prisonJson;
 }
 
 ostream &operator<<(ostream &out, const Prison &prison){

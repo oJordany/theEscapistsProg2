@@ -224,6 +224,20 @@ void Inmate::readBook(int additionalIntelligence){
     }
 }
 
+json Inmate::toJson() const{
+    json inmateJson;
+
+    inmateJson["name"] = name;
+    inmateJson["health"] = health;
+    inmateJson["energy"] = energy;
+    inmateJson["strength"] = strength;
+    inmateJson["speed"] = speed;
+    inmateJson["intelligence"] = intelligence;
+    inmateJson["money"] = money;
+
+    return inmateJson;
+}
+
 ostream &operator<<(ostream &out, const Inmate &inmate){
     out << "Name: " << inmate.getName() << "\n";
     out << "Health: " << inmate.getHealth() << "\n";

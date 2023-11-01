@@ -11,6 +11,9 @@ using std::ostream;
 #include <map>
 using std::map;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 class Inmate
 {
     friend ostream &operator<<(ostream &, const Inmate &);
@@ -31,6 +34,7 @@ public:
     bool operator!=(const Inmate &) const;      // operador de diferença
     bool operator!() const;                     // operador de negação
 
+    json toJson() const;
     string getName() const;
     int getHealth() const;
     int getEnergy() const;
