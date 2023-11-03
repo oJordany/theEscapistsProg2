@@ -21,6 +21,15 @@ using std::ws;
 #include <map>
 using std::map;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+#include "Data.h"
+#include "Inmate.h"
+#include "JobBoard.h"
+#include "Prison.h"
+#include "Time.h"
+
 string strip(const string& str) {
     size_t first = str.find_first_not_of(" \t\n\r\f\v");
     size_t last = str.find_last_not_of(" \t\n\r\f\v");
@@ -29,6 +38,29 @@ string strip(const string& str) {
         return "";
 
     return str.substr(first, (last - first + 1));
+}
+
+bool loadSaves( string nameFile )
+{
+
+    ifstream inputFile(nameFile);
+
+    if ( !inputFile.is_open() ) 
+    {
+        cerr << "Error opening file." << '\n';
+        return false; // Exit with an error code
+    }
+
+    json savedDatasJson;
+
+    inputFile >> savedDatasJson;
+
+    Prison *savedPrisonPtr = new Prison()
+
+    inputFile.close();
+
+    return true;
+
 }
 
 bool loadConfig( map<string, string>& variables, string nameFile )
@@ -69,23 +101,16 @@ bool loadConfig( map<string, string>& variables, string nameFile )
 
 }
 
-bool saveConfigs( map<string, double>& variables, string nameFile )
+bool saveConfigs( const json& datas, string nameFile="saves.json" )
 {
     // abre o arquivo pra escrita 
-    ofstream outputFile(nameFile, std::ios::out | std::ios::trunc);
+    ofstream outputFile(nameFile, std::ios::out);
     if (!outputFile.is_open()) {
         cerr << "Erro ao abrir aquivo para escrita!" << '\n';
         return false; //
     }
 
-    for (const auto& pair : variables)
-        outputFile << pair.first << " = " << pair.second << '\n';
-    
-    // escreve no arquivo 
-   /*  outputFile << "dia = " << dia << '\n';
-    outputFile << "mes = " << mes << '\n';
-    outputFile << "ano = " << ano << '\n';
- */
+    outputFile << datas.dump(4);
     outputFile.close();
     cout << "Dados salvos com sucesso!" << '\n';
     return true;

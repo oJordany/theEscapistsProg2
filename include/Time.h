@@ -20,6 +20,10 @@ struct Routine {
     string routineName;
 };
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+
 class Time{
     friend ostream &operator<<(ostream &, const Time &);
 
@@ -30,12 +34,13 @@ class Time{
         ~Time();
 
         static void displayTime();
-        static void startTime(Routine [], int, const Data &);
+        static void startTime(Routine [], int, const Data &, int=-1, int=-1, int=0, int=0);
         static void skipTime(int, int);
         static void useTime(const Time &);
         static void releaseTime(string);
         static void releaseAllTimes();
         static void endTime();
+        static json toJson();
 
         // métodos inline usados para incrementar hora, minuto, contador de dias e dia atual
         inline static void incrementHour(){Time::hour++;}
@@ -68,7 +73,7 @@ class Time{
         string timeName;
         static Routine *dailyRoutinePtr;                             // Array static para guardar a rotina diária na prisão
         static int routinesNumber;
-        static Data *prisonDatePtr;
+        static Data *datePtr;
         static vector<string> createdTimes;
         static vector<string> filesInUse;
         static bool gameIsRunning;

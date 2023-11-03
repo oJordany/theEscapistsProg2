@@ -41,7 +41,7 @@ const string Time::DAYSOFTHEWEEK[MAXNUMDAYSOFTHEWEEK] = {
 Routine *Time::dailyRoutinePtr = 0;
 vector<string> Time::createdTimes;
 vector<string> Time::filesInUse;
-Data *Time::prisonDatePtr = 0;
+Data *Time::datePtr = 0;
 
 Time::Time(){
     timeName = "Time_" + to_string(hour) + to_string(minute) + to_string(dayCounter);
@@ -129,13 +129,13 @@ void Time::createTimeFile() const{
                 for (int i = 0; i <= routinesNumber; i++){
                     if (hour >= dailyRoutinePtr[i].startHour && hour <= dailyRoutinePtr[i].endHour &&
                         minute >= dailyRoutinePtr[i].startMinute && minute <= dailyRoutinePtr[i].endMinute){
-                        file << DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *prisonDatePtr << " ) - [ " << Time::dailyRoutinePtr[i].routineName << " ] \n";
+                        file << DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *datePtr << " ) - [ " << Time::dailyRoutinePtr[i].routineName << " ] \n";
                         isRoutine = true;
                         break;
                     }
                 }
                 if (!isRoutine){
-                    file << Time::DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *prisonDatePtr << " )\n";
+                    file << Time::DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *datePtr << " )\n";
                 }
             }else{
                 file << " ";
@@ -154,14 +154,14 @@ void Time::displayTime(){
             minute >= dailyRoutinePtr[i].startMinute && minute <= dailyRoutinePtr[i].endMinute){
             cout << DAYSOFTHEWEEK[currentDay] << " - ";
             cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
-            cout << " ( Day " << dayCounter << " - " << *prisonDatePtr << " ) - [ " << dailyRoutinePtr[i].routineName << " ] \n" << setfill(' ');
+            cout << " ( Day " << dayCounter << " - " << *datePtr << " ) - [ " << dailyRoutinePtr[i].routineName << " ] \n" << setfill(' ');
             return;
         }
     }
-    if (prisonDatePtr != 0){
+    if (datePtr != 0){
         cout << DAYSOFTHEWEEK[currentDay] << " - ";
         cout << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute;
-        cout << " ( Day " << dayCounter << " - " << *prisonDatePtr << " ) \n" << setfill(' ');
+        cout << " ( Day " << dayCounter << " - " << *datePtr << " ) \n" << setfill(' ');
         return;
     }
     cout << DAYSOFTHEWEEK[currentDay] << " - ";
@@ -169,14 +169,22 @@ void Time::displayTime(){
     cout << " ( Day " << dayCounter << " ) \n" << setfill(' ');
 }
 
-void Time::startTime(Routine dailyRoutinePtr[], int routinesNumber, const Data &data){
-    prisonDatePtr = new Data(data);
+void Time::startTime(Routine dailyRoutinePtr[], 
+                    int routinesNumber, 
+                    const Data &startDate,
+                    int startHour,
+                    int startMinute, 
+                    int dayCounter, 
+                    int currentDay){
     if (routinesNumber > 0){
+        datePtr = new Data(startDate);
+        Time::dayCounter = dayCounter;
+        Time::currentDay = currentDay;
         Time::routinesNumber = routinesNumber;
         Time::dailyRoutinePtr = new Routine[routinesNumber]; 
         Time::gameIsRunning = true;
-        Time::hour = dailyRoutinePtr[0].startHour;
-        Time::minute = dailyRoutinePtr[0].startMinute;
+        Time::hour = (startHour < 0) ? dailyRoutinePtr[0].startHour : startHour;
+        Time::minute = (startMinute < 0) ? dailyRoutinePtr[0].startMinute : startMinute;
 
         // loop for usando para iterar sobre o array de Routine
         // Ele faz a cópia do array dailyRoutine (parâmetro) para o array Time::dailyRoutine (atributo) 
@@ -188,7 +196,6 @@ void Time::startTime(Routine dailyRoutinePtr[], int routinesNumber, const Data &
             Time::dailyRoutinePtr[i].routineName = dailyRoutinePtr[i].routineName;
         }
 
-        // cout << routinesNumber << "\n";
         thread clockThread([](){
             // usando loop while que fica rodando enquanto o jogo estiver rodando
             // esse loop é responsável por incrementar o tempo do jogo em uma thread que opera em segundo plano
@@ -207,10 +214,10 @@ void Time::startTime(Routine dailyRoutinePtr[], int routinesNumber, const Data &
                         Time::incrementDayCounter();
                         // método inline para incrementar o dia atual (dia da semana)
                         Time::incrementCurrentDay();
-                        if (currentDay >= 6){
+                        if (Time::currentDay >= 6){
                             Time::currentDay = 0;
                         }
-                        prisonDatePtr->incrementaData();
+                        datePtr->incrementaData();
                     }
                 }
             }
@@ -223,11 +230,33 @@ void Time::startTime(Routine dailyRoutinePtr[], int routinesNumber, const Data &
 
 void Time::skipTime(int hour, int minute){
     if (hour >= 0 && hour < 24){
-        Time::hour = hour;
+        if (Time::hour < hour){
+            Time::hour = hour;
+        }else{
+            Time::hour = hour;
+            Time::incrementDayCounter();
+            Time::incrementCurrentDay();
+            datePtr->incrementaData();
+        }        
     }
     if (minute >= 0 && minute <= 60){
         Time::minute = minute;
     }
+}
+
+json Time::toJson(){
+    json timeJson;
+    json dateJson;
+    dateJson["dia"] = datePtr->getDia();
+    dateJson["mes"] = datePtr->getMes();
+    dateJson["ano"] = datePtr->getAno();
+    timeJson["startDate"] = dateJson;
+    timeJson["startHour"] = Time::hour;
+    timeJson["startMinute"] = Time::minute;
+    timeJson["dayCounter"] = Time::dayCounter;
+    timeJson["currentDay"] = Time::currentDay;
+
+    return timeJson;
 }
 
 ostream &operator<<(ostream &out, const Time &time){
@@ -238,7 +267,7 @@ ostream &operator<<(ostream &out, const Time &time){
             Time::minute >= Time::dailyRoutinePtr[i].startMinute && Time::minute <= Time::dailyRoutinePtr[i].endMinute){
             out << Time::DAYSOFTHEWEEK[Time::currentDay] << " - ";
             out << setfill('0') << setw(2) << Time::hour << ":" << setfill('0') << setw(2) << Time::minute;
-            out << " ( Day " << Time::dayCounter << " - " << *Time::prisonDatePtr<< " ) - [ " << Time::dailyRoutinePtr[i].routineName << " ] \n";
+            out << " ( Day " << Time::dayCounter << " - " << *Time::datePtr<< " ) - [ " << Time::dailyRoutinePtr[i].routineName << " ] \n";
             out << "File is in use: " << !time << "\n";
             out << setfill('-') << setw(time.timeName.length() + 65) << "\n";
             return out;
@@ -246,7 +275,7 @@ ostream &operator<<(ostream &out, const Time &time){
     }
     out << Time::DAYSOFTHEWEEK[Time::currentDay] << " - ";
     out << setfill('0') << setw(2) << Time::hour << ":" << setfill('0') << setw(2) << Time::minute;
-    out << " ( Day " << Time::dayCounter << " - " << *Time::prisonDatePtr << " ) \n";
+    out << " ( Day " << Time::dayCounter << " - " << *Time::datePtr << " ) \n";
 
     out << setfill(' ');
     out << "File is in use: " << !time << "\n";
@@ -309,7 +338,7 @@ Time::~Time(){
 
     if (!Time::gameIsRunning && createdTimes.empty()) {
         delete [] dailyRoutinePtr;
-        delete prisonDatePtr;
+        delete datePtr;
     }else
         gameIsRunning = true;
 }

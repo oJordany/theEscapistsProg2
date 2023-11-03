@@ -10,6 +10,9 @@ using std::string;
 using std::cout;
 using std::ostream;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 struct Task
 {
     string taskName;
@@ -35,6 +38,7 @@ class JobBoard
         void setIsAvailable(bool);
         void setTasksSize(int);
         void registerTask(Task);
+        json toJson() const;
 
         const JobBoard & operator=(const JobBoard &);
         bool operator==(const JobBoard &) const;

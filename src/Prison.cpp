@@ -79,10 +79,16 @@ Prison::Prison(const Prison &other)
     }
 }
 
-void Prison::startPrisonTime(){
+void Prison::startPrisonTime(const Data &startDate, int startHour, int startMinute, int dayCounter, int currentDay){
     Time::releaseAllTimes();
     Time::useTime(*prisonTimePtr);
-    Time::startTime(dailyRoutinePtr, dailyRoutineSize, prisonDate);
+    Time::startTime(dailyRoutinePtr, 
+                    dailyRoutineSize, 
+                    startDate, 
+                    startHour, 
+                    startMinute, 
+                    dayCounter, 
+                    currentDay);
 }
 
 void Prison::assignTasksToInmates(){
@@ -339,12 +345,46 @@ Routine Prison::getDailyRoutineAtIndex(int index) const{
 json Prison::toJson() const{
     json prisonJson;
     
+    //Saving prisonName [string]
     prisonJson["prisonName"] = prisonName;
 
-    // Saving Inmates vector
+    // Saving Inmates [vector]
     for (const auto& inmate : registeredInmates) {
         prisonJson["registeredInmates"].push_back(inmate->toJson());
     } 
+
+    // Saving locationsPtr [Array]
+    for (int i=0; i < nextEntrieInLocations; i++){
+        prisonJson["locationsPtr"].push_back(locationsPtr[i]); 
+    }
+
+    //Saving dailyRoutinePtr [Array]
+    json routine;
+    for (int i=0; i < nextEntrieInDailyRoutine; i++){
+        routine["routineName"] = dailyRoutinePtr[i].routineName;
+        routine["startHour"] = dailyRoutinePtr[i].startHour;
+        routine["startMinute"] = dailyRoutinePtr[i].startMinute;
+        routine["endHour"] = dailyRoutinePtr[i].endHour;
+        routine["endMinute"] = dailyRoutinePtr[i].endMinute;
+        prisonJson["dailyRoutinePtr"].push_back(routine);
+    }
+
+    //Saving prisonTimePtr [Time]
+    prisonJson["prisonTimePtr"] = (!*prisonTimePtr) ? Time::toJson() : "";
+
+    //Saving prisonDate [Data]
+    json dateJson;
+    dateJson["dia"] = prisonDate.getDia();
+    dateJson["mes"] = prisonDate.getMes();
+    dateJson["ano"] = prisonDate.getAno();
+    prisonJson["prisonDate"] = dateJson;
+
+    //Saving prisonJobBoard [JobBoard]
+    prisonJson["prisonJobBoard"] = prisonJobBoard.toJson();
+
+    //Saving level [int]
+    prisonJson["level"] = level;
+    
 
     return prisonJson;
 }

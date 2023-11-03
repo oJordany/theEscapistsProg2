@@ -29,6 +29,9 @@ public:
     void print() const;
     
     void incrementaData();
+    inline int getDia() const {return dia;} 
+    inline int getMes() const {return mes;} 
+    inline int getAno() const {return ano;} 
     
 private:
     

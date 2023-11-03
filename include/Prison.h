@@ -46,7 +46,7 @@ class Prison{
         void setRegisteredInmatesSize(int);
         void setLocationsSize(int);
 
-        void startPrisonTime();
+        void startPrisonTime(const Data &, int, int, int=0, int=0);
         void assignTasksToInmates();
         void displayPrisonJobBoard() const;
         void viewPrisonTaskDetails(int) const;

@@ -112,6 +112,7 @@ int main(){
         cout << "[7] - Iniciar tempo de stalag flucht\n";
         cout << "[8] - Atribuir tarefas aos prisioneiros\n";
         cout << "[9] - Passar tempo\n";
+        cout << "[10] - Salvar progresso\n";
         cout << "Opção: ";
         cin >> option;
         switch (option)
@@ -148,11 +149,11 @@ int main(){
             break;
 
         case 6:
-            centerPerks.startPrisonTime();
+            centerPerks.startPrisonTime(Data(31, 12, 2023), 13, 0);
             break;
 
         case 7:
-            stalagFlucht.startPrisonTime();
+            stalagFlucht.startPrisonTime(Data(31, 12, 2023), 13, 0);
             break;
 
         case 8:
@@ -170,7 +171,7 @@ int main(){
             break;
 
         case 10:
-            cout << centerPerks.toJson();
+            saveConfigs(centerPerks.toJson());
             break;
 
         default:

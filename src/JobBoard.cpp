@@ -294,6 +294,18 @@ void JobBoard::setTasksSize(int tasksSize) {
     delete [] tasksTempPtr;
 }
 
+json JobBoard::toJson() const{
+    json jobBoardJson;
+    json taskJson;
+    for (int i=0; i < nextEntrieInTasks; i++){
+        taskJson["taskName"] = tasksPtr[i].taskName;
+        taskJson["taskDetails"] = tasksPtr[i].taskDetails;
+        jobBoardJson.push_back(taskJson);
+    }
+
+    return jobBoardJson;
+}
+
 ostream & operator<<(ostream &out, const JobBoard &jobBoard){
     if (!jobBoard.nextEntrieInTasks){
         out << "\n";
