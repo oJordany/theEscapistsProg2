@@ -40,26 +40,24 @@ string strip(const string& str) {
     return str.substr(first, (last - first + 1));
 }
 
-bool loadSaves( string nameFile )
+json loadSaves( string nameFile )
 {
 
     ifstream inputFile(nameFile);
 
+    json storage;
+    
     if ( !inputFile.is_open() ) 
     {
         cerr << "Error opening file." << '\n';
-        return false; // Exit with an error code
+        return storage; // Exit with an error code
     }
 
-    json savedDatasJson;
-
-    inputFile >> savedDatasJson;
-
-    Prison *savedPrisonPtr = new Prison()
+    inputFile >> storage;
 
     inputFile.close();
 
-    return true;
+    return storage;
 
 }
 

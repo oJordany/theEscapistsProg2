@@ -15,89 +15,96 @@ using std::map;
 #include <vector>
 using std::vector;
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 int main(){
     int option = -1;
-    map<string, string> tasksInfos;
-    string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
-    string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
-                                "Cleaning Room", "Laundry", "Security Room", 
-                                "Deposit", "Isolation", "Kitchen", "Meeting room",
-                                "Watch-tower", "Pantry"};
-    // ALOCANDO 10 PRISIONEIROS E COLOCANDO ELES NO VETOR DE PONTEIROS 
-    vector<Inmate *> inmates;
-    for (int i=0; i<10; i++){
-        inmates.push_back(new Inmate(inmateNames[i]));
-        Inmate::viewAllInmates(); // método que usa o stl Map para printar as informacoes ID e INMATE NAME
-        cout << "\n\n";
-    }
+    // map<string, string> tasksInfos;
+    // string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
+    // string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
+    //                             "Cleaning Room", "Laundry", "Security Room", 
+    //                             "Deposit", "Isolation", "Kitchen", "Meeting room",
+    //                             "Watch-tower", "Pantry"};
+    // // ALOCANDO 10 PRISIONEIROS E COLOCANDO ELES NO VETOR DE PONTEIROS 
+    // vector<Inmate *> inmates;
+    // for (int i=0; i<10; i++){
+    //     inmates.push_back(new Inmate(inmateNames[i]));
+    //     Inmate::viewAllInmates(); // método que usa o stl Map para printar as informacoes ID e INMATE NAME
+    //     cout << "\n\n";
+    // }
 
-    // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
-    loadConfig(tasksInfos, "../utils/configs.txt");
-    Task tasks[tasksInfos.size()];
-    int i = 0;
-    for (auto pair : tasksInfos){
-        tasks[i].taskName = pair.first;
-        tasks[i].taskDetails = pair.second;
-        tasks[i].inmate = 0;
-        i++;
-    }
-    // CRIANDO JOBBOARD
-    JobBoard jobBoard(tasks, tasksInfos.size());
-    JobBoard jobBoardSF(jobBoard); // Usando o construtor de copia
-    cout << "jobBoardSF == jobBoard --> " << (jobBoardSF == jobBoard) << "\n";
+    // // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
+    // loadConfig(tasksInfos, "../utils/configs.txt");
+    // Task tasks[tasksInfos.size()];
+    // int i = 0;
+    // for (auto pair : tasksInfos){
+    //     tasks[i].taskName = pair.first;
+    //     tasks[i].taskDetails = pair.second;
+    //     tasks[i].inmate = 0;
+    //     i++;
+    // }
+    // // CRIANDO JOBBOARD
+    // JobBoard jobBoard(tasks, tasksInfos.size());
+    // JobBoard jobBoardSF(jobBoard); // Usando o construtor de copia
+    // cout << "jobBoardSF == jobBoard --> " << (jobBoardSF == jobBoard) << "\n";
 
-    // CRIANDO DUAS PRISOES COM O MESMO JOBBOARD
-    Prison stalagFlucht("stalag flucht", jobBoardSF);
-    Prison centerPerks("center perks", 0, jobBoard, Data(31, 12, 2023));
+    // // CRIANDO DUAS PRISOES COM O MESMO JOBBOARD
+    // Prison stalagFlucht("stalag flucht", jobBoardSF);
+    // Prison centerPerks("center perks", 0, jobBoard, Data(31, 12, 2023));
 
-    // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
-    // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
-    // center perks: 
-    centerPerks.registerDailyPrisonRoutine({5, 0, 5, 59, "Wake Up Call, Roll Call"});
-    centerPerks.registerDailyPrisonRoutine({6, 0, 6, 59, "Breakfast Time"});
-    centerPerks.registerDailyPrisonRoutine({9, 0, 9, 59, "Exercise Time"});
-    centerPerks.registerDailyPrisonRoutine({10, 0, 11, 59, "Free Time"});
-    centerPerks.registerDailyPrisonRoutine({7, 0, 8, 59, "Job Time"}); // ROTINA INSERIDA NA ORDEM ERRADA
-    centerPerks.registerDailyPrisonRoutine({12, 0, 12, 59, "Lunch Time"});
-    centerPerks.registerDailyPrisonRoutine({13, 0, 13, 59, "Roll Call"});
-    centerPerks.registerDailyPrisonRoutine({14, 0, 15, 59, "Job Time"});
-    centerPerks.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
-    centerPerks.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
-    centerPerks.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
-    // stalag flucht
-    stalagFlucht.registerDailyPrisonRoutine({5, 0, 5, 59, "Wake Up Call, Roll Call"});
-    stalagFlucht.registerDailyPrisonRoutine({6, 0, 6, 59, "Breakfast Time"});
-    stalagFlucht.registerDailyPrisonRoutine({9, 0, 9, 59, "Exercise Time"});
-    stalagFlucht.registerDailyPrisonRoutine({10, 0, 11, 59, "Free Time"});
-    stalagFlucht.registerDailyPrisonRoutine({7, 0, 8, 59, "Job Time"}); // ROTINA INSERIDA NA ORDEM ERRADA
-    stalagFlucht.registerDailyPrisonRoutine({12, 0, 12, 59, "Lunch Time"});
-    stalagFlucht.registerDailyPrisonRoutine({13, 0, 13, 59, "Roll Call"});
-    stalagFlucht.registerDailyPrisonRoutine({14, 0, 15, 59, "Job Time"});
-    stalagFlucht.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
-    stalagFlucht.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
-    stalagFlucht.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
+    // // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
+    // // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
+    // // center perks: 
+    // centerPerks.registerDailyPrisonRoutine({5, 0, 5, 59, "Wake Up Call, Roll Call"});
+    // centerPerks.registerDailyPrisonRoutine({6, 0, 6, 59, "Breakfast Time"});
+    // centerPerks.registerDailyPrisonRoutine({9, 0, 9, 59, "Exercise Time"});
+    // centerPerks.registerDailyPrisonRoutine({10, 0, 11, 59, "Free Time"});
+    // centerPerks.registerDailyPrisonRoutine({7, 0, 8, 59, "Job Time"}); // ROTINA INSERIDA NA ORDEM ERRADA
+    // centerPerks.registerDailyPrisonRoutine({12, 0, 12, 59, "Lunch Time"});
+    // centerPerks.registerDailyPrisonRoutine({13, 0, 13, 59, "Roll Call"});
+    // centerPerks.registerDailyPrisonRoutine({14, 0, 15, 59, "Job Time"});
+    // centerPerks.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
+    // centerPerks.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
+    // centerPerks.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
+    // // stalag flucht
+    // stalagFlucht.registerDailyPrisonRoutine({5, 0, 5, 59, "Wake Up Call, Roll Call"});
+    // stalagFlucht.registerDailyPrisonRoutine({6, 0, 6, 59, "Breakfast Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({9, 0, 9, 59, "Exercise Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({10, 0, 11, 59, "Free Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({7, 0, 8, 59, "Job Time"}); // ROTINA INSERIDA NA ORDEM ERRADA
+    // stalagFlucht.registerDailyPrisonRoutine({12, 0, 12, 59, "Lunch Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({13, 0, 13, 59, "Roll Call"});
+    // stalagFlucht.registerDailyPrisonRoutine({14, 0, 15, 59, "Job Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
+    // stalagFlucht.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
 
-    // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
-    for (auto inmate : inmates){
-        stalagFlucht.registerInmateInPrison(*inmate);
-        centerPerks.registerInmateInPrison(*inmate);
-    }
+    // // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
+    // for (auto inmate : inmates){
+    //     stalagFlucht.registerInmateInPrison(*inmate);
+    //     centerPerks.registerInmateInPrison(*inmate);
+    // }
 
-    // CADASTRANDO OS LOCAIS NA PRISÕES
-    for (auto location : prisonLocations){
-        stalagFlucht.registerLocationInPrison(location);
-        centerPerks.registerLocationInPrison(location);
-    }
-    Time time_1;
-    cout << "!time_1 -->"<< !time_1 << "\n"; 
-    cout << centerPerks;
-    cout << stalagFlucht;
-    cout << "centerPerks == stalagFlucht --> ";
-    cout << (centerPerks == stalagFlucht) << "\n";
-    cout << "centerPerks != stalagFlucht --> ";
-    cout << (centerPerks != stalagFlucht) << "\n";
-    cout << "!inmates[0] --> ";
-    cout << !inmates[0] << "\n";
+    // // CADASTRANDO OS LOCAIS NA PRISÕES
+    // for (auto location : prisonLocations){
+    //     stalagFlucht.registerLocationInPrison(location);
+    //     centerPerks.registerLocationInPrison(location);
+    // }
+    // Time time_1;
+    // cout << "!time_1 -->"<< !time_1 << "\n"; 
+    // cout << centerPerks;
+    // cout << stalagFlucht;
+    // cout << "centerPerks == stalagFlucht --> ";
+    // cout << (centerPerks == stalagFlucht) << "\n";
+    // cout << "centerPerks != stalagFlucht --> ";
+    // cout << (centerPerks != stalagFlucht) << "\n";
+    // cout << "!inmates[0] --> ";
+    // cout << !inmates[0] << "\n";
+
+    json storage = loadSaves("saves.json");
+
+    Prison centerPerks = Prison(storage);
 
     while(option != 0){
         cout << "Simulando a execução do programa...\n";
@@ -109,10 +116,10 @@ int main(){
         cout << "[4] - Exibir quadro de tarefas da prisão\n";
         cout << "[5] - Exibir detalhes de uma tarefa\n";
         cout << "[6] - Iniciar tempo de center perks\n";
-        cout << "[7] - Iniciar tempo de stalag flucht\n";
-        cout << "[8] - Atribuir tarefas aos prisioneiros\n";
-        cout << "[9] - Passar tempo\n";
-        cout << "[10] - Salvar progresso\n";
+        cout << "[7] - Atribuir tarefas aos prisioneiros\n";
+        cout << "[8] - Passar tempo\n";
+        cout << "[9] - Salvar progresso\n";
+        cout << "[10] - Continuar de onde parou\n";
         cout << "Opção: ";
         cin >> option;
         switch (option)
@@ -153,14 +160,10 @@ int main(){
             break;
 
         case 7:
-            stalagFlucht.startPrisonTime(Data(31, 12, 2023), 13, 0);
-            break;
-
-        case 8:
             centerPerks.assignTasksToInmates();
             break;
 
-        case 9:
+        case 8:
             int hour;
             int minute;
             cout << "Hora: ";
@@ -170,9 +173,12 @@ int main(){
             Time::skipTime(hour, minute);
             break;
 
-        case 10:
+        case 9:
             saveConfigs(centerPerks.toJson());
             break;
+
+        case 10:
+            loadSaves("saves.json");
 
         default:
             cout << "Insira uma opção válida!\n";
@@ -180,7 +186,7 @@ int main(){
         }
     }
 
-    for (int i=0; i < inmates.size(); i++){
-        delete inmates[i];
-    }
+    // for (int i=0; i < inmates.size(); i++){
+    //     delete inmates[i];
+    // }
 }

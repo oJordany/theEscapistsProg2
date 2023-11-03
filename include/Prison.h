@@ -28,7 +28,7 @@ class Prison{
                 const JobBoard &, 
                 const Data & = Data(29, 10, 2023));
         Prison(const Prison &);
-        // Prison(const json&);
+        Prison(const json &);
         ~Prison();
 
         json toJson() const;
@@ -67,7 +67,7 @@ class Prison{
 
         Time *prisonTimePtr;
         Data prisonDate;
-        JobBoard prisonJobBoard;
+        JobBoard *prisonJobBoardPtr;
 
         int level;
 

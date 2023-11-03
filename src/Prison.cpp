@@ -25,8 +25,9 @@ using std::time;
 #include "Prison.h"
 
 Prison::Prison(string prisonName, const JobBoard &jobBoard)
-:dailyRoutinePtr(0), locationsPtr(0), level(0), prisonDate(), prisonJobBoard(jobBoard)
-{
+:dailyRoutinePtr(0), locationsPtr(0), level(0), prisonDate()
+{   
+    prisonJobBoardPtr = new JobBoard(jobBoard);
     dailyRoutineSize = 0;
     locationsSize = 0;
     nextEntrieInDailyRoutine = 0;
@@ -40,8 +41,9 @@ Prison::Prison( string prisonName,
                 const JobBoard &jobBoard, 
                 const Data &date
                 )
-:prisonDate(date), prisonJobBoard(jobBoard), dailyRoutinePtr(0), locationsPtr(0){
+:prisonDate(date), dailyRoutinePtr(0), locationsPtr(0){
     setLevel(level);
+    prisonJobBoardPtr = new JobBoard(jobBoard);
     dailyRoutineSize = 0;
     locationsSize = 0;
     nextEntrieInDailyRoutine = 0;
@@ -52,8 +54,9 @@ Prison::Prison( string prisonName,
 }
 
 Prison::Prison(const Prison &other)
-:level(other.level), prisonDate(other.prisonDate), prisonJobBoard(other.prisonJobBoard)
+:level(other.level), prisonDate(other.prisonDate)
 {   
+    prisonJobBoardPtr = new JobBoard(*other.prisonJobBoardPtr);
     this->prisonName = other.prisonName;
     if (prisonTimePtr != 0)
         delete prisonTimePtr;
@@ -79,6 +82,28 @@ Prison::Prison(const Prison &other)
     }
 }
 
+Prison::Prison(const json &savedDatasJson)
+:prisonDate(Data(savedDatasJson["prisonDate"]["dia"], savedDatasJson["prisonDate"]["mes"], savedDatasJson["prisonDate"]["ano"])){
+    Task tasks[savedDatasJson["prisonJobBoard"].size()];
+
+    for (int i=0; i < savedDatasJson["prisonJobBoard"].size(); i++){
+        tasks[i].taskName = savedDatasJson["prisonJobBoard"][i]["taskName"];
+        tasks[i].taskDetails = savedDatasJson["prisonJobBoard"][i]["taskDetails"];
+        tasks[i].inmate = 0;
+    }
+
+    prisonJobBoardPtr = new JobBoard(tasks, savedDatasJson["prisonJobBoard"].size());
+
+    prisonName = savedDatasJson["prisonName"];
+    level = savedDatasJson["level"];
+
+    dailyRoutineSize = 0;
+    locationsSize = 0;
+    nextEntrieInDailyRoutine = 0;
+    nextEntrieInLocations = 0;
+    prisonTimePtr = new Time("Time_" + prisonName);
+}
+
 void Prison::startPrisonTime(const Data &startDate, int startHour, int startMinute, int dayCounter, int currentDay){
     Time::releaseAllTimes();
     Time::useTime(*prisonTimePtr);
@@ -95,30 +120,30 @@ void Prison::assignTasksToInmates(){
     // Inicializa a semente para a função rand()
     srand(time(0));
 
-    for (int i = 0; i < prisonJobBoard.getNextEntrieInTasks(); i++){
-        prisonJobBoard.unassignTask(i);
+    for (int i = 0; i < prisonJobBoardPtr->getNextEntrieInTasks(); i++){
+        prisonJobBoardPtr->unassignTask(i);
     }
 
-    if (!prisonJobBoard > registeredInmates.size()){
-        prisonJobBoard.setTasksSize(registeredInmates.size());
+    if (!*prisonJobBoardPtr > registeredInmates.size()){
+        prisonJobBoardPtr->setTasksSize(registeredInmates.size());
     }
 
     int randomIndex;
 
-    while (prisonJobBoard.getIsAvailable()){
+    while (prisonJobBoardPtr->getIsAvailable()){
         // Gera um índice aleatório do vetor de Inmates
         randomIndex = rand() % registeredInmates.size();
         // cout << "ri: " << randomIndex << "\n" << *registeredInmates[randomIndex];
-        prisonJobBoard.assignTaskTo(*registeredInmates[randomIndex]);
+        prisonJobBoardPtr->assignTaskTo(*registeredInmates[randomIndex]);
     }
 }
 
 void Prison::displayPrisonJobBoard() const{
-    prisonJobBoard.displayTasks();
+    prisonJobBoardPtr->displayTasks();
 }
 
 void Prison::viewPrisonTaskDetails(int taskIndex) const{
-    prisonJobBoard.viewTasksDetails(taskIndex);
+    prisonJobBoardPtr->viewTasksDetails(taskIndex);
 }
 
 int Prison::searchInsertIndex(Routine routine){
@@ -380,7 +405,7 @@ json Prison::toJson() const{
     prisonJson["prisonDate"] = dateJson;
 
     //Saving prisonJobBoard [JobBoard]
-    prisonJson["prisonJobBoard"] = prisonJobBoard.toJson();
+    prisonJson["prisonJobBoard"] = prisonJobBoardPtr->toJson();
 
     //Saving level [int]
     prisonJson["level"] = level;
@@ -410,7 +435,7 @@ const Prison & Prison::operator=(const Prison &prison){
     this->prisonName = prison.prisonName;
     this->level = prison.level;
     this->prisonDate = prison.prisonDate;
-    this->prisonJobBoard = prison.prisonJobBoard;
+    this->prisonJobBoardPtr = new JobBoard(*prison.prisonJobBoardPtr);
     if (prisonTimePtr != 0)
         delete prisonTimePtr;
     this->prisonTimePtr = (prison.prisonTimePtr == 0) ? new Time(*prison.prisonTimePtr) : 0;
@@ -443,7 +468,7 @@ bool Prison::operator==(const Prison &prison) const{
         return false;
     if (this->prisonDate != prison.prisonDate)
         return false;
-    if (this->prisonJobBoard != prison.prisonJobBoard)
+    if (*this->prisonJobBoardPtr != *prison.prisonJobBoardPtr)
         return false;
     if ((this->prisonTimePtr == 0 && prison.prisonTimePtr != 0) || (this->prisonTimePtr != 0 && prison.prisonTimePtr == 0))
         return false;
@@ -486,7 +511,7 @@ bool Prison::operator!=(const Prison &prison) const{
 }
 
 bool Prison::operator!() const{
-    return ( !this->prisonJobBoard && 
+    return ( !*this->prisonJobBoardPtr && 
             this->registeredInmates.size() &&
             this->nextEntrieInDailyRoutine &&
             this->nextEntrieInLocations);
@@ -496,6 +521,7 @@ Prison::~Prison(){
     delete [] dailyRoutinePtr;
     delete [] locationsPtr;
     delete prisonTimePtr;
+    delete prisonJobBoardPtr;
     for (int i=0; i < registeredInmates.size(); i++){
         delete registeredInmates[i];
     }
