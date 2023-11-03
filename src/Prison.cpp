@@ -101,6 +101,18 @@ Prison::Prison(const json &savedDatasJson)
     locationsSize = 0;
     nextEntrieInDailyRoutine = 0;
     nextEntrieInLocations = 0;
+
+    Routine routineAux;
+
+    for (auto routine : savedDatasJson["dailyRoutinePtr"]){
+        routineAux.startHour = routine["startHour"];
+        routineAux.startMinute = routine["startMinute"];
+        routineAux.endHour = routine["endHour"];
+        routineAux.endMinute = routine["endMinute"];
+        routineAux.routineName = routine["routineName"];
+        registerDailyPrisonRoutine(routineAux);
+    }
+    
     prisonTimePtr = new Time("Time_" + prisonName);
 }
 
