@@ -114,6 +114,20 @@ Prison::Prison(const json &savedDatasJson)
     }
     
     prisonTimePtr = new Time("Time_" + prisonName);
+
+    for (auto location : savedDatasJson["locationsPtr"]){
+        registerLocationInPrison(location);
+    }
+
+    for (auto inmate : savedDatasJson["registeredInmates"]){
+        registerInmateInPrison(Inmate(inmate["name"],
+                                      inmate["health"],
+                                      inmate["energy"],
+                                      inmate["strength"],
+                                      inmate["speed"],
+                                      inmate["intelligence"],
+                                      inmate["money"]));
+    }
 }
 
 void Prison::startPrisonTime(const Data &startDate, int startHour, int startMinute, int dayCounter, int currentDay){
@@ -223,17 +237,27 @@ void Prison::allocateDailyPrisonRoutine( Routine routine ){
 }
 
 void Prison::displayDailyRoutine() const{
+    setfill(' ');
     for (int i = 0; i < nextEntrieInDailyRoutine; i++){
         cout << setfill('0') << setw(2) << dailyRoutinePtr[ i ].startHour << ":" << setfill('0') << setw(2) << dailyRoutinePtr[ i ].startMinute << " - ";
         cout << setfill('0') << setw(2) << dailyRoutinePtr[ i ].endHour << ":" << setfill('0') << setw(2) << dailyRoutinePtr[ i ].endMinute << " | ";
         cout << dailyRoutinePtr[ i ].routineName << "\n"; 
     }
+    setfill(' ');
 }
 
 void Prison::registerInmateInPrison(const Inmate &inmate){
     string inmateName = inmate.getName();
     string inmateRoomName = inmateName + "'s" + " room";
-    registerLocationInPrison(inmateRoomName);
+    bool roomAlreadyExists = false;
+    for (int i=0; i < nextEntrieInLocations; i++){
+        if (locationsPtr[i] == inmateRoomName){
+            roomAlreadyExists = true;
+            break;
+        }
+    }
+    if (!roomAlreadyExists)
+        registerLocationInPrison(inmateRoomName);
     registeredInmates.push_back(new Inmate(inmate));
 }
 
@@ -379,20 +403,20 @@ Routine Prison::getDailyRoutineAtIndex(int index) const{
     return {};
 }
 
-json Prison::toJson() const{
+json Prison::toJson(string objectName) const{
     json prisonJson;
-    
+
     //Saving prisonName [string]
-    prisonJson["prisonName"] = prisonName;
+    prisonJson[objectName]["prisonName"] = prisonName;
 
     // Saving Inmates [vector]
     for (const auto& inmate : registeredInmates) {
-        prisonJson["registeredInmates"].push_back(inmate->toJson());
+        prisonJson[objectName]["registeredInmates"].push_back(inmate->toJson());
     } 
 
     // Saving locationsPtr [Array]
     for (int i=0; i < nextEntrieInLocations; i++){
-        prisonJson["locationsPtr"].push_back(locationsPtr[i]); 
+        prisonJson[objectName]["locationsPtr"].push_back(locationsPtr[i]); 
     }
 
     //Saving dailyRoutinePtr [Array]
@@ -403,24 +427,34 @@ json Prison::toJson() const{
         routine["startMinute"] = dailyRoutinePtr[i].startMinute;
         routine["endHour"] = dailyRoutinePtr[i].endHour;
         routine["endMinute"] = dailyRoutinePtr[i].endMinute;
-        prisonJson["dailyRoutinePtr"].push_back(routine);
+        prisonJson[objectName]["dailyRoutinePtr"].push_back(routine);
     }
 
     //Saving prisonTimePtr [Time]
-    prisonJson["prisonTimePtr"] = (!*prisonTimePtr) ? Time::toJson() : "";
+    if (!*prisonTimePtr)
+        prisonJson[objectName]["prisonTimePtr"] = Time::toJson();
+    else{
+        prisonJson[objectName]["prisonTimePtr"]["currentDay"] = 0;
+        prisonJson[objectName]["prisonTimePtr"]["dayCounter"] = 0;
+        prisonJson[objectName]["prisonTimePtr"]["startDate"]["ano"] = prisonDate.getAno();
+        prisonJson[objectName]["prisonTimePtr"]["startDate"]["mes"] = prisonDate.getMes();
+        prisonJson[objectName]["prisonTimePtr"]["startDate"]["dia"] = prisonDate.getDia();
+        prisonJson[objectName]["prisonTimePtr"]["startHour"] = dailyRoutinePtr[0].startHour;
+        prisonJson[objectName]["prisonTimePtr"]["startMinute"] = dailyRoutinePtr[0].startMinute;
+    }
 
     //Saving prisonDate [Data]
     json dateJson;
     dateJson["dia"] = prisonDate.getDia();
     dateJson["mes"] = prisonDate.getMes();
     dateJson["ano"] = prisonDate.getAno();
-    prisonJson["prisonDate"] = dateJson;
+    prisonJson[objectName]["prisonDate"] = dateJson;
 
     //Saving prisonJobBoard [JobBoard]
-    prisonJson["prisonJobBoard"] = prisonJobBoardPtr->toJson();
+    prisonJson[objectName]["prisonJobBoard"] = prisonJobBoardPtr->toJson();
 
     //Saving level [int]
-    prisonJson["level"] = level;
+    prisonJson[objectName]["level"] = level;
     
 
     return prisonJson;

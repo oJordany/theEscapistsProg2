@@ -146,7 +146,7 @@ void JobBoard::repeatCharacter(string character, int amount) const{
 }
 
 void JobBoard::displayTasks() const{
-    setfill(' ');
+    cout << setfill(' ');
     cout << " __| |";
     repeatCharacter("_", 72);
     cout << "| |__\n";

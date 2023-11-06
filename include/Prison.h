@@ -31,7 +31,7 @@ class Prison{
         Prison(const json &);
         ~Prison();
 
-        json toJson() const;
+        json toJson(string objectName) const;
 
         void registerDailyPrisonRoutine(Routine);
         void registerInmateInPrison(const Inmate &);

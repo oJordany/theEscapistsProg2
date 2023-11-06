@@ -101,19 +101,50 @@ bool loadConfig( map<string, string>& variables, string nameFile )
 
 bool saveConfigs( const json& datas, string nameFile="saves.json" )
 {
-    // abre o arquivo pra escrita 
-    ofstream outputFile(nameFile, std::ios::out);
-    if (!outputFile.is_open()) {
-        cerr << "Erro ao abrir aquivo para escrita!" << '\n';
-        return false; //
+    // abre o arquivo pra leitura
+    ifstream inputFile(nameFile);
+    if (!inputFile.is_open()) {
+        cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+        return false; 
     }
 
-    outputFile << datas.dump(4);
+    json storage;
+
+    inputFile >> storage;
+
+    for (auto data : datas.items()){
+        cout << data.key() << "\n";
+        storage["centerPerks"] = data.value();
+    }
+    inputFile.close();
+
+    // abre o arquivo para escrita
+    ofstream outputFile(nameFile);
+    if (!outputFile.is_open()) {
+        cerr << "Erro ao abrir aquivo para escrita!" << '\n';
+        return false; 
+    }
+
+    outputFile << storage.dump(4);
+
     outputFile.close();
     cout << "Dados salvos com sucesso!" << '\n';
     return true;
 }
 
+void showPrisons(){
+    ifstream inputFile("../utils/prisonArts.txt");
+
+    if (inputFile.is_open()){
+        string line;
+        while (getline(inputFile, line)){
+            cout << line << "\n";
+        }
+        inputFile.close();
+    }else{
+        cout << "Erro ao abrir o arquivo para leitura!\n";
+    }
+}
 
 void createInfos( string nameFile, int id = 0 )
 {
@@ -128,18 +159,18 @@ void createInfos( string nameFile, int id = 0 )
     }
 
     // abre o arquivo pra escrita 
-    ofstream outputFile(nameFile, std::ios::out | std::ios::trunc);
-    if (!outputFile.is_open()) {
+    ofstream ioFile(nameFile, std::ios::out | std::ios::trunc);
+    if (!ioFile.is_open()) {
         cerr << "Erro ao abrir aquivo para escrita!" << '\n';
         return; //
     }
 		// escreve no arquivo 
-    outputFile << "id = " << id << '\n';
-    outputFile << "dia = " << dia << '\n';
-    outputFile << "mes = " << mes << '\n';
-    outputFile << "ano = " << ano << '\n';
+    ioFile << "id = " << id << '\n';
+    ioFile << "dia = " << dia << '\n';
+    ioFile << "mes = " << mes << '\n';
+    ioFile << "ano = " << ano << '\n';
 
-    outputFile.close();
+    ioFile.close();
     cout << "Dados salvos com sucesso!" << '\n';
     return;
 }

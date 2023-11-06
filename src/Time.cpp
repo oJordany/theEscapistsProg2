@@ -106,6 +106,7 @@ void Time::releaseAllTimes(){
 }
 
 void Time::createTimeFile() const{ 
+    setfill(' ');
     gameIsRunning = true;
     string timeNameTxt = timeName + ".txt";
     thread clockThread([timeNameTxt, this](){
@@ -137,6 +138,7 @@ void Time::createTimeFile() const{
                 if (!isRoutine){
                     file << Time::DAYSOFTHEWEEK[currentDay] << " - " << setfill('0') << setw(2) << hour << ":" << setfill('0') << setw(2) << minute << " ( Day " << dayCounter << " - " << *datePtr << " )\n";
                 }
+                setfill(' ');
             }else{
                 file << " ";
             }
@@ -149,6 +151,7 @@ void Time::createTimeFile() const{
 }
 
 void Time::displayTime(){ 
+    setfill(' ');
     for (int i = 0; i <= routinesNumber; i++){
         if  (dailyRoutinePtr != 0 && hour >= dailyRoutinePtr[i].startHour && hour <= dailyRoutinePtr[i].endHour &&
             minute >= dailyRoutinePtr[i].startMinute && minute <= dailyRoutinePtr[i].endMinute){

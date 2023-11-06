@@ -102,25 +102,18 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
-    json storage = loadSaves("saves.json");
-
-    Prison centerPerks = Prison(storage);
+    json savedPrisons = loadSaves("saves.json");
+    vector <Prison *> prisons;
+    for (auto savedPrison : savedPrisons.items()){
+        prisons.push_back(new Prison(savedPrison.value()));
+    }
 
     while(option != 0){
         cout << "Simulando a execução do programa...\n";
         cout << "Escolha uma opção: \n";
         cout << "[0] - Sair do jogo\n";
-        cout << "[1] - Exibir rotina diária da prisão\n";
-        cout << "[2] - Exibir nome dos prisioneiros da prisão\n";
-        cout << "[3] - Exibir todos os locais da prisão\n";
-        cout << "[4] - Exibir quadro de tarefas da prisão\n";
-        cout << "[5] - Exibir detalhes de uma tarefa\n";
-        cout << "[6] - Iniciar tempo de center perks\n";
-        cout << "[7] - Atribuir tarefas aos prisioneiros\n";
-        cout << "[8] - Passar tempo\n";
-        cout << "[9] - Salvar progresso\n";
-        cout << "[10] - Continuar de onde parou\n";
-        cout << "Opção: ";
+        showPrisons();
+        cout << "Escolha uma prisão: ";
         cin >> option;
         switch (option)
         {
@@ -128,65 +121,107 @@ int main(){
             cout << "Saindo do jogo...\n";
             break;
         case 1:
-            // EXIBINDO A ROTINA DIÁRIA COMPLETA DA PRISÃO
-            centerPerks.displayDailyRoutine();
+            prisons[0]->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
+                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
+                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
+                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
+                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
+                                        savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
+                                        savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
             break;
-
-        case 2:
-            // EXIBINDO O NOME DE TODOS OS PRISIONEIROS CADASTRADOS NA PRISÃO
-            centerPerks.displayAllRegisteredInmates();
-            break;
-
-        case 3:
-            // EXIBINDO TODOS OS LOCAIS DA PRISÃO
-            centerPerks.displayAllPrisonLocations();
-            break;
-
-        case 4:
-            // EXIBINDO O QUADRO DE TAREFAS DA PRISÃO
-            centerPerks.displayPrisonJobBoard();
-            break;
-
-        case 5:
-            // EXIBINDO DETALHES DE UMA TAREFA PELO ÍNDICE
-            int taskOption;
-            cout << "Insira o índice da tarefa: ";
-            cin >> taskOption;
-            centerPerks.viewPrisonTaskDetails(taskOption);
-            break;
-
-        case 6:
-            centerPerks.startPrisonTime(Data(31, 12, 2023), 13, 0);
-            break;
-
-        case 7:
-            centerPerks.assignTasksToInmates();
-            break;
-
-        case 8:
-            int hour;
-            int minute;
-            cout << "Hora: ";
-            cin >> hour;
-            cout << "Minuto: ";
-            cin >> minute;
-            Time::skipTime(hour, minute);
-            break;
-
-        case 9:
-            saveConfigs(centerPerks.toJson());
-            break;
-
-        case 10:
-            loadSaves("saves.json");
-
         default:
             cout << "Insira uma opção válida!\n";
             break;
         }
     }
 
-    // for (int i=0; i < inmates.size(); i++){
-    //     delete inmates[i];
+    // while(option != 0){
+    //     cout << "Simulando a execução do programa...\n";
+    //     cout << "Escolha uma opção: \n";
+    //     cout << "[0] - Sair do jogo\n";
+    //     cout << "[1] - Exibir rotina diária da prisão\n";
+    //     cout << "[2] - Exibir nome dos prisioneiros da prisão\n";
+    //     cout << "[3] - Exibir todos os locais da prisão\n";
+    //     cout << "[4] - Exibir quadro de tarefas da prisão\n";
+    //     cout << "[5] - Exibir detalhes de uma tarefa\n";
+    //     cout << "[6] - Iniciar tempo de center perks\n";
+    //     cout << "[7] - Atribuir tarefas aos prisioneiros\n";
+    //     cout << "[8] - Passar tempo\n";
+    //     cout << "[9] - Salvar progresso\n";
+    //     cout << "[10] - Continuar de onde parou\n";
+    //     cout << "Opção: ";
+    //     cin >> option;
+    //     switch (option)
+    //     {
+    //     case 0:
+    //         cout << "Saindo do jogo...\n";
+    //         break;
+    //     case 1:
+    //         // EXIBINDO A ROTINA DIÁRIA COMPLETA DA PRISÃO
+    //         prisons[0]->displayDailyRoutine();
+    //         break;
+
+    //     case 2:
+    //         // EXIBINDO O NOME DE TODOS OS PRISIONEIROS CADASTRADOS NA PRISÃO
+    //         prisons[0]->displayAllRegisteredInmates();
+    //         break;
+
+    //     case 3:
+    //         // EXIBINDO TODOS OS LOCAIS DA PRISÃO
+    //         prisons[0]->displayAllPrisonLocations();
+    //         break;
+
+    //     case 4:
+    //         // EXIBINDO O QUADRO DE TAREFAS DA PRISÃO
+    //         prisons[0]->displayPrisonJobBoard();
+    //         break;
+
+    //     case 5:
+    //         // EXIBINDO DETALHES DE UMA TAREFA PELO ÍNDICE
+    //         int taskOption;
+    //         cout << "Insira o índice da tarefa: ";
+    //         cin >> taskOption;
+    //         prisons[0]->viewPrisonTaskDetails(taskOption);
+    //         break;
+
+    //     case 6:
+    //         prisons[0]->startPrisonTime(Data(savedPrisonsValues[0]["prisonTimePtr"]["startDate"]["dia"],
+    //                                         savedPrisonsValues[0]["prisonTimePtr"]["startDate"]["mes"],
+    //                                         savedPrisonsValues[0]["prisonTimePtr"]["startDate"]["ano"]),
+    //                                     savedPrisonsValues[0]["prisonTimePtr"]["startHour"],
+    //                                     savedPrisonsValues[0]["prisonTimePtr"]["startMinute"],
+    //                                     savedPrisonsValues[0]["prisonTimePtr"]["dayCounter"],
+    //                                     savedPrisonsValues[0]["prisonTimePtr"]["currentDay"]);
+    //         break;
+
+    //     case 7:
+    //         prisons[0]->assignTasksToInmates();
+    //         break;
+
+    //     case 8:
+    //         int hour;
+    //         int minute;
+    //         cout << "Hora: ";
+    //         cin >> hour;
+    //         cout << "Minuto: ";
+    //         cin >> minute;
+    //         Time::skipTime(hour, minute);
+    //         break;
+
+    //     case 9:
+    //         saveConfigs(prisons[0]->toJson("centerPerks"));
+    //         break;
+
+    //     case 10:
+    //         loadSaves("saves.json");
+
+    //     default:
+    //         cout << "Insira uma opção válida!\n";
+    //         break;
+    //     }
     // }
+
+    for (int i=0; i < prisons.size(); i++){
+        delete prisons[i];
+    }
 }

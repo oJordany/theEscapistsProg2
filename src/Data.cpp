@@ -77,6 +77,7 @@ void Data::incrementaData(){
 }
 
 ostream &operator<<(ostream &out, const Data &data){
+    setfill(' ');
     out << setfill('0') << setw(2) << right << data.dia << "/";
     out << setfill('0') << setw(2) << right << data.mes << "/";
     out << setfill(' ') << data.ano;
