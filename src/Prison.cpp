@@ -493,6 +493,9 @@ const Prison & Prison::operator=(const Prison &prison){
     for (int i=0; i < nextEntrieInDailyRoutine; i++){
         this->dailyRoutinePtr[i] = prison.dailyRoutinePtr[i];
     }
+    for (int i=0; i < registeredInmates.size(); i++){
+        delete this->registeredInmates[i];
+    }
     this->registeredInmates.resize(prison.registeredInmates.size());
     for (int i=0; i < registeredInmates.size(); i++){
         if (this->registeredInmates[i] != 0)
