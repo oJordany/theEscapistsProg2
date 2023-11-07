@@ -132,8 +132,8 @@ bool saveConfigs( const json& datas, string nameFile="saves.json" )
     return true;
 }
 
-void showPrisons(){
-    ifstream inputFile("../utils/prisonArts.txt");
+void showFigure(string figureName){
+    ifstream inputFile("../utils/"+figureName);
 
     if (inputFile.is_open()){
         string line;

@@ -2,6 +2,9 @@
 using std::cout;
 using std::cin;
 
+#include <cstdlib>
+using std::system;
+
 #include "Inmate.h"
 #include "JobBoard.h"
 #include "Time.h"
@@ -20,6 +23,8 @@ using json = nlohmann::json;
 
 int main(){
     int option = -1;
+    int option2 = -1;
+    bool hasCheckpoint = false;
     // map<string, string> tasksInfos;
     // string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
     // string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
@@ -110,10 +115,9 @@ int main(){
 
     while(option != 0){
         cout << "Simulando a execução do programa...\n";
-        cout << "Escolha uma opção: \n";
-        cout << "[0] - Sair do jogo\n";
-        showPrisons();
-        cout << "Escolha uma prisão: ";
+        cout << "Escolha uma opção [0 para sair do jogo]: \n";
+        showFigure("prisonFigures.txt");
+        cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
         cin >> option;
         switch (option)
         {
@@ -121,13 +125,40 @@ int main(){
             cout << "Saindo do jogo...\n";
             break;
         case 1:
-            prisons[0]->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
-                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
-                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
-                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
-                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
-                                        savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
-                                        savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
+            system("clear");
+            if (savedPrisons.dump() != "null"){
+                for (auto savedPrison : savedPrisons.items()){
+                    if (savedPrison.key() == "centerPerks"){
+                        showFigure("playAndContinueFigures.txt");
+                        hasCheckpoint = true;
+                        break;
+                    }
+                }
+                if (hasCheckpoint) {    
+                    while(option2 != 0){
+                        cout << "\nEscolha uma opção [0 para voltar]: ";
+                        cin >> option2;
+                        switch (option2)
+                        {
+                        case 1:
+                            cout << "Inicia novo jogo\n";
+                            break;
+                        case 2:
+                            cout << "Continua jogo\n";
+                            prisons[0]->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
+                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
+                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
+                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
+                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
+                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
+                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
+                            break;
+                        default:
+                            break;
+                        }
+                    }
+                }
+            }
             break;
         default:
             cout << "Insira uma opção válida!\n";
