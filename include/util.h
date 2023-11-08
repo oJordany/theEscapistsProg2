@@ -146,31 +146,84 @@ void showFigure(string figureName){
     }
 }
 
-void createInfos( string nameFile, int id = 0 )
-{
-    int dia;
-    int mes;
-    int ano;
+void createInfos( int prisonID = 1 )
+{   
+    const int INMATESNUMBER = 10;
+    const int LOCATIONSNUMBER = 12;
+    string inmateName;
+    cout << "\t_________________________\n";
+    cout << "\t   ||   ||     ||   ||   \n";
+    cout << "\t   ||   ||, , ,||   ||   \n";
+    cout << "\t   ||  (||/|/(\\||/  ||   \n";
+    cout << "\t   ||  ||| _'_`|||  ||   \n";
+    cout << "\t   ||   || o o ||   ||   \n";
+    cout << "\t   ||  (||  - `||)  ||   \n";
+    cout << "\t   ||   ||  =  ||   ||   \n";
+    cout << "\t   ||   ||\\___/||   ||   \n";
+    cout << "\t   ||\033[30m___\033[m||) , (||\033[30m___\033[m||   \n";
+    cout << "\t  /||---||-\\_/-||---||\\  \n";
+    cout << "\t / ||\033[30m--_\033[m||\033[30m_____\033[m||\033[30m_--\033[m|| \\ \n";
+    cout << "\t(_(||)-| S123-45 |-(||)_)\n";
+    cout << "\033[30mINMATE NAME:\033[m ";
+    cin >> inmateName;
+    if (prisonID == 1){
+      map<string, string> tasksInfos;
+      string inmateNames[INMATESNUMBER] = {inmateName, "KEV", 
+                                "KELAUCE", "CARL", 
+                                "CAMEO", "JACKALL", 
+                                "ARNIE", "KRIMEWAVE", 
+                                "DOGEKIT", "PHIL"};
+      string prisonLocations[LOCATIONSNUMBER] = {"Dining Room", "Gymnasium", "Exercise Room", 
+                                    "Cleaning Room", "Laundry", "Security Room", 
+                                    "Deposit", "Isolation", "Kitchen", 
+                                    "Meeting room", "Watch-tower", "Pantry"};
 
-    cout << "Para jogar, insira sua data de nascimento (dia mês ano): ";
-    if (!(cin >> dia >> mes >> ano)) {
-        cerr << "entrada inválida!" << '\n';
-        return; // Exit with an error code
+      // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
+      loadConfig(tasksInfos, "../utils/configs.txt");
+      Task tasks[tasksInfos.size()];
+      int i = 0;
+      for (auto pair : tasksInfos){
+          tasks[i].taskName = pair.first;
+          tasks[i].taskDetails = pair.second;
+          tasks[i].inmate = 0;
+          i++;
+      }
+      
+      // // CRIANDO JOBBOARD
+      JobBoard jobBoard(tasks, tasksInfos.size());
+
+      Prison centerPerks("Center Perks", 0, jobBoard, Data(31, 12, 2023));
+
+      // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
+      // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
+      // center perks: 
+      centerPerks.registerDailyPrisonRoutine({5, 0, 5, 59, "Wake Up Call, Roll Call"});
+      centerPerks.registerDailyPrisonRoutine({6, 0, 6, 59, "Breakfast Time"});
+      centerPerks.registerDailyPrisonRoutine({9, 0, 9, 59, "Exercise Time"});
+      centerPerks.registerDailyPrisonRoutine({10, 0, 11, 59, "Free Time"});
+      centerPerks.registerDailyPrisonRoutine({7, 0, 8, 59, "Job Time"}); // ROTINA INSERIDA NA ORDEM ERRADA
+      centerPerks.registerDailyPrisonRoutine({12, 0, 12, 59, "Lunch Time"});
+      centerPerks.registerDailyPrisonRoutine({13, 0, 13, 59, "Roll Call"});
+      centerPerks.registerDailyPrisonRoutine({14, 0, 15, 59, "Job Time"});
+      centerPerks.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
+      centerPerks.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
+      centerPerks.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
+
+      // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
+      for (int i=0; i < INMATESNUMBER; i++){
+          centerPerks.registerInmateInPrison(Inmate(inmateNames[i]));
+      }
+
+      // CADASTRANDO OS LOCAIS NA PRISÕES
+      for (auto location : prisonLocations){
+          centerPerks.registerLocationInPrison(location);
+      }
+       
+      cout << "startPrisonTime\n";
+      centerPerks.startPrisonTime(Data(31, 12, 2023), 5, 0);
+      json centerPerksJson = centerPerks.toJson("centerPerks")
+      saveConfigs(centerPerks);
     }
 
-    // abre o arquivo pra escrita 
-    ofstream ioFile(nameFile, std::ios::out | std::ios::trunc);
-    if (!ioFile.is_open()) {
-        cerr << "Erro ao abrir aquivo para escrita!" << '\n';
-        return; //
-    }
-		// escreve no arquivo 
-    ioFile << "id = " << id << '\n';
-    ioFile << "dia = " << dia << '\n';
-    ioFile << "mes = " << mes << '\n';
-    ioFile << "ano = " << ano << '\n';
 
-    ioFile.close();
-    cout << "Dados salvos com sucesso!" << '\n';
-    return;
 }

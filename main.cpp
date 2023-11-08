@@ -22,6 +22,7 @@ using std::vector;
 using json = nlohmann::json;
 
 int main(){
+    int returnSystem;
     int option = -1;
     int option2 = -1;
     bool hasCheckpoint = false;
@@ -108,15 +109,18 @@ int main(){
     // cout << !inmates[0] << "\n";
 
     json savedPrisons = loadSaves("saves.json");
+    // cout << savedPrisons
     vector <Prison *> prisons;
-    for (auto savedPrison : savedPrisons.items()){
-        prisons.push_back(new Prison(savedPrison.value()));
+    if (savedPrisons.dump() != "null"){ 
+      for (auto savedPrison : savedPrisons.items()){
+          prisons.push_back(new Prison(savedPrison.value()));
+      }
     }
 
     while(option != 0){
         cout << "Simulando a execução do programa...\n";
         cout << "Escolha uma opção [0 para sair do jogo]: \n";
-        showFigure("prisonFigures.txt");
+        showFigure("prisonsFigure.txt");
         cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
         cin >> option;
         switch (option)
@@ -125,7 +129,7 @@ int main(){
             cout << "Saindo do jogo...\n";
             break;
         case 1:
-            system("clear");
+            returnSystem = system("clear");
             if (savedPrisons.dump() != "null"){
                 for (auto savedPrison : savedPrisons.items()){
                     if (savedPrison.key() == "centerPerks"){
@@ -141,10 +145,10 @@ int main(){
                         switch (option2)
                         {
                         case 1:
-                            cout << "Inicia novo jogo\n";
+                            cout << "Iniciando novo jogo...\n";
                             break;
                         case 2:
-                            cout << "Continua jogo\n";
+                            cout << "Continuando jogo...\n";
                             prisons[0]->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
                                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
                                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
@@ -156,6 +160,21 @@ int main(){
                         default:
                             break;
                         }
+                    }
+                }
+            }else{
+                cout << "não há jogo salvo\n";
+                while(option2 != 0){
+                    showFigure("newGameFigure.txt");
+                    cout << "\nEscolha uma opção [0 para voltar]: ";
+                    cin >> option2;
+                    switch (option2)
+                    {
+                    case 1:
+                        createInfos(1);
+                        break;
+                    default:
+                        break;
                     }
                 }
             }
