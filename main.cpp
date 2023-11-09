@@ -25,7 +25,9 @@ int main(){
     int returnSystem;
     int option = -1;
     int option2 = -1;
+    int option3 = -1;
     bool hasCheckpoint = false;
+    vector <Prison *> prisons;
     // map<string, string> tasksInfos;
     // string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
     // string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
@@ -108,32 +110,37 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
-    json savedPrisons = loadSaves("saves.json");
-    // cout << savedPrisons
-    vector <Prison *> prisons;
-    if (savedPrisons.dump() != "null"){ 
-      for (auto savedPrison : savedPrisons.items()){
-          prisons.push_back(new Prison(savedPrison.value()));
-      }
-    }
 
     while(option != 0){
+        for (int i=0; i < prisons.size(); i++){
+            delete prisons[i];
+        }
+        cout << "pSize: " << prisons.size() << "\n";
+        json savedPrisons = loadSaves("saves.json");
+        // cout << savedPrisons
+        if (savedPrisons.dump() != "null"){ 
+        for (auto savedPrison : savedPrisons.items()){
+            prisons.push_back(new Prison(savedPrison.value()));
+        }
+        }
         cout << "Simulando a execução do programa...\n";
         cout << "Escolha uma opção [0 para sair do jogo]: \n";
         showFigure("prisonsFigure.txt");
         cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
         cin >> option;
+        cout << "option: " << option << "\n";
         switch (option)
         {
         case 0:
             cout << "Saindo do jogo...\n";
             break;
         case 1:
+            option2 = -1;
             returnSystem = system("clear");
             if (savedPrisons.dump() != "null"){
                 for (auto savedPrison : savedPrisons.items()){
                     if (savedPrison.key() == "centerPerks"){
-                        showFigure("playAndContinueFigures.txt");
+                        showFigure("newGameAndContinueFigure.txt");
                         hasCheckpoint = true;
                         break;
                     }
@@ -170,10 +177,46 @@ int main(){
                     cin >> option2;
                     switch (option2)
                     {
+                    case 0:
+                        break;
                     case 1:
+                        option3 = -1;
+                        // Cria uma prisão inicial (e o arquivo saves.json)
                         createInfos(1);
+                        {
+                            json storage;
+                            ifstream inputFile("saves.json");
+                            // abre o arquivo saves.json pra leitura e cria centerPerks a partir dele
+                            
+                            if (!inputFile.is_open()) {
+                                cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+                            }else{
+                                inputFile >> storage;
+                                Prison centerPerks(storage["centerPerks"]);
+                                int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
+                                int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
+                                centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                while(option3 != 0){
+                                    cout << "\nEscolha uma opção [0 para voltar]: ";
+                                    cin >> option3;
+                                    switch (option3)
+                                    {   
+                                        case 0:
+                                            option2 = 0;
+                                            break;
+                                        case 1:
+                                            cout << "Testando";
+                                            break;
+                                        default:
+                                            cout << "Insira uma opção válida!\n";
+                                            break;
+                                    }
+                                }
+                            }
+                        }
                         break;
                     default:
+                        cout << "Insira uma opção válida!\n";
                         break;
                     }
                 }

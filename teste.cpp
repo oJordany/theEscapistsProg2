@@ -11,20 +11,17 @@ using json = nlohmann::json;
 
 using std::cout;
 using namespace nlohmann::literals;
+
 int main() {
-    json storage;
+    std::fstream arquivo("nome_do_arquivo.txt", std::ios::in | std::ios::out);
 
-    storage["centerPerks"];
-
-    storage["centerPerks"]["level"] = 2;
-
-    // storage["centerPerks"] = NULL;
-    cout << storage.items();
-    for (auto s : storage.items()){
-        cout << s.value()["level"];
+    if (arquivo.is_open()) {
+        std::cout << "Arquivo aberto com sucesso!" << std::endl;
+        // Agora você pode ler e escrever no arquivo usando o objeto 'arquivo'
+    } else {
+        std::cout << "Erro ao abrir o arquivo." << std::endl;
+        arquivo << "Primeira entrada\n";
     }
-
-    // std::cout << storage.dump() << std::endl;
 
     return 0;
 }

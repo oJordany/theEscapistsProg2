@@ -104,8 +104,18 @@ bool saveConfigs( const json& datas, string nameFile="saves.json" )
     // abre o arquivo pra leitura
     ifstream inputFile(nameFile);
     if (!inputFile.is_open()) {
-        cerr << "Erro ao abrir aquivo para leitura!" << '\n';
-        return false; 
+        cerr << "Erro ao abrir aquivo para leitura! Tentando criá-lo ..." << '\n';
+        // abre o arquivo para escrita
+        ofstream outputFile(nameFile);
+        if (!outputFile.is_open()) {
+            cerr << "Erro ao abrir aquivo para escrita!" << '\n';
+            return false; 
+        }
+
+        outputFile << datas.dump(4);
+
+        outputFile.close();
+        return true; 
     }
 
     json storage;
@@ -113,8 +123,7 @@ bool saveConfigs( const json& datas, string nameFile="saves.json" )
     inputFile >> storage;
 
     for (auto data : datas.items()){
-        cout << data.key() << "\n";
-        storage["centerPerks"] = data.value();
+        storage[data.key()] = data.value();
     }
     inputFile.close();
 
@@ -220,9 +229,11 @@ void createInfos( int prisonID = 1 )
       }
        
       cout << "startPrisonTime\n";
-      centerPerks.startPrisonTime(Data(31, 12, 2023), 5, 0);
-      json centerPerksJson = centerPerks.toJson("centerPerks")
-      saveConfigs(centerPerks);
+      int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
+      int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
+      centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+      json centerPerksJson = centerPerks.toJson("centerPerks");
+      saveConfigs(centerPerksJson);
     }
 
 
