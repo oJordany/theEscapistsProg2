@@ -83,7 +83,16 @@ Time::Time(const Time& other){
 }
 
 void Time::endTime(){
-    Time::gameIsRunning= false;
+    Time::gameIsRunning = false;
+    Time::hour = 0;
+    Time::minute = 0;
+    Time::dayCounter = 0;
+    Time::currentDay = 0;
+    Time::routinesNumber = 0;
+    Time::dailyRoutinePtr = 0;
+    Time::createdTimes.resize(0);
+    Time::filesInUse.resize(0);
+    Time::datePtr = 0;
 }
 
 void Time::useTime(const Time &time){
@@ -106,7 +115,6 @@ void Time::releaseAllTimes(){
 }
 
 void Time::createTimeFile() const{ 
-    setfill(' ');
     gameIsRunning = true;
     string timeNameTxt = timeName + ".txt";
     thread clockThread([timeNameTxt, this](){
@@ -119,8 +127,8 @@ void Time::createTimeFile() const{
                 return;
             }
             bool fileFound = false;
-            for (auto file : filesInUse){
-                if (timeName == file){
+            for (auto fileInUse : filesInUse){
+                if (timeName == fileInUse){
                     fileFound = true;
                     break;
                 }
@@ -342,6 +350,8 @@ Time::~Time(){
     if (!Time::gameIsRunning && createdTimes.empty()) {
         delete [] dailyRoutinePtr;
         delete datePtr;
+        filesInUse.resize(0);
+        createdTimes.resize(0);
     }else
         gameIsRunning = true;
 }

@@ -27,7 +27,7 @@ int main(){
     int option2 = -1;
     int option3 = -1;
     bool hasCheckpoint = false;
-    vector <Prison *> prisons;
+    Prison *prison;
     // map<string, string> tasksInfos;
     // string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
     // string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
@@ -110,19 +110,8 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
-
     while(option != 0){
-        for (int i=0; i < prisons.size(); i++){
-            delete prisons[i];
-        }
-        cout << "pSize: " << prisons.size() << "\n";
         json savedPrisons = loadSaves("saves.json");
-        // cout << savedPrisons
-        if (savedPrisons.dump() != "null"){ 
-        for (auto savedPrison : savedPrisons.items()){
-            prisons.push_back(new Prison(savedPrison.value()));
-        }
-        }
         cout << "Simulando a execução do programa...\n";
         cout << "Escolha uma opção [0 para sair do jogo]: \n";
         showFigure("prisonsFigure.txt");
@@ -151,18 +140,24 @@ int main(){
                         cin >> option2;
                         switch (option2)
                         {
+                        case 0:
+                            if (prison != 0){
+                                delete prison;
+                                prison = 0;
+                            };
                         case 1:
                             cout << "Iniciando novo jogo...\n";
                             break;
                         case 2:
                             cout << "Continuando jogo...\n";
-                            prisons[0]->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
-                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
-                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
-                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
-                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
-                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
-                                                        savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
+                            prison = new Prison(savedPrisons["centerPerks"]);
+                            prison->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
+                                                         savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
+                                                         savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
+                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
+                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
+                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
+                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
                             break;
                         default:
                             break;
@@ -184,24 +179,27 @@ int main(){
                         // Cria uma prisão inicial (e o arquivo saves.json)
                         createInfos(1);
                         {
-                            json storage;
                             ifstream inputFile("saves.json");
                             // abre o arquivo saves.json pra leitura e cria centerPerks a partir dele
                             
                             if (!inputFile.is_open()) {
                                 cerr << "Erro ao abrir aquivo para leitura!" << '\n';
                             }else{
-                                inputFile >> storage;
-                                Prison centerPerks(storage["centerPerks"]);
-                                int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
-                                int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
-                                centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                inputFile >> savedPrisons;
+                                prison = new Prison(savedPrisons["centerPerks"]);
+                                int startHour = prison->getDailyRoutineAtIndex(0).startHour;
+                                int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
                                 while(option3 != 0){
                                     cout << "\nEscolha uma opção [0 para voltar]: ";
                                     cin >> option3;
                                     switch (option3)
                                     {   
                                         case 0:
+                                            if (prison != 0){
+                                                delete prison;
+                                                prison = 0;
+                                            };
                                             option2 = 0;
                                             break;
                                         case 1:
@@ -313,8 +311,4 @@ int main(){
     //         break;
     //     }
     // }
-
-    for (int i=0; i < prisons.size(); i++){
-        delete prisons[i];
-    }
 }

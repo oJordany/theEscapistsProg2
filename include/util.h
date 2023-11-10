@@ -173,7 +173,8 @@ void createInfos( int prisonID = 1 )
     cout << "\t  /||---||-\\_/-||---||\\  \n";
     cout << "\t / ||\033[30m--_\033[m||\033[30m_____\033[m||\033[30m_--\033[m|| \\ \n";
     cout << "\t(_(||)-| S123-45 |-(||)_)\n";
-    cout << "\033[30mINMATE NAME:\033[m ";
+    cout << "\t‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n";
+    cout << "\t\033[30mINMATE NAME:\033[m ";
     cin >> inmateName;
     if (prisonID == 1){
       map<string, string> tasksInfos;
