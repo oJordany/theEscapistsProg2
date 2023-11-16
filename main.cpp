@@ -147,17 +147,17 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
+    showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
+    thread blinkThread(blinkMessage);                       // Pisca mensagem de start
+
+    cin.ignore();                                           // Aguarda a entrada do usuário
+
+    stopFlag = true;                                        // Sinaliza a thread para parar
+    blinkThread.join();                                     // Aguarda a thread piscante terminar
     /********************************************* MENU DE SELEÇÃO DA PRISÃO ****************************************/
     while(option != 0){
         option2 = -1;
         json savedPrisons = loadSaves("saves.json");            // Objeto JSON com as prisões salvas
-        showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
-        thread blinkThread(blinkMessage);                       // Pisca mensagem de start
-
-        cin.ignore();                                           // Aguarda a entrada do usuário
-
-        stopFlag = true;                                        // Sinaliza a thread para parar
-        blinkThread.join();                                     // Aguarda a thread piscante terminar
         returnSystem = system("clear");
         showFigure("prisonsFigure.txt");                        // Imagem das prisões
         cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
