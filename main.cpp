@@ -2,6 +2,9 @@
 using std::cout;
 using std::cin;
 
+#include <iomanip>
+using std::setw;
+
 #include <cstdlib>
 using std::system;
 
@@ -11,6 +14,13 @@ using std::system;
 #include "Prison.h"
 #include "Data.h"
 #include "util.h"
+
+#include <chrono>
+using std::chrono::milliseconds;
+
+#include <thread>
+using std::thread;
+using std::this_thread::sleep_for;
 
 #include <map>
 using std::map;
@@ -23,6 +33,29 @@ using std::vector;
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+bool stopFlag = false;
+
+void blinkMessage() {
+    bool showText = true;
+
+    while (!stopFlag) {
+        if (showText) {
+            std::cout << "                                    [ press Enter to start ]";
+        } else {
+            std::cout << "                                                            ";  // Espaços em branco para apagar o texto
+        }
+
+        showText = !showText;
+
+        sleep_for(milliseconds(500));  // Intervalo de 500 milissegundos
+
+        cout.flush();                                             // força a saída de todos os dados escritos no buffer
+
+        // Limpar a linha anterior
+        std::cout << '\r';  // Retorne ao início da linha
+    }
+}
 
 int main(){
     int returnSystem;
@@ -118,7 +151,14 @@ int main(){
     while(option != 0){
         option2 = -1;
         json savedPrisons = loadSaves("saves.json");            // Objeto JSON com as prisões salvas
-        cout << "Simulando a execução do programa...\n";        // Animação de entrada
+        showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
+        thread blinkThread(blinkMessage);                       // Pisca mensagem de start
+
+        cin.ignore();                                           // Aguarda a entrada do usuário
+
+        stopFlag = true;                                        // Sinaliza a thread para parar
+        blinkThread.join();                                     // Aguarda a thread piscante terminar
+        returnSystem = system("clear");
         showFigure("prisonsFigure.txt");                        // Imagem das prisões
         cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
 

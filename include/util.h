@@ -3,6 +3,9 @@ using std::cerr;
 using std::cin;
 using std::cout;
 
+#include <iomanip> 
+using std::setw;
+
 #include <string>
 using std::string;
 using std::getline;
@@ -23,6 +26,12 @@ using std::map;
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
+#include <chrono>
+using std::chrono::milliseconds;
+
+#include <thread>
+using std::this_thread::sleep_for;
 
 #include "Data.h"
 #include "Inmate.h"
@@ -139,6 +148,25 @@ bool saveConfigs( const json& datas, string nameFile="saves.json" )
     outputFile.close();
     cout << "Dados salvos com sucesso!" << '\n';
     return true;
+}
+
+void showTypeWritterAnimation(string figureName){
+    ifstream inputFile("../utils/"+figureName);
+
+    if (inputFile.is_open()){
+        string line;
+        while (getline(inputFile, line)){
+            for (int i=0; line[i] != '\0'; i++){
+                cout << line[i];
+                sleep_for(milliseconds(3));
+                cout.flush();
+            }
+            cout << " \n";
+        }
+        inputFile.close();
+    }else{
+        cout << "Erro ao abrir o arquivo para leitura!\n";
+    }
 }
 
 void showFigure(string figureName){
