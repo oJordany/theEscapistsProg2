@@ -31,6 +31,7 @@ int main(){
     int option3 = -1;
     bool hasCheckpoint = false;
     Prison *prison;
+    prison = 0;
     // map<string, string> tasksInfos;
     // string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
     // string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
@@ -154,7 +155,7 @@ int main(){
                                 case 0:                                     // Sai do menu de Center Perks
                                     if (prison != 0){
                                         delete prison;                      // Libera o ponteiro das prisões
-                                        prison = 0;                         
+                                        prison = 0;                     
                                     }
                                     break;
 
@@ -546,7 +547,6 @@ int main(){
                                     /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
                                     while(option3 != 0){
                                         returnSystem = system("clear");
-                                        
                                         cout << "\nEscolha uma opção [0 para voltar]: ";
                                         cin >> option3;                               // Seleção das opções de ação na prisão
                                         switch (option3)
