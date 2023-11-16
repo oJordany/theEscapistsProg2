@@ -158,7 +158,7 @@ void showFigure(string figureName){
 void createInfos( int prisonID = 1 )
 {   
     const int INMATESNUMBER = 10;
-    const int LOCATIONSNUMBER = 12;
+    const int LOCATIONSNUMBER = 13;
     string inmateName;
     cout << "\t_________________________\n";
     cout << "\t   ||   ||     ||   ||   \n";
@@ -186,7 +186,7 @@ void createInfos( int prisonID = 1 )
       string prisonLocations[LOCATIONSNUMBER] = {"Dining Room", "Gymnasium", "Exercise Room", 
                                     "Cleaning Room", "Laundry", "Security Room", 
                                     "Deposit", "Isolation", "Kitchen", 
-                                    "Meeting room", "Watch-tower", "Pantry"};
+                                    "Meeting room", "Watch-tower", "Pantry", "Library"};
 
       // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
       loadConfig(tasksInfos, "../utils/configs.txt");
@@ -203,7 +203,6 @@ void createInfos( int prisonID = 1 )
       JobBoard jobBoard(tasks, tasksInfos.size());
 
       Prison centerPerks("Center Perks", 0, jobBoard, Data(31, 12, 2023));
-
       // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
       // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
       // center perks: 
@@ -228,14 +227,131 @@ void createInfos( int prisonID = 1 )
       for (auto location : prisonLocations){
           centerPerks.registerLocationInPrison(location);
       }
-       
-      cout << "startPrisonTime\n";
       int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
       int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
       centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
       json centerPerksJson = centerPerks.toJson("centerPerks");
       saveConfigs(centerPerksJson);
+    }else if (prisonID == 2){
+      map<string, string> tasksInfos;
+      string inmateNames[INMATESNUMBER] = {inmateName, "KEV", 
+                                "KELAUCE", "CARL", 
+                                "CAMEO", "JACKALL", 
+                                "ARNIE", "KRIMEWAVE", 
+                                "DOGEKIT", "PHIL"};
+      string prisonLocations[LOCATIONSNUMBER] = {
+                                    "Forest Clearing", "Wilderness Training Ground", "Outdoor Fitness Area", 
+                                    "Rustic Workshop", "Riverbank Laundry", "Jungle Surveillance Center", 
+                                    "Storage Hut", "Deep Forest Solitude", "Canopy Kitchen", 
+                                    "Treetop Gathering Hall", "Canopy Observation Tower", "Jungle Supplies Depot",
+                                    "Canopy Library"
+                                    };
+
+      // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
+      loadConfig(tasksInfos, "../utils/configs2.txt");
+      Task tasks[tasksInfos.size()];
+      int i = 0;
+      for (auto pair : tasksInfos){
+          tasks[i].taskName = pair.first;
+          tasks[i].taskDetails = pair.second;
+          tasks[i].inmate = 0;
+          i++;
+      }
+      
+      // // CRIANDO JOBBOARD
+      JobBoard jobBoard(tasks, tasksInfos.size());
+
+      Prison jungleCompound("Jungle Compound", 0, jobBoard, Data(31, 12, 2023));
+
+      // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
+      // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
+      // center perks: 
+      jungleCompound.registerDailyPrisonRoutine({8, 0, 8, 59, "Morning Roll Call"});
+      jungleCompound.registerDailyPrisonRoutine({9, 0, 9, 59, "Breakfast"});
+      jungleCompound.registerDailyPrisonRoutine({10, 0, 12, 59, "Work Period"});
+      jungleCompound.registerDailyPrisonRoutine({13, 0, 13, 59, "Mid-day Roll Call"});
+      jungleCompound.registerDailyPrisonRoutine({14, 0, 15, 59, "Free Period"});
+      jungleCompound.registerDailyPrisonRoutine({16, 0, 16, 59, "Dinner"});
+      jungleCompound.registerDailyPrisonRoutine({17, 0, 17, 59, "Exercise Period"});
+      jungleCompound.registerDailyPrisonRoutine({18, 0, 18, 59, "Shower"});
+      jungleCompound.registerDailyPrisonRoutine({19, 0, 21, 59, "Free Period"});
+      jungleCompound.registerDailyPrisonRoutine({22, 0, 22, 59, "Evening Roll Call"});
+      jungleCompound.registerDailyPrisonRoutine({23, 0, 7, 59, "Lights Out"});
+
+      // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
+      for (int i=0; i < INMATESNUMBER; i++){
+          jungleCompound.registerInmateInPrison(Inmate(inmateNames[i]));
+      }
+
+      // CADASTRANDO OS LOCAIS NA PRISÕES
+      for (auto location : prisonLocations){
+          jungleCompound.registerLocationInPrison(location);
+      }
+      int startHour = jungleCompound.getDailyRoutineAtIndex(0).startHour;
+      int startMinute = jungleCompound.getDailyRoutineAtIndex(0).startMinute;
+      jungleCompound.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+      json jungleCompoundJson = jungleCompound.toJson("jungleCompound");
+      saveConfigs(jungleCompoundJson);
+    }else if(prisonID == 3){
+        map<string, string> tasksInfos;
+        string inmateNames[INMATESNUMBER] = {inmateName, "KEV", 
+                                    "KELAUCE", "CARL", 
+                                    "CAMEO", "JACKALL", 
+                                    "ARNIE", "KRIMEWAVE", 
+                                    "DOGEKIT", "PHIL"};
+        string prisonLocations[LOCATIONSNUMBER] = {
+                                        "Maximum Security Chow Hall", "Ironclad Exercise Yard", "Secure Metalshop", 
+                                        "Sanitation Chamber", "Prison Laundry Complex", "Surveillance Hub", 
+                                        "Contraband Vault", "Iron Isolation Unit", "Fortified Galley", 
+                                        "Warden's Briefing Chamber", "Iron Watchtower", "Ration Storage",  
+                                        "Ironbound Library"
+                                        };
+
+        // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
+        loadConfig(tasksInfos, "../utils/configs3.txt");
+        Task tasks[tasksInfos.size()];
+        int i = 0;
+        for (auto pair : tasksInfos){
+            tasks[i].taskName = pair.first;
+            tasks[i].taskDetails = pair.second;
+            tasks[i].inmate = 0;
+            i++;
+        }
+        
+        // // CRIANDO JOBBOARD
+        JobBoard jobBoard(tasks, tasksInfos.size());
+
+        Prison hmpIrongate("HMP Irongate", 0, jobBoard, Data(31, 12, 2023));
+
+        // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
+        // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
+        // center perks: 
+        hmpIrongate.registerDailyPrisonRoutine({9, 0, 9, 59, "Morning Roll Call"});
+        hmpIrongate.registerDailyPrisonRoutine({10, 0, 10, 59, "Breakfast"});
+        hmpIrongate.registerDailyPrisonRoutine({11, 0, 13, 59, "Work / Leisure Period"});
+        hmpIrongate.registerDailyPrisonRoutine({14, 0, 14, 59, "Afternoon Roll Call"});
+        hmpIrongate.registerDailyPrisonRoutine({15, 0, 15, 59, "Free Period"});
+        hmpIrongate.registerDailyPrisonRoutine({16, 0, 16, 59, "Exercise Period"});
+        hmpIrongate.registerDailyPrisonRoutine({17, 0, 17, 59, "Evening Meal"});
+        hmpIrongate.registerDailyPrisonRoutine({18, 0, 18, 59, "Shower Block"});
+        hmpIrongate.registerDailyPrisonRoutine({19, 0, 19, 59, "Evening Roll Call"});
+        hmpIrongate.registerDailyPrisonRoutine({20, 0, 8, 59, "Lights Out"});
+
+        // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
+        for (int i=0; i < INMATESNUMBER; i++){
+            hmpIrongate.registerInmateInPrison(Inmate(inmateNames[i]));
+        }
+
+        // CADASTRANDO OS LOCAIS NA PRISÕES
+        for (auto location : prisonLocations){
+            hmpIrongate.registerLocationInPrison(location);
+        }
+        int startHour = hmpIrongate.getDailyRoutineAtIndex(0).startHour;
+        int startMinute = hmpIrongate.getDailyRoutineAtIndex(0).startMinute;
+        hmpIrongate.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+        json hmpIrongateJson = hmpIrongate.toJson("hmpIrongate");
+        saveConfigs(hmpIrongateJson);
+    }else{
+        cout << "error creating information for prison\n";
     }
-
-
 }

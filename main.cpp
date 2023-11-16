@@ -15,6 +15,9 @@ using std::system;
 #include <map>
 using std::map;
 
+#include <fstream>
+using std::remove;
+
 #include <vector>
 using std::vector;
 
@@ -110,77 +113,150 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
+    /********************************************* MENU DE SELEÇÃO DA PRISÃO ****************************************/
     while(option != 0){
-        json savedPrisons = loadSaves("saves.json");
-        cout << "Simulando a execução do programa...\n";
-        cout << "Escolha uma opção [0 para sair do jogo]: \n";
-        showFigure("prisonsFigure.txt");
+        option2 = -1;
+        json savedPrisons = loadSaves("saves.json");            // Objeto JSON com as prisões salvas
+        cout << "Simulando a execução do programa...\n";        // Animação de entrada
+        showFigure("prisonsFigure.txt");                        // Imagem das prisões
         cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
-        cin >> option;
-        cout << "option: " << option << "\n";
+
+
+        cin >> option;                                          // Seleção da prisão
         switch (option)
         {
-        case 0:
-            cout << "Saindo do jogo...\n";
-            break;
-        case 1:
-            option2 = -1;
-            returnSystem = system("clear");
-            if (savedPrisons.dump() != "null"){
-                for (auto savedPrison : savedPrisons.items()){
-                    if (savedPrison.key() == "centerPerks"){
-                        showFigure("newGameAndContinueFigure.txt");
-                        hasCheckpoint = true;
-                        break;
-                    }
-                }
-                if (hasCheckpoint) {    
-                    while(option2 != 0){
-                        cout << "\nEscolha uma opção [0 para voltar]: ";
-                        cin >> option2;
-                        switch (option2)
-                        {
-                        case 0:
-                            if (prison != 0){
-                                delete prison;
-                                prison = 0;
-                            };
-                        case 1:
-                            cout << "Iniciando novo jogo...\n";
-                            break;
-                        case 2:
-                            cout << "Continuando jogo...\n";
-                            prison = new Prison(savedPrisons["centerPerks"]);
-                            prison->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
-                                                         savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
-                                                         savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
-                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
-                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
-                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
-                                                    savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
-                            break;
-                        default:
+            case 0:                                             // Sai do jogo
+                cout << "Saindo do jogo...\n";
+                break;
+
+
+            /******************************************** CENTER PERKS ********************************************/   
+            case 1:                                             
+                option2 = -1;
+                returnSystem = system("clear");
+
+                if (savedPrisons.dump() != "null"){                         // Varifica se existem prisões salvas
+                    hasCheckpoint = false;
+                    for (auto savedPrison : savedPrisons.items( )){         // Verifica se Center Perks tem checkpoint
+                        if (savedPrison.key() == "centerPerks"){
+                            showFigure("newGameAndContinueFigure.txt");     // Printa botões de Novo Jogo e Continuar
+                            hasCheckpoint = true;
                             break;
                         }
                     }
+                    if (hasCheckpoint) {    
+                        /***************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (CENTER PERKS) ********************/
+                        while(option2 != 0){
+                            cout << "\nEscolha uma opção [0 para voltar]: ";
+                            cin >> option2;                                 // Seleção: Novo jogo Ou Continuar ou Sair
+                            switch (option2)
+                            {
+                                case 0:                                     // Sai do menu de Center Perks
+                                    if (prison != 0){
+                                        delete prison;                      // Libera o ponteiro das prisões
+                                        prison = 0;                         
+                                    }
+                                    break;
+
+                                case 1:                                     // Inicia um novo jogo em Center Perks
+                                    cout << "Iniciando novo jogo...\n";
+                                    option3 = -1;                           // Seleção das opções de ação na prisão
+                                    createInfos(1);                         // Cria uma prisão inicial (no arquivo saves.json)
+                                    {
+                                        /* abre o arquivo saves.json e cria centerPerks a partir dele */
+                                        ifstream inputFile("saves.json");   
+                                        
+                                        if (!inputFile.is_open()) {
+                                            cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+                                        }else{
+                                            inputFile >> savedPrisons;
+                                            prison = new Prison(savedPrisons["centerPerks"]);
+                                            int startHour = prison->getDailyRoutineAtIndex(0).startHour;
+                                            int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                            prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+
+                                            /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
+                                            while(option3 != 0){
+                                                cout << "\nEscolha uma opção [0 para voltar]: ";
+                                                cin >> option3;
+                                                switch (option3)
+                                                {   
+                                                    case 0:
+                                                        if (prison != 0){
+                                                            delete prison;
+                                                            prison = 0;
+                                                        };
+                                                        option2 = 0;
+                                                        break;
+                                                    case 1:
+                                                        cout << "Testando";
+                                                        break;
+                                                    default:
+                                                        cout << "Insira uma opção válida!\n";
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 2:                                         // Continua o jogo a partir do que tava salvo
+                                    option3 = -1;
+                                    cout << "Continuando jogo...\n";
+                                    prison = new Prison(savedPrisons["centerPerks"]);
+                                    prison->startPrisonTime(Data(savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["dia"],
+                                                                savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["mes"],
+                                                                savedPrisons["centerPerks"]["prisonTimePtr"]["startDate"]["ano"]),
+                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["startHour"],
+                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
+                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
+                                                            savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
+
+                                    /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
+                                    while(option3 != 0){
+                                        returnSystem = system("clear");
+                                        cout << "\nEscolha uma opção [0 para voltar]: ";
+                                        cin >> option3;                             // Seleção das opções de ação na prisão
+                                        switch (option3)
+                                        {   
+                                            case 0:                                 
+                                                if (prison != 0){
+                                                    delete prison;
+                                                    prison = 0;
+                                                };
+                                                option2 = 0;
+                                                break;
+                                            case 1:
+                                                cout << "Testando";
+                                                break;
+                                            default:
+                                                cout << "Insira uma opção válida!\n";
+                                                break;
+                                        }
+                                    }                                                    
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
                 }
-            }else{
+                /***************************** CASO NÃO TENHA CHECKPOINT PARA CENTER PERKS *******************************/
                 cout << "não há jogo salvo\n";
+                /********************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (CENTER PERKS) *******************************/
                 while(option2 != 0){
-                    showFigure("newGameFigure.txt");
+                    showFigure("newGameFigure.txt");                                // Printa botão New game
                     cout << "\nEscolha uma opção [0 para voltar]: ";
-                    cin >> option2;
+                    cin >> option2;                                                 // Seleção: Novo jogo ou sair
                     switch (option2)
                     {
                     case 0:
                         break;
                     case 1:
                         option3 = -1;
-                        // Cria uma prisão inicial (e o arquivo saves.json)
-                        createInfos(1);
+                        createInfos(1);                                   // Cria uma prisão inicial (no arquivo saves.json)
                         {
+                            /* abre o arquivo saves.json pra leitura e cria centerPerks a partir dele */
                             ifstream inputFile("saves.json");
-                            // abre o arquivo saves.json pra leitura e cria centerPerks a partir dele
                             
                             if (!inputFile.is_open()) {
                                 cerr << "Erro ao abrir aquivo para leitura!" << '\n';
@@ -191,6 +267,7 @@ int main(){
                                 int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
                                 prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
                                 while(option3 != 0){
+                                    returnSystem = system("clear");
                                     cout << "\nEscolha uma opção [0 para voltar]: ";
                                     cin >> option3;
                                     switch (option3)
@@ -218,11 +295,345 @@ int main(){
                         break;
                     }
                 }
-            }
-            break;
-        default:
-            cout << "Insira uma opção válida!\n";
-            break;
+                break;
+
+
+            /*************************************** JUNGLE COMPOUND ****************************************/                 
+            case 2:
+                option2 = -1;
+                returnSystem = system("clear");
+                if (savedPrisons.dump() != "null"){                              // Verifica se existem prisões salvas     
+                    hasCheckpoint = false;
+                    for (auto savedPrison : savedPrisons.items()){               // Verifica se Jungle Compound tem checkpoint
+                        if (savedPrison.key() == "jungleCompound"){
+                            showFigure("newGameAndContinueFigure.txt");          // Printa botões de Novo Jogo e Continuar
+                            hasCheckpoint = true;
+                            break;
+                        }
+                    }
+                    if (hasCheckpoint) {    
+                    /***************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (JUNGLE COMPOUND) ********************/
+                        while(option2 != 0){
+                            cout << "\nEscolha uma opção [0 para voltar]: ";
+                            cin >> option2;                                 // Seleção: Novo jogo ou Continuar ou Sair
+                            switch (option2)    
+                            {
+                                case 0:                                         // Sai do menu de Jungle Compound
+                                    if (prison != 0){
+                                        delete prison;                          // Libera o ponteiro das prisões
+                                        prison = 0; 
+                                        break;
+                                    }else{
+                                        break;
+                                    }
+                                case 1:                                       // Inicia um novo jogo em Jungle Compound
+                                    cout << "Iniciando novo jogo...\n";
+                                    option3 = -1;                             // Seleção das opções de ação na prisão
+                                    createInfos(2);                           // Cria uma prisão inicial (no arquivo saves.json)
+                                    {
+                                        /* abre o arquivo saves.json e cria jungleCompound a partir dele */
+                                        ifstream inputFile("saves.json");
+                                        
+                                        if (!inputFile.is_open()) {
+                                            cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+                                        }else{
+                                            inputFile >> savedPrisons;
+                                            prison = new Prison(savedPrisons["jungleCompound"]);
+                                            int startHour = prison->getDailyRoutineAtIndex(0).startHour;
+                                            int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                            prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                            /**************** MENU DE SELEÇÃO DAS AÇÕES EM JUNGLE COMPOUND ***************/
+                                            while(option3 != 0){
+                                                cout << "\nEscolha uma opção [0 para voltar]: ";
+                                                cin >> option3;
+                                                switch (option3)
+                                                {   
+                                                    case 0:
+                                                        if (prison != 0){
+                                                            delete prison;
+                                                            prison = 0;
+                                                        };
+                                                        option2 = 0;
+                                                        break;
+                                                    case 1:
+                                                        cout << "Testando";
+                                                        break;
+                                                    default:
+                                                        cout << "Insira uma opção válida!\n";
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 2:                                         // Continua o jogo a partir do que tava salvo
+                                    option3 = -1;
+                                    cout << "Continuando jogo...\n";
+                                    prison = new Prison(savedPrisons["jungleCompound"]);
+                                    prison->startPrisonTime(Data(savedPrisons["jungleCompound"]["prisonTimePtr"]["startDate"]["dia"],
+                                                                savedPrisons["jungleCompound"]["prisonTimePtr"]["startDate"]["mes"],
+                                                                savedPrisons["jungleCompound"]["prisonTimePtr"]["startDate"]["ano"]),
+                                                            savedPrisons["jungleCompound"]["prisonTimePtr"]["startHour"],
+                                                            savedPrisons["jungleCompound"]["prisonTimePtr"]["startMinute"],
+                                                            savedPrisons["jungleCompound"]["prisonTimePtr"]["dayCounter"],
+                                                            savedPrisons["jungleCompound"]["prisonTimePtr"]["currentDay"]);
+                                    /**************** MENU DE SELEÇÃO DAS AÇÕES EM JUNGLE COMPOUND ***************/
+                                    while(option3 != 0){
+                                        returnSystem = system("clear");
+                                        
+                                        cout << "\nEscolha uma opção [0 para voltar]: ";
+                                        cin >> option3;                               // Seleção das opções de ação na prisão
+                                        switch (option3)
+                                        {   
+                                            case 0:
+                                                if (prison != 0){
+                                                    delete prison;
+                                                    prison = 0;
+                                                };
+                                                option2 = 0;
+                                                break;
+                                            case 1:
+                                                cout << "Testando";
+                                                break;
+                                            default:
+                                                cout << "Insira uma opção válida!\n";
+                                                break;
+                                        }
+                                    }                                                    
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                /***************************** CASO NÃO TENHA CHECKPOINT PARA JUNGLE COMPOUND *******************************/
+                cout << "não há jogo salvo\n";
+                /********************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (JUNGLE COMPOUND) *******************************/
+                while(option2 != 0){
+                    showFigure("newGameFigure.txt");                                        // Printa botão New game
+                    cout << "\nEscolha uma opção [0 para voltar]: ";                        
+                    cin >> option2;                                                         // Seleção: Novo jogo ou sair
+                    switch (option2)
+                    {
+                    case 0:
+                        break;
+                    case 1:
+                        option3 = -1;
+                        createInfos(2);                                    // Cria uma prisão inicial (no arquivo saves.json)
+                        {
+                            // abre o arquivo saves.json pra leitura e cria jungleCompound a partir dele
+                            ifstream inputFile("saves.json");
+                            
+                            if (!inputFile.is_open()) {
+                                cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+                            }else{
+                                inputFile >> savedPrisons;
+                                prison = new Prison(savedPrisons["jungleCompound"]);
+                                int startHour = prison->getDailyRoutineAtIndex(0).startHour;
+                                int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                while(option3 != 0){
+                                    returnSystem = system("clear");
+                                    cout << "\nEscolha uma opção [0 para voltar]: ";
+                                    cin >> option3;
+                                    switch (option3)
+                                    {   
+                                        case 0:
+                                            if (prison != 0){
+                                                delete prison;
+                                                prison = 0;
+                                            };
+                                            option2 = 0;
+                                            break;
+                                        case 1:
+                                            cout << "Testando";
+                                            break;
+                                        default:
+                                            cout << "Insira uma opção válida!\n";
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        cout << "Insira uma opção válida!\n";
+                        break;
+                    }
+                }
+
+                break;
+
+            case 3:
+                option2 = -1;
+                returnSystem = system("clear");
+                if (savedPrisons.dump() != "null"){                              // Verifica se existem prisões salvas     
+                    hasCheckpoint = false;
+                    for (auto savedPrison : savedPrisons.items()){               // Verifica se JUNGLE COMPOUND tem checkpoint
+                        if (savedPrison.key() == "hmpIrongate"){
+                            showFigure("newGameAndContinueFigure.txt");          // Printa botões de Novo Jogo e Continuar
+                            hasCheckpoint = true;
+                            break;
+                        }
+                    }
+                    if (hasCheckpoint) {    
+                    /***************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (JUNGLE COMPOUND) ********************/
+                        while(option2 != 0){
+                            cout << "\nEscolha uma opção [0 para voltar]: ";
+                            cin >> option2;                                 // Seleção: Novo jogo ou Continuar ou Sair
+                            switch (option2)    
+                            {
+                                case 0:                                         // Sai do menu de JUNGLE COMPOUND
+                                    if (prison != 0){
+                                        delete prison;                          // Libera o ponteiro das prisões
+                                        prison = 0; 
+                                        break;
+                                    }else{
+                                        break;
+                                    }
+                                case 1:                                       // Inicia um novo jogo em JUNGLE COMPOUND
+                                    cout << "Iniciando novo jogo...\n";
+                                    option3 = -1;                             // Seleção das opções de ação na prisão
+                                    createInfos(3);                           // Cria uma prisão inicial (no arquivo saves.json)
+                                    {
+                                        /* abre o arquivo saves.json e cria JUNGLE COMPOUND a partir dele */
+                                        ifstream inputFile("saves.json");
+                                        
+                                        if (!inputFile.is_open()) {
+                                            cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+                                        }else{
+                                            inputFile >> savedPrisons;
+                                            prison = new Prison(savedPrisons["hmpIrongate"]);
+                                            int startHour = prison->getDailyRoutineAtIndex(0).startHour;
+                                            int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                            prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                            /**************** MENU DE SELEÇÃO DAS AÇÕES EM JUNGLE COMPOUND ***************/
+                                            while(option3 != 0){
+                                                cout << "\nEscolha uma opção [0 para voltar]: ";
+                                                cin >> option3;
+                                                switch (option3)
+                                                {   
+                                                    case 0:
+                                                        if (prison != 0){
+                                                            delete prison;
+                                                            prison = 0;
+                                                        };
+                                                        option2 = 0;
+                                                        break;
+                                                    case 1:
+                                                        cout << "Testando";
+                                                        break;
+                                                    default:
+                                                        cout << "Insira uma opção válida!\n";
+                                                        break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case 2:                                         // Continua o jogo a partir do que tava salvo
+                                    option3 = -1;
+                                    cout << "Continuando jogo...\n";
+                                    prison = new Prison(savedPrisons["hmpIrongate"]);
+                                    prison->startPrisonTime(Data(savedPrisons["hmpIrongate"]["prisonTimePtr"]["startDate"]["dia"],
+                                                                savedPrisons["hmpIrongate"]["prisonTimePtr"]["startDate"]["mes"],
+                                                                savedPrisons["hmpIrongate"]["prisonTimePtr"]["startDate"]["ano"]),
+                                                            savedPrisons["hmpIrongate"]["prisonTimePtr"]["startHour"],
+                                                            savedPrisons["hmpIrongate"]["prisonTimePtr"]["startMinute"],
+                                                            savedPrisons["hmpIrongate"]["prisonTimePtr"]["dayCounter"],
+                                                            savedPrisons["hmpIrongate"]["prisonTimePtr"]["currentDay"]);
+                                    /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
+                                    while(option3 != 0){
+                                        returnSystem = system("clear");
+                                        
+                                        cout << "\nEscolha uma opção [0 para voltar]: ";
+                                        cin >> option3;                               // Seleção das opções de ação na prisão
+                                        switch (option3)
+                                        {   
+                                            case 0:
+                                                if (prison != 0){
+                                                    delete prison;
+                                                    prison = 0;
+                                                };
+                                                option2 = 0;
+                                                break;
+                                            case 1:
+                                                cout << "Testando";
+                                                break;
+                                            default:
+                                                cout << "Insira uma opção válida!\n";
+                                                break;
+                                        }
+                                    }                                                    
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                    }
+                }
+                /***************************** CASO NÃO TENHA CHECKPOINT PARA JUNGLE COMPOUND *******************************/
+                cout << "não há jogo salvo\n";
+                /********************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (JUNGLE COMPOUND) *******************************/
+                while(option2 != 0){
+                    showFigure("newGameFigure.txt");                                        // Printa botão New game
+                    cout << "\nEscolha uma opção [0 para voltar]: ";                        
+                    cin >> option2;                                                         // Seleção: Novo jogo ou sair
+                    switch (option2)
+                    {
+                    case 0:
+                        break;
+                    case 1:
+                        option3 = -1;
+                        createInfos(3);                                    // Cria uma prisão inicial (no arquivo saves.json)
+                        {
+                            // abre o arquivo saves.json pra leitura e cria hmpIrongate a partir dele
+                            ifstream inputFile("saves.json");
+                            
+                            if (!inputFile.is_open()) {
+                                cerr << "Erro ao abrir aquivo para leitura!" << '\n';
+                            }else{
+                                inputFile >> savedPrisons;
+                                prison = new Prison(savedPrisons["hmpIrongate"]);
+                                int startHour = prison->getDailyRoutineAtIndex(0).startHour;
+                                int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                while(option3 != 0){
+                                    returnSystem = system("clear");
+                                    cout << "\nEscolha uma opção [0 para voltar]: ";
+                                    cin >> option3;
+                                    switch (option3)
+                                    {   
+                                        case 0:
+                                            if (prison != 0){
+                                                delete prison;
+                                                prison = 0;
+                                            };
+                                            option2 = 0;
+                                            break;
+                                        case 1:
+                                            cout << "Testando";
+                                            break;
+                                        default:
+                                            cout << "Insira uma opção válida!\n";
+                                            break;
+                                    }
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        cout << "Insira uma opção válida!\n";
+                        break;
+                    }
+                }
+
+                break;
+
+            default:
+                cout << "Insira uma opção válida!\n";
+                break;
         }
     }
 
