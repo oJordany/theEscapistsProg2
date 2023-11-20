@@ -42,7 +42,9 @@ public:
     int getSpeed() const;
     int getIntelligence() const;
     double getMoney() const;
+    inline string getCurrentLocation() const {return currentLocation;};
     inline bool isNull() const { return this == nullptr; }
+    inline void moveTo(string newLocation) { currentLocation = newLocation;};
 
     void setName(string);
     void setHealth(int);
@@ -65,6 +67,7 @@ private:
     int speed;
     int intelligence;
     double money;
+    string currentLocation;
     void showPercentageBar(int) const;
     void repeatCharacter(string, int) const;
     const int MAXSIZENAME = 10;

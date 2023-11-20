@@ -35,6 +35,7 @@ using std::this_thread::sleep_for;
 
 #include "Data.h"
 #include "Inmate.h"
+#include "BotInmate.h"
 #include "JobBoard.h"
 #include "Prison.h"
 #include "Time.h"
@@ -158,7 +159,7 @@ void showTypeWritterAnimation(string figureName){
         while (getline(inputFile, line)){
             for (int i=0; line[i] != '\0'; i++){
                 cout << line[i];
-                sleep_for(milliseconds(3));
+                sleep_for(milliseconds(1));
                 cout.flush();
             }
             cout << " \n";
@@ -186,7 +187,7 @@ void showFigure(string figureName){
 void createInfos( int prisonID = 1 )
 {   
     const int INMATESNUMBER = 10;
-    const int LOCATIONSNUMBER = 13;
+    // const int LOCATIONSNUMBER = 13;
     string inmateName;
     cout << "\t_________________________\n";
     cout << "\t   ||   ||     ||   ||   \n";
@@ -211,10 +212,11 @@ void createInfos( int prisonID = 1 )
                                 "CAMEO", "JACKALL", 
                                 "ARNIE", "KRIMEWAVE", 
                                 "DOGEKIT", "PHIL"};
-      string prisonLocations[LOCATIONSNUMBER] = {"Dining Room", "Gymnasium", "Exercise Room", 
-                                    "Cleaning Room", "Laundry", "Security Room", 
-                                    "Deposit", "Isolation", "Kitchen", 
-                                    "Meeting room", "Watch-tower", "Pantry", "Library"};
+      map <string, bool> prisonLocations = {{"Dining Room", 1}, {"Gymnasium", 1}, {"Exercise Room", 1}, 
+                                            {"Cleaning Room", 1}, {"Laundry", 1}, {"Security Room", 0}, 
+                                            {"Deposit", 1}, {"Isolation", 0}, {"Kitchen", 1}, 
+                                            {"Meeting Room", 1}, {"Watch-tower", 0}, {"Pantry", 1}, {"Library", 1},
+                                            {"Shower Room", 1}};
 
       // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
       loadConfig(tasksInfos, "../utils/configs.txt");
@@ -245,16 +247,34 @@ void createInfos( int prisonID = 1 )
       centerPerks.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
       centerPerks.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
       centerPerks.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
+      centerPerks.registerDailyPrisonRoutine({19, 0, 4, 59, "Lights Out"});
+
+      centerPerks.registerRoutineToLocation("Wake Up Call, Roll Call", "Meeting Room");
+      centerPerks.registerRoutineToLocation("Breakfast Time", "Dining Room");
+      centerPerks.registerRoutineToLocation("Exercise Time", "Exercise Room");
+      centerPerks.registerRoutineToLocation("Free Time", "");
+      centerPerks.registerRoutineToLocation("Job Time", "");
+      centerPerks.registerRoutineToLocation("Lunch Time", "Dining Room");
+      centerPerks.registerRoutineToLocation("Roll Call", "Meeting Room");
+      centerPerks.registerRoutineToLocation("Shower Time", "Shower Room");
+      centerPerks.registerRoutineToLocation("Dinner Time", "Dining Room");
+      centerPerks.registerRoutineToLocation("Lights Out", "");
 
       // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
       for (int i=0; i < INMATESNUMBER; i++){
           centerPerks.registerInmateInPrison(Inmate(inmateNames[i]));
       }
 
+      // CADASTRANDO OS 10 PRISIONEIROS BOT NAS PRISÕES
+      for (int i=1; i < INMATESNUMBER; i++){
+          centerPerks.registerBotInmateInPrison(BotInmate(inmateNames[i]));
+      }
+
       // CADASTRANDO OS LOCAIS NA PRISÕES
       for (auto location : prisonLocations){
-          centerPerks.registerLocationInPrison(location);
+          centerPerks.registerLocationInPrison(location.first, location.second);
       }
+
       int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
       int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
       centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
@@ -267,12 +287,12 @@ void createInfos( int prisonID = 1 )
                                 "CAMEO", "JACKALL", 
                                 "ARNIE", "KRIMEWAVE", 
                                 "DOGEKIT", "PHIL"};
-      string prisonLocations[LOCATIONSNUMBER] = {
-                                    "Forest Clearing", "Wilderness Training Ground", "Outdoor Fitness Area", 
-                                    "Rustic Workshop", "Riverbank Laundry", "Jungle Surveillance Center", 
-                                    "Storage Hut", "Deep Forest Solitude", "Canopy Kitchen", 
-                                    "Treetop Gathering Hall", "Canopy Observation Tower", "Jungle Supplies Depot",
-                                    "Canopy Library"
+      map <string, bool> prisonLocations = {
+                                    {"Forest Clearing", 1}, {"Wilderness Training Ground", 1}, {"Outdoor Fitness Area", 1}, 
+                                    {"Rustic Workshop", 1}, {"Riverbank Laundry", 1}, {"Jungle Surveillance Center", 0}, 
+                                    {"Storage Hut", 1}, {"Deep Forest Solitude", 0}, {"Canopy Kitchen", 1}, 
+                                    {"Treetop Gathering Hall", 1}, {"Canopy Observation Tower", 0}, {"Jungle Supplies Depot", 1},
+                                    {"Canopy Library", 1}, {"Riverbank Bathhouse", 1}
                                     };
 
       // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
@@ -306,6 +326,17 @@ void createInfos( int prisonID = 1 )
       jungleCompound.registerDailyPrisonRoutine({22, 0, 22, 59, "Evening Roll Call"});
       jungleCompound.registerDailyPrisonRoutine({23, 0, 7, 59, "Lights Out"});
 
+      jungleCompound.registerRoutineToLocation("Morning Roll Call", "Treetop Gathering Hall");
+      jungleCompound.registerRoutineToLocation("Breakfast", "Forest Clearing");
+      jungleCompound.registerRoutineToLocation("Work Period", "");
+      jungleCompound.registerRoutineToLocation("Mid-day Roll Call", "Treetop Gathering Hall");
+      jungleCompound.registerRoutineToLocation("Free Period", "");
+      jungleCompound.registerRoutineToLocation("Dinner", "Forest Clearing");
+      jungleCompound.registerRoutineToLocation("Exercise Period", "Outdoor Fitness Area");
+      jungleCompound.registerRoutineToLocation("Shower", "Riverbank Bathhouse");
+      jungleCompound.registerRoutineToLocation("Evening Roll Call", "Treetop Gathering Hall");
+      jungleCompound.registerRoutineToLocation("Lights Out", "");
+
       // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
       for (int i=0; i < INMATESNUMBER; i++){
           jungleCompound.registerInmateInPrison(Inmate(inmateNames[i]));
@@ -313,7 +344,7 @@ void createInfos( int prisonID = 1 )
 
       // CADASTRANDO OS LOCAIS NA PRISÕES
       for (auto location : prisonLocations){
-          jungleCompound.registerLocationInPrison(location);
+          jungleCompound.registerLocationInPrison(location.first, location.second);
       }
       int startHour = jungleCompound.getDailyRoutineAtIndex(0).startHour;
       int startMinute = jungleCompound.getDailyRoutineAtIndex(0).startMinute;
@@ -327,12 +358,12 @@ void createInfos( int prisonID = 1 )
                                     "CAMEO", "JACKALL", 
                                     "ARNIE", "KRIMEWAVE", 
                                     "DOGEKIT", "PHIL"};
-        string prisonLocations[LOCATIONSNUMBER] = {
-                                        "Maximum Security Chow Hall", "Ironclad Exercise Yard", "Secure Metalshop", 
-                                        "Sanitation Chamber", "Prison Laundry Complex", "Surveillance Hub", 
-                                        "Contraband Vault", "Iron Isolation Unit", "Fortified Galley", 
-                                        "Warden's Briefing Chamber", "Iron Watchtower", "Ration Storage",  
-                                        "Ironbound Library"
+        map <string, bool> prisonLocations = {
+                                        {"Maximum Security Chow Hall", 1}, {"Ironclad Exercise Yard", 1}, {"Secure Metalshop", 1}, 
+                                        {"Sanitation Chamber", 1}, {"Prison Laundry Complex", 1}, {"Surveillance Hub", 0}, 
+                                        {"Contraband Vault", 1}, {"Iron Isolation Unit", 0}, {"Fortified Galley", 1}, 
+                                        {"Warden's Briefing Chamber", 1}, {"Iron Watchtower", 0}, {"Ration Storage", 1},  
+                                        {"Ironbound Library", 1}, {"Maximum Security Bathhouse", 1}
                                         };
 
         // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
@@ -356,7 +387,7 @@ void createInfos( int prisonID = 1 )
         // center perks: 
         hmpIrongate.registerDailyPrisonRoutine({9, 0, 9, 59, "Morning Roll Call"});
         hmpIrongate.registerDailyPrisonRoutine({10, 0, 10, 59, "Breakfast"});
-        hmpIrongate.registerDailyPrisonRoutine({11, 0, 13, 59, "Work / Leisure Period"});
+        hmpIrongate.registerDailyPrisonRoutine({11, 0, 13, 59, "Work Period"});
         hmpIrongate.registerDailyPrisonRoutine({14, 0, 14, 59, "Afternoon Roll Call"});
         hmpIrongate.registerDailyPrisonRoutine({15, 0, 15, 59, "Free Period"});
         hmpIrongate.registerDailyPrisonRoutine({16, 0, 16, 59, "Exercise Period"});
@@ -365,6 +396,17 @@ void createInfos( int prisonID = 1 )
         hmpIrongate.registerDailyPrisonRoutine({19, 0, 19, 59, "Evening Roll Call"});
         hmpIrongate.registerDailyPrisonRoutine({20, 0, 8, 59, "Lights Out"});
 
+        hmpIrongate.registerRoutineToLocation("Morning Roll Call", "Warden's Briefing Chamber");
+        hmpIrongate.registerRoutineToLocation("Breakfast", "Maximum Security Chow Hall");
+        hmpIrongate.registerRoutineToLocation("Work Period", "");
+        hmpIrongate.registerRoutineToLocation("Afternoon Roll Call", "Warden's Briefing Chamber");
+        hmpIrongate.registerRoutineToLocation("Free Period", "");
+        hmpIrongate.registerRoutineToLocation("Exercise Period", "Ironclad Exercise Yard");
+        hmpIrongate.registerRoutineToLocation("Evening Meal", "Maximum Security Chow Hall");
+        hmpIrongate.registerRoutineToLocation("Shower Block", "Maximum Security Bathhouse");
+        hmpIrongate.registerRoutineToLocation("Evening Roll Call", "Warden's Briefing Chamber");
+        hmpIrongate.registerRoutineToLocation("Lights Out", "");
+
         // CADASTRANDO OS 10 PRISIONEIROS NAS PRISÕES
         for (int i=0; i < INMATESNUMBER; i++){
             hmpIrongate.registerInmateInPrison(Inmate(inmateNames[i]));
@@ -372,7 +414,7 @@ void createInfos( int prisonID = 1 )
 
         // CADASTRANDO OS LOCAIS NA PRISÕES
         for (auto location : prisonLocations){
-            hmpIrongate.registerLocationInPrison(location);
+            hmpIrongate.registerLocationInPrison(location.first, location.second);
         }
         int startHour = hmpIrongate.getDailyRoutineAtIndex(0).startHour;
         int startMinute = hmpIrongate.getDailyRoutineAtIndex(0).startMinute;

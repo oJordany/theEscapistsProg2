@@ -158,6 +158,18 @@ void Time::createTimeFile() const{
     clockThread.detach();
 }
 
+string Time::getCurrentRoutineName(){
+    string currentRoutineName = "";
+    for (int i = 0; i <= routinesNumber; i++){
+        if  (dailyRoutinePtr != 0 && hour >= dailyRoutinePtr[i].startHour && hour <= dailyRoutinePtr[i].endHour &&
+            minute >= dailyRoutinePtr[i].startMinute && minute <= dailyRoutinePtr[i].endMinute){
+            currentRoutineName = dailyRoutinePtr[i].routineName;
+            break;
+        }
+    }
+    return currentRoutineName;
+}
+
 void Time::displayTime(){ 
     setfill(' ');
     for (int i = 0; i <= routinesNumber; i++){

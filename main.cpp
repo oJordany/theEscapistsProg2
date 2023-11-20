@@ -14,6 +14,7 @@ using std::system;
 #include "Prison.h"
 #include "Data.h"
 #include "util.h"
+#include "BotInmate.h"
 
 #include <chrono>
 using std::chrono::milliseconds;
@@ -63,8 +64,19 @@ int main(){
     int option2 = -1;
     int option3 = -1;
     bool hasCheckpoint = false;
+    string nameLocation;
     Prison *prison;
     prison = 0;
+    BotInmate bi = BotInmate();
+    bi.moveTo("Meeting Room");
+    cout << bi.getCurrentLocation() << "\n";
+    // string itemName;
+    // bi.showRequest();
+    // cin >> itemName;
+    // bi.completeRequest(itemName);
+    // bi.showRequest();
+    // cout << bi;
+
     // map<string, string> tasksInfos;
     // string inmateNames[10] = {"KEV", "KELAUCE", "CLIVE", "CARL", "CAMEO", "JACKALL", "ARNIE", "KRIMEWAVE", "DOGEKIT", "PHIL"};
     // string prisonLocations[12] = {"Dining Room", "Gymnasium", "Exercise Room", 
@@ -147,13 +159,13 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
-    showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
-    thread blinkThread(blinkMessage);                       // Pisca mensagem de start
+    // showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
+    // thread blinkThread(blinkMessage);                       // Pisca mensagem de start
 
-    cin.ignore();                                           // Aguarda a entrada do usuário
+    // cin.get();                                           // Aguarda a entrada do usuário
 
-    stopFlag = true;                                        // Sinaliza a thread para parar
-    blinkThread.join();                                     // Aguarda a thread piscante terminar
+    // stopFlag = true;                                        // Sinaliza a thread para parar
+    // blinkThread.join();                                     // Aguarda a thread piscante terminar
     /********************************************* MENU DE SELEÇÃO DA PRISÃO ****************************************/
     while(option != 0){
         option2 = -1;
@@ -210,15 +222,19 @@ int main(){
                                         if (!inputFile.is_open()) {
                                             cerr << "Erro ao abrir aquivo para leitura!" << '\n';
                                         }else{
+                                            bool clear = true;
                                             inputFile >> savedPrisons;
                                             prison = new Prison(savedPrisons["centerPerks"]);
                                             int startHour = prison->getDailyRoutineAtIndex(0).startHour;
                                             int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
                                             prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                            
 
                                             /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
                                             while(option3 != 0){
-                                                cout << "\nEscolha uma opção [0 para voltar]: ";
+                                                cout << "\n[1] - Exibir todos os locais da prisão\n";
+                                                cout << "[2] - Exibir informações do local\n";
+                                                cout << "Escolha uma opção [0 para voltar]: ";
                                                 cin >> option3;
                                                 switch (option3)
                                                 {   
@@ -230,7 +246,14 @@ int main(){
                                                         option2 = 0;
                                                         break;
                                                     case 1:
-                                                        cout << "Testando";
+                                                        // EXIBINDO TODOS OS LOCAIS DA PRISÃO
+                                                        prison->displayAllPrisonLocations();
+                                                        break;
+                                                    case 2:
+                                                        cout << "Insira o nome do local: ";
+                                                        cin.ignore();
+                                                        std::getline(cin, nameLocation);
+                                                        prison->viewLocationInformation(nameLocation);
                                                         break;
                                                     default:
                                                         cout << "Insira uma opção válida!\n";
@@ -251,11 +274,16 @@ int main(){
                                                             savedPrisons["centerPerks"]["prisonTimePtr"]["startMinute"],
                                                             savedPrisons["centerPerks"]["prisonTimePtr"]["dayCounter"],
                                                             savedPrisons["centerPerks"]["prisonTimePtr"]["currentDay"]);
-
+                                    
                                     /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
                                     while(option3 != 0){
-                                        returnSystem = system("clear");
-                                        cout << "\nEscolha uma opção [0 para voltar]: ";
+                                        bool clear = true;
+                                        if (clear) 
+                                            returnSystem = system("clear");
+                                        cout << "\n[1] - Exibir todos os locais da prisão\n";
+                                        cout << "[2] - Exibir informações do local\n";
+                                        cout << "Escolha uma opção [0 para voltar]: ";
+                                        cin >> option3;
                                         cin >> option3;                             // Seleção das opções de ação na prisão
                                         switch (option3)
                                         {   
@@ -267,7 +295,16 @@ int main(){
                                                 option2 = 0;
                                                 break;
                                             case 1:
-                                                cout << "Testando";
+                                                // EXIBINDO TODOS OS LOCAIS DA PRISÃO
+                                                prison->displayAllPrisonLocations();
+                                                clear = false;
+                                                break;
+                                            case 2:
+                                                cout << "Insira o nome do local: ";
+                                                cin.ignore();
+                                                std::getline(cin, nameLocation);
+                                                prison->viewLocationInformation(nameLocation);
+                                                clear = false;
                                                 break;
                                             default:
                                                 cout << "Insira uma opção válida!\n";
@@ -302,14 +339,19 @@ int main(){
                             if (!inputFile.is_open()) {
                                 cerr << "Erro ao abrir aquivo para leitura!" << '\n';
                             }else{
+                                bool clear = true;
                                 inputFile >> savedPrisons;
                                 prison = new Prison(savedPrisons["centerPerks"]);
                                 int startHour = prison->getDailyRoutineAtIndex(0).startHour;
                                 int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
                                 prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+                                
                                 while(option3 != 0){
-                                    returnSystem = system("clear");
-                                    cout << "\nEscolha uma opção [0 para voltar]: ";
+                                    if (clear) 
+                                        returnSystem = system("clear");
+                                    cout << "\n[1] - Exibir todos os locais da prisão\n";
+                                    cout << "[2] - Exibir informações do local\n";
+                                    cout << "Escolha uma opção [0 para voltar]: ";
                                     cin >> option3;
                                     switch (option3)
                                     {   
@@ -321,7 +363,16 @@ int main(){
                                             option2 = 0;
                                             break;
                                         case 1:
-                                            cout << "Testando";
+                                            // EXIBINDO TODOS OS LOCAIS DA PRISÃO
+                                            prison->displayAllPrisonLocations();
+                                            clear = false;
+                                            break;
+                                        case 2:
+                                            cout << "Insira o nome do local: ";
+                                            cin.ignore();
+                                            std::getline(cin, nameLocation);
+                                            prison->viewLocationInformation(nameLocation);
+                                            clear = false;
                                             break;
                                         default:
                                             cout << "Insira uma opção válida!\n";

@@ -52,6 +52,7 @@ class Time{
         inline string getFileName(){return timeName;}
         inline static int getHour(){return hour;}
         inline static int getMinute(){return minute;}
+        static string getCurrentRoutineName();
         inline static bool getCurrentDay(){return currentDay;}
         inline static bool getDayCounter(){return dayCounter;}
         inline static bool getGameIsRunning(){return gameIsRunning;}

@@ -1,4 +1,5 @@
 #include <iostream>
+using std::ostream;
 using std::cout;
 
 #include <iomanip>
@@ -24,7 +25,7 @@ int Inmate::nextId = 1;
 map <int, string> Inmate::inmateMap;
 
 Inmate::Inmate()
-:name("Player"), health(100), energy(100), strength(40), speed(40), intelligence(40), money(0){
+:name("Player"), health(100), energy(100), strength(40), speed(40), intelligence(40), money(0), currentLocation(""){
     Inmate::inmateMap[nextId++] = name;
 }
 
@@ -42,6 +43,7 @@ Inmate::Inmate( string name,
     setSpeed(speed);
     setIntelligence(intelligence);
     setMoney(money);
+    currentLocation = "";
     Inmate::inmateMap[nextId++] = this->name;
 }
 
@@ -55,6 +57,7 @@ Inmate::Inmate( const Inmate& other )
     this->intelligence = other.intelligence;
     this->money = other.money;
     Inmate::inmateMap[nextId++] = this->name;
+    this->currentLocation = other.currentLocation;
 }
 
 void Inmate::showPercentageBar(int percentage) const{
@@ -246,6 +249,7 @@ ostream &operator<<(ostream &out, const Inmate &inmate){
     out << "Speed: " << inmate.getSpeed() << "\n";
     out << "Intelligence: " << inmate.getIntelligence() << "\n";
     out << "Money: " << inmate.getIntelligence() << "\n";
+    out << "Current Location: " << inmate.currentLocation << "\n";
 
     return out;
 }
@@ -259,6 +263,7 @@ const Inmate & Inmate::operator=(const Inmate &inmateOnTheRight){
         this->speed = inmateOnTheRight.speed;
         this->intelligence = inmateOnTheRight.intelligence;
         this->money = inmateOnTheRight.money;
+        this->currentLocation = inmateOnTheRight.currentLocation;
     }
 
     return *this;

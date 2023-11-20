@@ -11,9 +11,13 @@ using std::vector;
 #include "Inmate.h"
 #include "JobBoard.h"
 #include "Data.h"
+#include "BotInmate.h"
 
 #include <iostream>
 using std::ostream;
+
+#include <map>
+using std::map;
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -35,7 +39,9 @@ class Prison{
 
         void registerDailyPrisonRoutine(Routine);
         void registerInmateInPrison(const Inmate &);
-        void registerLocationInPrison(string);
+        void registerBotInmateInPrison(const BotInmate &);
+        void registerLocationInPrison(string, bool);
+        void registerRoutineToLocation(string, string);
 
         void displayDailyRoutine() const;
         void displayAllRegisteredInmates() const;
@@ -44,12 +50,16 @@ class Prison{
         void setLevel(int);
         void setDailyRoutineSize(int);
         void setRegisteredInmatesSize(int);
-        void setLocationsSize(int);
+        // void setLocationsSize(int);
 
         void startPrisonTime(const Data &, int, int, int=0, int=0);
         void assignTasksToInmates();
         void displayPrisonJobBoard() const;
         void viewPrisonTaskDetails(int) const;
+        void viewLocationInformation(string);
+        void viewAllBotInmates() const;
+        void viewRoutinesToLocationsMap() const;
+        void moveBotInmates();
 
         Routine getDailyRoutineAtIndex(int) const;
         inline int getNextEntrieInDailyRoutine() const {return nextEntrieInDailyRoutine;}
@@ -60,10 +70,13 @@ class Prison{
         bool operator!() const;
 
     private:
+        bool stopBotInmates;
         string prisonName; 
         Routine *dailyRoutinePtr;
         vector <Inmate *> registeredInmates;
-        string *locationsPtr;
+        vector <BotInmate *> registeredBotInmates;
+        map <string, bool> locations;
+        map <string, string> routinesToLocations;
 
         Time *prisonTimePtr;
         Data prisonDate;
@@ -74,11 +87,11 @@ class Prison{
         int dailyRoutineSize;
         int nextEntrieInDailyRoutine;
 
-        int locationsSize;
-        int nextEntrieInLocations;
+        // int locationsSize;
+        // int nextEntrieInLocations;
 
         void allocateDailyPrisonRoutine(Routine);
-        void allocateLocationInPrison(string);
+        // void allocateLocationInPrison(string);
         int searchInsertIndex(Routine);
 };
 
