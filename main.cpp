@@ -67,9 +67,9 @@ int main(){
     string nameLocation;
     Prison *prison;
     prison = 0;
-    BotInmate bi = BotInmate();
-    bi.moveTo("Meeting Room");
-    cout << bi.getCurrentLocation() << "\n";
+    // BotInmate bi = BotInmate();
+    // bi.moveTo("Meeting Room");
+    // cout << bi.getCurrentLocation() << "\n";
     // string itemName;
     // bi.showRequest();
     // cin >> itemName;
@@ -158,14 +158,18 @@ int main(){
     // cout << (centerPerks != stalagFlucht) << "\n";
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
+    string teste = "TESTANDO";
+    toLowerCase(teste);
+    cout << teste;
 
-    // showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
-    // thread blinkThread(blinkMessage);                       // Pisca mensagem de start
+    showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
+    thread blinkThread(blinkMessage);                       // Pisca mensagem de start
 
-    // cin.get();                                           // Aguarda a entrada do usuário
+    cin.get();                                           // Aguarda a entrada do usuário
 
-    // stopFlag = true;                                        // Sinaliza a thread para parar
-    // blinkThread.join();                                     // Aguarda a thread piscante terminar
+    stopFlag = true;                                        // Sinaliza a thread para parar
+    blinkThread.join();                                     // Aguarda a thread piscante terminar
+
     /********************************************* MENU DE SELEÇÃO DA PRISÃO ****************************************/
     while(option != 0){
         option2 = -1;

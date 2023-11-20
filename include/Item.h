@@ -10,32 +10,33 @@ using std::ostream;
 #include <vector>
 using std::vector;
 
-#include 
+#include "Inmate.h"
+
+#include <climits>  // para usar INT_MAX
 
 class Item{
     friend ostream &operator<<(ostream &, const Item &);
     public:
         Item();
-        Item(string, string, int);
+        Item(string, const Inmate&, string="",  int=5);
         Item(const Item&);
         ~Item();
         const Item & operator=(const Item &);
         bool operator==(const Item &) const;
         bool operator!=(const Item &) const;
         bool operator!() const;
-        void catchItem(string currentLocation);
-        void dropItem(string nameItem, string currentLocation);
+        void catchItem(string, Inmate);
+        void dropItem(string, string);
+        void setItemName(string);
+        void setDurability(int=INT_MAX);
     private:
         string itemName;
         int durability;
+        string ownerName;
         string currentLocation;
         const static int MAXNUMITEMS = 20;
         const static int MAXNUMITEMTYPES = 18;
-        const static *ITEMTYPESPTR[MAXNUMITEMTYPES] = {"Shovel", "Brass Knuckles", "Key",
-                                                    "Correspondence Letter", "Fabric", "Sheet Metal",
-                                                    "Book", "Guard Clothing", "Prisoner Clothes", "Hoe",
-                                                    "Mop", "Knife", "Master Key", 
-                                                    "Pliers", "Tool Handle"};
+        const static *ITEMTYPESPTR[MAXNUMITEMTYPES];
         static int itemsNumber;
         string drawItem() const;
 }

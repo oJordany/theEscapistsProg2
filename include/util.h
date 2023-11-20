@@ -33,6 +33,9 @@ using std::chrono::milliseconds;
 #include <thread>
 using std::this_thread::sleep_for;
 
+#include <cctype>
+using std::tolower;
+
 #include "Data.h"
 #include "Inmate.h"
 #include "BotInmate.h"
@@ -48,6 +51,11 @@ string strip(const string& str) {
         return "";
 
     return str.substr(first, (last - first + 1));
+}
+
+string toLowerCase(string str){
+    for (auto &character : str) character = tolower(character);
+    return str;
 }
 
 json loadSaves( string nameFile )
