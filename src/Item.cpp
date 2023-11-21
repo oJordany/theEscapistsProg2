@@ -22,7 +22,16 @@ using std::time;
 
 #include <climits>
 
-itemsNumber = 0;
+#define RESET   "\033[0m"
+#define BLACK   "\033[30m"
+#define RED     "\033[31m"      
+#define GREEN   "\033[32m"      
+#define YELLOW  "\033[33m"      
+#define BLUE    "\033[34m"      
+#define MAGENTA "\033[35m"      
+#define CYAN    "\033[36m"      
+#define WHITE   "\033[37m" 
+
 const string Item::ITEMTYPESPTR[MAXNUMITEMTYPES] = {"Shovel", "Brass Knuckles", "Key",
                                                     "Correspondence Letter", "Fabric", "Sheet Metal",
                                                     "Book", "Guard Clothing", "Prisoner Clothes", "Hoe",
@@ -31,16 +40,14 @@ const string Item::ITEMTYPESPTR[MAXNUMITEMTYPES] = {"Shovel", "Brass Knuckles", 
 
 Item::Item(){
     itemName = drawItem();
-    durability = 5;
+    durability = INT_MAX;
     currentLocation = "";
-    itemsNumber++;
 }
 
 Item::Item(string item, const Inmate &owner, string locationName, int durability)
 :currentLocation(locationName), ownerName(owner.getName()){
     setItemName(item);
     setDurability(durability);
-    itemsNumber++
 }
 
 Item::Item(const Item &other){
@@ -71,6 +78,29 @@ void Item::setItemName(string item){
         this->itemName = item;
     else   
         this->itemName = drawItem();
+}
+
+void Item::catchItem(const Inmate &inmate){
+    if (ownerName.empty()){
+        ownerName = inmate.getName();
+        currentLocation = inmate.getCurrentLocation();
+    }else{
+        cout << RED << "This item belongs to " << ownerName << RESET << "\n";
+    }
+}
+
+void Item::giveTo(const Inmate &inmate){
+    ownerName = inmate.getName();
+    currentLocation = inmate.getCurrentLocation();
+}
+
+void Item::drop(string location){
+    currentLocation = location;
+    ownerName = "";
+}
+
+void Item::viewInfos() const{
+    cout << 
 }
 
 string Item::drawItem() const{

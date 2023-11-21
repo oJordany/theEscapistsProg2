@@ -6,11 +6,10 @@ using std::fstream;
 using std::ifstream;
 using std::ofstream;
 
-#include "include/util.h"
+#include <stdexcept>
 
 int main() {
-    string teste = "TESTANDO";
-    cout << toLowerCase(teste) << "\n";
-
+    std::cout << "⛏️" << " Pá" << std::endl;
+    std::cout << "⛏️" << " Pá" << std::endl;
     return 0;
 }

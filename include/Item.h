@@ -25,19 +25,23 @@ class Item{
         bool operator==(const Item &) const;
         bool operator!=(const Item &) const;
         bool operator!() const;
-        void catchItem(string, Inmate);
-        void dropItem(string, string);
+        void catchItem(const Inmate&);
+        void giveTo(const Inmate&);
+        void drop(string);
+        void viewInfos() const;
         void setItemName(string);
         void setDurability(int=INT_MAX);
+        inline void setCurrentLocation(string location){currentLocation = location;};
+        inline string getItemName() const {return itemName;};
+        inline int getDurability() const {return durability;};
+        inline string currentLocation() const {return currentLocation;};
     private:
         string itemName;
         int durability;
         string ownerName;
         string currentLocation;
-        const static int MAXNUMITEMS = 20;
         const static int MAXNUMITEMTYPES = 18;
         const static *ITEMTYPESPTR[MAXNUMITEMTYPES];
-        static int itemsNumber;
         string drawItem() const;
 }
 
