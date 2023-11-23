@@ -11,28 +11,19 @@ using std::ofstream;
 #include <cstdlib>
 using std::system;
 
+#include <map>
+using std::map;
 
 int main() {
-    // Nome do arquivo que você deseja imprimir
-    std::string nomeArquivo = "Shovel.txt";
+     std::map<int, std::string> meuMapa;
 
-    // Cria um objeto ifstream para ler o arquivo
-    std::ifstream arquivo(nomeArquivo);
+    // Preencher o mapa com alguns valores de exemplo
+    meuMapa[1] = "um";
+    meuMapa[2] = "dois";
+    meuMapa[3] = "três";
+    meuMapa[4] = "quatro";
 
-    // Verifica se o arquivo foi aberto corretamente
-    if (!arquivo.is_open()) {
-        std::cerr << "Não foi possível abrir o arquivo: " << nomeArquivo << std::endl;
-        return 1; // Retorna um código de erro
-    }
-
-    // Lê e imprime o conteúdo do arquivo linha por linha
-    std::string linha;
-    while (std::getline(arquivo, linha)) {
-        std::cout << linha << std::endl;
-    }
-
-    // Fecha o arquivo
-    arquivo.close();
+    cout << meuMapa.end()->first <<  "\n";
 
     return 0;
 }

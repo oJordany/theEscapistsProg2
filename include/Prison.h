@@ -56,7 +56,8 @@ class Prison{
         void assignTasksToInmates();
         void displayPrisonJobBoard() const;
         void viewPrisonTaskDetails(int) const;
-        void viewLocationInformation(string);
+        void viewLocationInformation(string) const;
+        void viewAllLocationInformation() const;
         void viewAllBotInmates() const;
         void viewRoutinesToLocationsMap() const;
         void moveBotInmates();

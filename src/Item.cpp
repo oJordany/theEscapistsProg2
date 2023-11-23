@@ -32,11 +32,11 @@ using std::time;
 #define CYAN    "\033[36m"      
 #define WHITE   "\033[37m" 
 
-const string Item::ITEMTYPESPTR[MAXNUMITEMTYPES] = {"Shovel", "Brass Knuckles", "Key",
-                                                    "Correspondence Letter", "Fabric", "Sheet Metal",
-                                                    "Book", "Guard Outfit", "Inmate Outfit", "Hoe",
-                                                    "Mop", "Knife", "Master Key", 
-                                                    "Pliers", "Tool Handle"};
+const string Item::ITEMTYPESPTR[MAXNUMITEMTYPES] = {"shovel", "brass knuckles", "key",
+                                                    "correspondence letter", "fabric", "sheet metal",
+                                                    "book", "guard outfit", "inmate outfit", "hoe",
+                                                    "mop", "knife", "master key", 
+                                                    "pliers", "tool handle", "soap", "molten plastic"};
 
 Item::Item(){
     itemName = drawItem();
@@ -100,13 +100,20 @@ void Item::drop(string location){
 }
 
 void Item::viewInfos() const{
-    cout << 
+    showFigure("Items/"+itemName);
+    cout << "ℹ️ | Name: " << itemName << "\n";
+    cout << "ℹ️ | Durability: " << durability << "\n";
+    cout << "ℹ️ | Owner Name: " << ownerName << "\n";
+    cout << "ℹ️ | Current Location: " << currentLocation << "\n";
 }
 
 string Item::drawItem() const{
     srand(time(0));
 
     int randomIndex = rand() % MAXNUMITEMTYPES;
+
+    while(ITEMTYPESPTR[randomIndex] == "Key")
+        randomIndex = rand() % MAXNUMITEMTYPES;
 
     return ITEMTYPESPTR[randomIndex];
 }

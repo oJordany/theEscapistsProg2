@@ -64,6 +64,7 @@ int main(){
     int option2 = -1;
     int option3 = -1;
     bool hasCheckpoint = false;
+    bool clear;
     string nameLocation;
     Prison *prison;
     prison = 0;
@@ -158,9 +159,6 @@ int main(){
     // cout << (centerPerks != stalagFlucht) << "\n";
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
-    string teste = "TESTANDO";
-    toLowerCase(teste);
-    cout << teste;
 
     showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
     thread blinkThread(blinkMessage);                       // Pisca mensagem de start
@@ -268,6 +266,7 @@ int main(){
                                     }
                                     break;
                                 case 2:                                         // Continua o jogo a partir do que tava salvo
+                                    clear = true;
                                     option3 = -1;
                                     cout << "Continuando jogo...\n";
                                     prison = new Prison(savedPrisons["centerPerks"]);
@@ -281,13 +280,12 @@ int main(){
                                     
                                     /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
                                     while(option3 != 0){
-                                        bool clear = true;
                                         if (clear) 
                                             returnSystem = system("clear");
                                         cout << "\n[1] - Exibir todos os locais da prisão\n";
                                         cout << "[2] - Exibir informações do local\n";
+                                        cout << "[3] - Exibir informações de todos os locais\n";
                                         cout << "Escolha uma opção [0 para voltar]: ";
-                                        cin >> option3;
                                         cin >> option3;                             // Seleção das opções de ação na prisão
                                         switch (option3)
                                         {   
@@ -308,6 +306,10 @@ int main(){
                                                 cin.ignore();
                                                 std::getline(cin, nameLocation);
                                                 prison->viewLocationInformation(nameLocation);
+                                                clear = false;
+                                                break;
+                                            case 3:
+                                                prison->viewAllLocationInformation();
                                                 clear = false;
                                                 break;
                                             default:
@@ -343,7 +345,7 @@ int main(){
                             if (!inputFile.is_open()) {
                                 cerr << "Erro ao abrir aquivo para leitura!" << '\n';
                             }else{
-                                bool clear = true;
+                                clear = true;
                                 inputFile >> savedPrisons;
                                 prison = new Prison(savedPrisons["centerPerks"]);
                                 int startHour = prison->getDailyRoutineAtIndex(0).startHour;
