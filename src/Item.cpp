@@ -34,7 +34,7 @@ using std::time;
 
 const string Item::ITEMTYPESPTR[MAXNUMITEMTYPES] = {"Shovel", "Brass Knuckles", "Key",
                                                     "Correspondence Letter", "Fabric", "Sheet Metal",
-                                                    "Book", "Guard Clothing", "Prisoner Clothes", "Hoe",
+                                                    "Book", "Guard Outfit", "Inmate Outfit", "Hoe",
                                                     "Mop", "Knife", "Master Key", 
                                                     "Pliers", "Tool Handle"};
 
