@@ -100,11 +100,29 @@ void Item::drop(string location){
 }
 
 void Item::viewInfos() const{
-    showFigure("Items/"+itemName);
-    cout << "ℹ️ | Name: " << itemName << "\n";
-    cout << "ℹ️ | Durability: " << durability << "\n";
-    cout << "ℹ️ | Owner Name: " << ownerName << "\n";
-    cout << "ℹ️ | Current Location: " << currentLocation << "\n";
+    ifstream inputFile("../utils/Items/"+figureName);
+    int counter = 0;
+    int startInfo;
+    if (inputFile.is_open()){
+        string line;
+        while (getline(inputFile, line))
+            counter++;
+        startInfo = (counter / 2) - 1;
+        counter = 0;
+        while (getline(inputFile, line)){
+            counter++;
+            if (counter == startInfo)
+                cout << line << "ℹ️ | Name: " << itemName << "\n";
+            else if(counter == startInfo+1)
+                cout << line << "ℹ️ | Owner Name: " << ownerName << "\n";
+            else if(counter == startInfo+1)
+                cout << line << "ℹ️ | Current Location: " << Current Location << "\n";
+        }
+
+        inputFile.close();
+    }else{
+        cout << "Erro ao abrir o arquivo para leitura!\n";
+    }
 }
 
 string Item::drawItem() const{

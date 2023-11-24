@@ -358,7 +358,7 @@ void Prison::moveBotInmates(){
     thread moveBotInmatesThread([this](){
         map <string, bool> releasedLocations;
         for (auto location: locations){
-            if (location.second == false){
+            if (location.second == true){
                 releasedLocations[location.first] = location.second;
             }
         }
@@ -369,27 +369,34 @@ void Prison::moveBotInmates(){
         bool random;
         while (!stopBotInmates){
             destination = routinesToLocations[Time::getCurrentRoutineName()];
+            if (Time::getCurrentRoutineName() == "Lights Out")
+                random = false;
             if (destination != "" && destination != lastDestination){
                 random = false;
                 for (auto botInmate : registeredBotInmates){
                     botInmate->moveTo(destination);
+                    locations[botInmate->getName()+"'s" + " room"] = 1;
                     // cout << *botInmate << "\n";
                 }
                 lastDestination = destination;
-            }else if (destination == "" && !random && Time::getCurrentRoutineName() == "Lights Out"){
+            }else if (destination == "" && !random){
                 random = true;
-                for (auto botInmate : registeredBotInmates){
-                    auto it = releasedLocations.begin();
-                    advance(it, rand() % releasedLocations.size());
-                    destination = it->first;
-                    botInmate->moveTo(destination);
-                    // cout << *botInmate << "\n";
+                if (Time::getCurrentRoutineName() != "Lights Out"){
+                    for (auto botInmate : registeredBotInmates){
+                        auto it = releasedLocations.begin();
+                        advance(it, rand() % releasedLocations.size());
+                        destination = it->first;
+                        botInmate->moveTo(destination);
+                        locations[botInmate->getName()+"'s" + " room"] = 1;
+                        // cout << *botInmate << "\n";
+                    }
+                } else {
+                    for (auto botInmate : registeredBotInmates){
+                        botInmate->moveTo(botInmate->getName()+"'s" + " room");
+                        locations[botInmate->getName()+"'s" + " room"] = 0;
+                    }
                 }
                 lastDestination = destination;
-            }else if (destination == "Lights Out"){
-                for (auto botInmate : registeredBotInmates){
-                    botInmate->moveTo(botInmate->getName()+"'s" + " room");
-                }
             }
         }
     });

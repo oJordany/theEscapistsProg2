@@ -14,16 +14,11 @@ using std::system;
 #include <map>
 using std::map;
 
+#include "../include/Item.h"
+
 int main() {
-     std::map<int, std::string> meuMapa;
+    Item teste = Item;
 
-    // Preencher o mapa com alguns valores de exemplo
-    meuMapa[1] = "um";
-    meuMapa[2] = "dois";
-    meuMapa[3] = "três";
-    meuMapa[4] = "quatro";
-
-    cout << meuMapa.end()->first <<  "\n";
-
+    teste.viewInfos();
     return 0;
 }

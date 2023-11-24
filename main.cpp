@@ -15,6 +15,7 @@ using std::system;
 #include "Data.h"
 #include "util.h"
 #include "BotInmate.h"
+#include "Item.h"
 
 #include <chrono>
 using std::chrono::milliseconds;
@@ -34,6 +35,7 @@ using std::vector;
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
+
 
 bool stopFlag = false;
 
@@ -59,6 +61,8 @@ void blinkMessage() {
 }
 
 int main(){
+    Item teste = Item;
+    teste.viewInfos();
     int returnSystem;
     int option = -1;
     int option2 = -1;
@@ -236,6 +240,7 @@ int main(){
                                             while(option3 != 0){
                                                 cout << "\n[1] - Exibir todos os locais da prisão\n";
                                                 cout << "[2] - Exibir informações do local\n";
+                                                cout << "[3] - Exibir informações de todos os locais\n";
                                                 cout << "Escolha uma opção [0 para voltar]: ";
                                                 cin >> option3;
                                                 switch (option3)
@@ -256,6 +261,9 @@ int main(){
                                                         cin.ignore();
                                                         std::getline(cin, nameLocation);
                                                         prison->viewLocationInformation(nameLocation);
+                                                        break;
+                                                    case 3:
+                                                        prison->viewAllLocationInformation();
                                                         break;
                                                     default:
                                                         cout << "Insira uma opção válida!\n";
@@ -357,6 +365,7 @@ int main(){
                                         returnSystem = system("clear");
                                     cout << "\n[1] - Exibir todos os locais da prisão\n";
                                     cout << "[2] - Exibir informações do local\n";
+                                    cout << "[3] - Exibir informações de todos os locais\n";
                                     cout << "Escolha uma opção [0 para voltar]: ";
                                     cin >> option3;
                                     switch (option3)
@@ -378,6 +387,10 @@ int main(){
                                             cin.ignore();
                                             std::getline(cin, nameLocation);
                                             prison->viewLocationInformation(nameLocation);
+                                            clear = false;
+                                            break;
+                                        case 3:
+                                            prison->viewAllLocationInformation();
                                             clear = false;
                                             break;
                                         default:

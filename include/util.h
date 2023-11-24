@@ -244,6 +244,7 @@ void createInfos( int prisonID = 1 )
       // REGISTRANDO CADA ROTINA NA ROTINA DIÁRIA DA PRISÃO
       // *O método registerDailyPrisonRoutine() já ordena as rotinas por horário automaticamente*
       // center perks: 
+      centerPerks.registerDailyPrisonRoutine({0, 0, 4, 59, "Lights Out"});
       centerPerks.registerDailyPrisonRoutine({5, 0, 5, 59, "Wake Up Call, Roll Call"});
       centerPerks.registerDailyPrisonRoutine({6, 0, 6, 59, "Breakfast Time"});
       centerPerks.registerDailyPrisonRoutine({9, 0, 9, 59, "Exercise Time"});
@@ -255,7 +256,7 @@ void createInfos( int prisonID = 1 )
       centerPerks.registerDailyPrisonRoutine({16, 0, 16, 59, "Shower Time"});
       centerPerks.registerDailyPrisonRoutine({17, 0, 17, 59, "Dinner Time"});
       centerPerks.registerDailyPrisonRoutine({18, 0, 18, 59, "Free Time"});
-      centerPerks.registerDailyPrisonRoutine({19, 0, 4, 59, "Lights Out"});
+      centerPerks.registerDailyPrisonRoutine({19, 0, 23, 59, "Lights Out"});
 
       centerPerks.registerRoutineToLocation("Wake Up Call, Roll Call", "Meeting Room");
       centerPerks.registerRoutineToLocation("Breakfast Time", "Dining Room");

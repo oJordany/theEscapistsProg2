@@ -29,12 +29,10 @@ class Item{
         void giveTo(const Inmate&);
         void drop(string);
         void viewInfos() const;
-        void setItemName(string);
-        void setDurability(int=INT_MAX);
         inline void setCurrentLocation(string location){currentLocation = location;};
         inline string getItemName() const {return itemName;};
         inline int getDurability() const {return durability;};
-        inline string currentLocation() const {return currentLocation;};
+        inline string getCurrentLocation() const {return currentLocation;};
     private:
         string itemName;
         int durability;
@@ -43,6 +41,8 @@ class Item{
         const static int MAXNUMITEMTYPES = 18;
         const static *ITEMTYPESPTR[MAXNUMITEMTYPES];
         string drawItem() const;
+        void setItemName(string);
+        void setDurability(int=INT_MAX);
 }
 
 #endif //ITEM_H
