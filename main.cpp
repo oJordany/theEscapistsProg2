@@ -61,7 +61,7 @@ void blinkMessage() {
 }
 
 int main(){
-    Item teste = Item;
+    Item teste;
     teste.viewInfos();
     int returnSystem;
     int option = -1;

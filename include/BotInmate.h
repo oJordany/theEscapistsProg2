@@ -15,7 +15,7 @@ using std::map;
 using std::vector;
 
 #include "Inmate.h"
-
+#include "Item.h"
 struct Request {
     string description;
     string itemName;
@@ -41,9 +41,10 @@ class BotInmate: public Inmate
         bool operator!=(const BotInmate &) const;
         bool operator!() const;
         void showRequest() const;
-        bool completeRequest(string);
+        bool completeRequest(Item);
     private:
-        static vector <Request> REQUESTS;
+        const static int MAXNUMREQUESTS = ;
+        static Request requests[];
         const double REWARDVALUE = 5.0;
         Request request;
         Request drawRequest() const;

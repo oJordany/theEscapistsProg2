@@ -224,7 +224,7 @@ void createInfos( int prisonID = 1 )
                                             {"Cleaning Room", 1}, {"Laundry", 1}, {"Security Room", 0}, 
                                             {"Deposit", 1}, {"Isolation", 0}, {"Kitchen", 1}, 
                                             {"Meeting Room", 1}, {"Watch-tower", 0}, {"Pantry", 1}, {"Library", 1},
-                                            {"Shower Room", 1}};
+                                            {"Shower Room", 1}, {"Prison Gate", 0}};
 
       // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
       loadConfig(tasksInfos, "../utils/configs.txt");

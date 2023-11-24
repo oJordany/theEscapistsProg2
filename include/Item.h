@@ -18,7 +18,7 @@ class Item{
     friend ostream &operator<<(ostream &, const Item &);
     public:
         Item();
-        Item(string, const Inmate&, string="",  int=5);
+        Item(string, const Inmate&, string="");
         Item(const Item&);
         ~Item();
         const Item & operator=(const Item &);
@@ -31,18 +31,17 @@ class Item{
         void viewInfos() const;
         inline void setCurrentLocation(string location){currentLocation = location;};
         inline string getItemName() const {return itemName;};
-        inline int getDurability() const {return durability;};
         inline string getCurrentLocation() const {return currentLocation;};
     private:
         string itemName;
-        int durability;
         string ownerName;
         string currentLocation;
-        const static int MAXNUMITEMTYPES = 18;
-        const static *ITEMTYPESPTR[MAXNUMITEMTYPES];
+        const static int MAXNUMITEMTYPES = 24;
+        const static string ITEMTYPESPTR[MAXNUMITEMTYPES];
         string drawItem() const;
         void setItemName(string);
-        void setDurability(int=INT_MAX);
-}
+        string strip(const string&) const;
+        string toLowerCase(string) const;
+};
 
 #endif //ITEM_H

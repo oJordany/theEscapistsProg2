@@ -10,7 +10,11 @@ using std::string
 using std::ostream;
 using std::out;
 
-class PlayerInmate{
+#include "Item.h"
+#include "BotInmate.h"
+
+class PlayerInmate: public Inmate
+{
     friend ostream &operator<<(ostream &, const PlayerInmate &);
     public:
         PlayerInmate();
@@ -27,10 +31,20 @@ class PlayerInmate{
         bool operator==(const PlayerInmate &) const;
         bool operator!=(const PlayerInmate &) const;
         bool operator!() const;
+        void refreshStoredItemsLocations();
+        void refreshStoredItemsLocations();
+        void addItem(const Item&);
+        const Item& dropItem(int);
+        void showInventory();
+        const Item& giveItemTo(const BotInmate&);
+        void 
+        void showAcceptedRequests() const;
     private:
+        int totalItems;
+        Item outfit;
         const static MAXNUMITEMS = 6;
-        // Item *itemStorage[MAXNUMITEMS];
-        vector <*BotInmate> requestsAccepted;
+        Item storedItems[MAXNUMITEMS];
+        vector <*BotInmate> acceptedRequests;
 }
 
 #endif //PLAYERINMATE_H

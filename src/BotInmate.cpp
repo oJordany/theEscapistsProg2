@@ -21,8 +21,6 @@ using std::rand;
 using std::time;
 
 vector <Request> BotInmate::REQUESTS = {
-                                        {"I need a \033[31mshovel\033[m to dig my way out. Can you find one for me?", "shovel", 0},
-                                        {"In a tight spot without protection. Bring me \033[31mbrass knuckles\033[m, quick!", "brass knuckles", 0},
                                         {"Trying to fix something. Bring me a \033[31msheet metal\033[m, please.", "sheet metal", 0},
                                         {"Bored out of my mind. Lend me a \033[31mbook\033[m, would you?", "book", 0},
                                         {"Caught the eye of a guard. Need some camouflage - \033[31mguard clothing\033[m -, anyone?", "guard clothing", 0},
@@ -55,7 +53,7 @@ BotInmate::BotInmate(const BotInmate &other)
     this->request = other.request;
 }
 
-bool BotInmate::completeRequest(string item){
+bool BotInmate::completeRequest(Item item){
     if (item == request.itemName){
         request.status = 1;
         return true;
