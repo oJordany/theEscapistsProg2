@@ -16,6 +16,10 @@ using std::vector;
 
 #include "Inmate.h"
 #include "Item.h"
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 struct Request {
     string description;
     string itemName;
@@ -36,18 +40,21 @@ class BotInmate: public Inmate
                     double = 0.0);
         BotInmate(const BotInmate &); 
         ~BotInmate();
+        json toFullJson() const;
         const BotInmate & operator=(const BotInmate &);
         bool operator==(const BotInmate &) const;
         bool operator!=(const BotInmate &) const;
         bool operator!() const;
         void showRequest() const;
-        bool completeRequest(Item);
+        inline Request getRequest() const {return request;}
+        bool completeRequest(const Item&);
+        void setRequest(Request);
+        Request drawRequest() const;
     private:
-        const static int MAXNUMREQUESTS = ;
-        static Request requests[];
+        const static int MAXNUMREQUESTS = 11;
+        const static Request REQUESTS[MAXNUMREQUESTS];
         const double REWARDVALUE = 5.0;
         Request request;
-        Request drawRequest() const;
 };
 
 

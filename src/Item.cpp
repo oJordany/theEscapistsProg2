@@ -59,6 +59,11 @@ Item::Item(){
     currentLocation = "";
 }
 
+Item::Item(string item, string ownerName, string locationName)
+:currentLocation(locationName), ownerName(ownerName){
+    setItemName(item);
+}
+
 Item::Item(string item, const Inmate &owner, string locationName)
 :currentLocation(locationName), ownerName(owner.getName()){
     setItemName(item);
@@ -156,7 +161,6 @@ void Item::viewInfos() const{
 }
 
 string Item::drawItem() const{
-    srand(time(0));
 
     int randomIndex = rand() % MAXNUMITEMTYPES;
 
@@ -186,10 +190,18 @@ string Item::drawItem() const{
     return ruffleItems[randomIndex];
 }
 
+json Item::toJson() const{
+    json itemJson;
+    itemJson["itemName"] = itemName;
+    itemJson["currentLocation"] = currentLocation;
+    itemJson["ownerName"] = ownerName;
+    return itemJson;
+}
+
 ostream &operator<<(ostream &out, const Item &item){
-    out << "itemName: " << itemName << "\n";
-    out << "ownerName: " << ownerName << "\n";
-    out << "currentLocation: " << currentLocation << "\n";
+    out << "itemName: " << item.itemName << "\n";
+    out << "ownerName: " << ((item.ownerName == "") ? "null" : item.ownerName) << "\n";
+    out << "currentLocation: " << ((item.currentLocation == "") ? "null" : item.currentLocation) << "\n";
 
     return out;
 }

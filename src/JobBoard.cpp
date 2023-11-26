@@ -13,6 +13,7 @@ using std::ceil;
 #include "JobBoard.h"
 
 #define UNDERLINED "\x1b[4m"
+#define BOLD "\x1b[1m"
 #define RESETSTYLE "\x1b[0m"
 #define RESET   "\033[0m"
 #define BLACK   "\033[30m"

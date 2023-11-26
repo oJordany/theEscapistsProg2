@@ -20,17 +20,19 @@ using std::rand;
 #include <ctime>
 using std::time;
 
-vector <Request> BotInmate::REQUESTS = {
-                                        {"Trying to fix something. Bring me a \033[31msheet metal\033[m, please.", "sheet metal", 0},
-                                        {"Bored out of my mind. Lend me a \033[31mbook\033[m, would you?", "book", 0},
-                                        {"Caught the eye of a guard. Need some camouflage - \033[31mguard clothing\033[m -, anyone?", "guard clothing", 0},
-                                        {"Got a bit of gardening to do. Pass me a \033[31mhoe\033[m, will you?", "hoe", 0},
-                                        {"Need to scrub down this mess. A \033[31mmop\033[m would be a lifesaver!", "mop", 0},
-                                        {"Hungry as ever. How about some \033[31mfood\033[m to keep me going?", "food", 0},
-                                        {"Feeling a bit under the weather. Could use a boost - an \033[31menergetic\033[m drink, perhaps?", "energetic", 0},
-                                        {"Accidents happen. A \033[31mFirst Aid Kit\033[m could save the day. Can you find one?", "first aid kit", 0},
-                                        {"Trying to fix this contraption. I need \033[31mpliers\033[m, and I need them fast!", "pliers", 0}
-                                        };
+const Request BotInmate::REQUESTS[MAXNUMREQUESTS] = {
+                                    {"I need a \033[31mshovel\033[m to dig my way out. Can you find one for me?", "shovel", 0},
+                                    {"In a tight spot without protection. Bring me \033[31mbrass knuckles\033[m, quick!", "brass knuckles", 0},
+                                    {"Trying to fix something. Bring me a \033[31msheet metal\033[m, please.", "sheet metal", 0},
+                                    {"Bored out of my mind. Lend me a \033[31mbook\033[m, would you?", "book", 0},
+                                    {"Caught the eye of a guard. Need some camouflage - \033[31mguard clothing\033[m -, anyone?", "guard clothing", 0},
+                                    {"Got a bit of gardening to do. Pass me a \033[31mhoe\033[m, will you?", "hoe", 0},
+                                    {"Need to scrub down this mess. A \033[31mmop\033[m would be a lifesaver!", "mop", 0},
+                                    {"Hungry as ever. How about some \033[31mfood\033[m to keep me going?", "food", 0},
+                                    {"Feeling a bit under the weather. Could use a boost - an \033[31menergetic\033[m drink, perhaps?", "energetic", 0},
+                                    {"Accidents happen. A \033[31mFirst Aid Kit\033[m could save the day. Can you find one?", "first aid kit", 0},
+                                    {"Trying to fix this contraption. I need \033[31mpliers\033[m, and I need them fast!", "pliers", 0}
+                                    };
 
 BotInmate::BotInmate()
 :Inmate(){
@@ -53,8 +55,8 @@ BotInmate::BotInmate(const BotInmate &other)
     this->request = other.request;
 }
 
-bool BotInmate::completeRequest(Item item){
-    if (item == request.itemName){
+bool BotInmate::completeRequest(const Item &item){
+    if (item.getItemName() == request.itemName){
         request.status = 1;
         return true;
     }
@@ -67,9 +69,14 @@ void BotInmate::showRequest() const{
 }
 
 Request BotInmate::drawRequest() const{
-    srand(time(0));
-    int randomIndex = rand() % REQUESTS.size();
+    int randomIndex = rand() % MAXNUMREQUESTS;
     return REQUESTS[randomIndex];
+}
+
+void BotInmate::setRequest(Request newRequest){
+    request.itemName = newRequest.itemName;
+    request.description = newRequest.description;
+    request.status = newRequest.status;
 }
 
 ostream &operator<<(ostream &out, const BotInmate &botInmate){
@@ -108,6 +115,16 @@ bool BotInmate::operator!=(const BotInmate &botInmateOnTheRight) const{
 bool BotInmate::operator!() const{
     return (!static_cast<Inmate>(*this) &&
             !this->request.status);
+}
+
+json BotInmate::toFullJson() const{
+    json botInmateJson = this->toJson();
+    json requestJson;
+    requestJson["description"] = request.description;
+    requestJson["itemName"] = request.itemName;
+    requestJson["status"] = request.status;
+    botInmateJson["request"] = requestJson;
+    return botInmateJson;
 }
 
 BotInmate::~BotInmate(){

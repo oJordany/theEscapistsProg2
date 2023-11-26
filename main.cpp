@@ -61,8 +61,9 @@ void blinkMessage() {
 }
 
 int main(){
-    Item teste;
-    teste.viewInfos();
+    srand(time(0));
+    // Item teste;
+    // teste.viewInfos();
     int returnSystem;
     int option = -1;
     int option2 = -1;
@@ -164,13 +165,13 @@ int main(){
     // cout << "!inmates[0] --> ";
     // cout << !inmates[0] << "\n";
 
-    showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
-    thread blinkThread(blinkMessage);                       // Pisca mensagem de start
+    // showTypeWritterAnimation("logoFigure.txt");             // Animação de entrada
+    // thread blinkThread(blinkMessage);                       // Pisca mensagem de start
 
-    cin.get();                                           // Aguarda a entrada do usuário
+    // cin.get();                                           // Aguarda a entrada do usuário
 
-    stopFlag = true;                                        // Sinaliza a thread para parar
-    blinkThread.join();                                     // Aguarda a thread piscante terminar
+    // stopFlag = true;                                        // Sinaliza a thread para parar
+    // blinkThread.join();                                     // Aguarda a thread piscante terminar
 
     /********************************************* MENU DE SELEÇÃO DA PRISÃO ****************************************/
     while(option != 0){
@@ -257,10 +258,7 @@ int main(){
                                                         prison->displayAllPrisonLocations();
                                                         break;
                                                     case 2:
-                                                        cout << "Insira o nome do local: ";
-                                                        cin.ignore();
-                                                        std::getline(cin, nameLocation);
-                                                        prison->viewLocationInformation(nameLocation);
+                                                        prison->viewLocationInformation(prison->getCurrentLocationPlayerInmate());
                                                         break;
                                                     case 3:
                                                         prison->viewAllLocationInformation();
@@ -310,10 +308,7 @@ int main(){
                                                 clear = false;
                                                 break;
                                             case 2:
-                                                cout << "Insira o nome do local: ";
-                                                cin.ignore();
-                                                std::getline(cin, nameLocation);
-                                                prison->viewLocationInformation(nameLocation);
+                                                prison->viewLocationInformation(prison->getCurrentLocationPlayerInmate());
                                                 clear = false;
                                                 break;
                                             case 3:
@@ -383,10 +378,8 @@ int main(){
                                             clear = false;
                                             break;
                                         case 2:
-                                            cout << "Insira o nome do local: ";
-                                            cin.ignore();
-                                            std::getline(cin, nameLocation);
-                                            prison->viewLocationInformation(nameLocation);
+                                            cout << prison->getCurrentLocationPlayerInmate() << "\n";
+                                            prison->viewLocationInformation(prison->getCurrentLocationPlayerInmate());
                                             clear = false;
                                             break;
                                         case 3:

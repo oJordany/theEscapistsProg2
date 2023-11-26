@@ -2,9 +2,14 @@
 using std::ostream;
 using std::cout;
 
-#include <iomanip>
 #include "Inmate.h"
 
+#include <regex>
+using std::regex;
+using std::regex_constants::icase;
+using std::regex_search;
+
+#include <iomanip>
 using std::setw;
 using std::left;
 using std::right;
@@ -219,11 +224,33 @@ void Inmate::viewProfile() const{
 }
 
 void Inmate::readBook(int additionalIntelligence){
-    if (this->energy >= 5){
+    regex pattern("Library", icase); // 'icase' torna a correspondência sem diferenciação de maiúsculas e minúsculas
+
+    if (this->energy >= 5 && regex_search(this->currentLocation, pattern)){
         int newIntelligence = this->intelligence + additionalIntelligence;
         int newEnergy = this->energy - 5;
         setEnergy(newEnergy);
         setIntelligence(newIntelligence);
+    }
+}
+
+void Inmate::workOut(int additional){
+    regex pattern("Exercise", icase); // 'icase' torna a correspondência sem diferenciação de maiúsculas e minúsculas
+
+    if (this->energy >= 5 && regex_search(this->currentLocation, pattern)){
+        int newStrength = this->strength + additional;
+        int newSpeed = this->speed + additional;
+        int newEnergy = this->energy - 5;
+        setEnergy(newEnergy);
+        setStrength(newStrength);
+    }
+}
+
+void Inmate::bathe(int additional){
+    regex pattern("Shower", icase); // 'icase' torna a correspondência sem diferenciação de maiúsculas e minúsculas
+    if (regex_search(this->currentLocation, pattern)){
+        int newEnergy = this->energy + additional;
+        setEnergy(newEnergy);
     }
 }
 

@@ -28,6 +28,7 @@ using std::this_thread::sleep_for;
 #include <chrono>
 using std::chrono::milliseconds;
 
+
 #define UNDERLINED "\x1b[4m"
 #define RESETSTYLE "\x1b[0m"
 #define RESET   "\033[0m"
@@ -36,7 +37,7 @@ using std::chrono::milliseconds;
 #include "Prison.h"
 
 Prison::Prison(string prisonName, const JobBoard &jobBoard)
-:dailyRoutinePtr(0), level(0), prisonDate(), stopBotInmates(false)
+:dailyRoutinePtr(0), level(0), prisonDate(), stopBotInmates(false), playerInmatePtr(0)
 {   
     prisonJobBoardPtr = new JobBoard(jobBoard);
     dailyRoutineSize = 0;
@@ -52,7 +53,7 @@ Prison::Prison( string prisonName,
                 const JobBoard &jobBoard, 
                 const Data &date
                 )
-:prisonDate(date), dailyRoutinePtr(0), stopBotInmates(false){
+:prisonDate(date), dailyRoutinePtr(0), stopBotInmates(false), playerInmatePtr(0){
     setLevel(level);
     prisonJobBoardPtr = new JobBoard(jobBoard);
     dailyRoutineSize = 0;
@@ -65,7 +66,7 @@ Prison::Prison( string prisonName,
 }
 
 Prison::Prison(const Prison &other)
-:level(other.level), prisonDate(other.prisonDate), stopBotInmates(other.stopBotInmates)
+:level(other.level), prisonDate(other.prisonDate), stopBotInmates(other.stopBotInmates), playerInmatePtr(0)
 {   
     prisonJobBoardPtr = new JobBoard(*other.prisonJobBoardPtr);
     this->prisonName = other.prisonName;
@@ -98,10 +99,20 @@ Prison::Prison(const Prison &other)
     for (auto pair : other.routinesToLocations){
         this->routinesToLocations[pair.first] = pair.second;
     }
+    
+    for (auto otherItem : other.items){
+        this->items.push_back(new Item(*otherItem));
+    }
+
+    for (auto otherRegisteredBotInmate : other.registeredBotInmates){
+        registerBotInmateInPrison(*otherRegisteredBotInmate);
+    }
+
+    registerPlayerInmateInPrison(*other.playerInmatePtr);
 }
 
 Prison::Prison(const json &savedDatasJson)
-:prisonDate(Data(savedDatasJson["prisonDate"]["dia"], savedDatasJson["prisonDate"]["mes"], savedDatasJson["prisonDate"]["ano"])){
+:prisonDate(Data(savedDatasJson["prisonDate"]["dia"], savedDatasJson["prisonDate"]["mes"], savedDatasJson["prisonDate"]["ano"])), playerInmatePtr(0){
     Task tasks[savedDatasJson["prisonJobBoard"].size()];
     for (int i=0; i < savedDatasJson["prisonJobBoard"].size(); i++){
         tasks[i].taskName = savedDatasJson["prisonJobBoard"][i]["taskName"];
@@ -156,14 +167,70 @@ Prison::Prison(const json &savedDatasJson)
     }
 
     for (auto botInmate : savedDatasJson["registeredBotInmates"]){
-        registerBotInmateInPrison(BotInmate(botInmate["name"],
-                                            botInmate["health"],
-                                            botInmate["energy"],
-                                            botInmate["strength"],
-                                            botInmate["speed"],
-                                            botInmate["intelligence"],
-                                            botInmate["money"]));
+        BotInmate botInmateAux( botInmate["name"],
+                                botInmate["health"],
+                                botInmate["energy"],
+                                botInmate["strength"],
+                                botInmate["speed"],
+                                botInmate["intelligence"],
+                                botInmate["money"]);
+        Request requestAux = {
+            botInmate["request"]["description"],
+            botInmate["request"]["itemName"],
+            botInmate["request"]["status"],
+        };
+        botInmateAux.setRequest(requestAux);
+        registerBotInmateInPrison(botInmateAux);
     }
+
+    PlayerInmate playerInmateAux(savedDatasJson["playerInmatePtr"]["name"],
+                                 savedDatasJson["playerInmatePtr"]["health"],
+                                 savedDatasJson["playerInmatePtr"]["energy"],
+                                 savedDatasJson["playerInmatePtr"]["strength"],
+                                 savedDatasJson["playerInmatePtr"]["speed"],
+                                 savedDatasJson["playerInmatePtr"]["intelligence"],
+                                 savedDatasJson["playerInmatePtr"]["money"]);
+
+    playerInmateAux.setOutfit(Item( savedDatasJson["playerInmatePtr"]["outfit"]["itemName"],
+                                    savedDatasJson["playerInmatePtr"]["outfit"]["ownerName"],
+                                    savedDatasJson["playerInmatePtr"]["outfit"]["currentLocation"]));
+
+    for (const auto& item : savedDatasJson["playerInmatePtr"]["storedItems"]){
+        playerInmateAux.addItem(Item(item["itemName"],
+                                     item["ownerName"],
+                                     item["currentLocation"]
+                                    ));
+    }
+
+    for (const auto& acceptedRequest : savedDatasJson["playerInmatePtr"]["acceptedRequests"]){
+        BotInmate botInmateAux2( acceptedRequest["name"],
+                                acceptedRequest["health"],
+                                acceptedRequest["energy"],
+                                acceptedRequest["strength"],
+                                acceptedRequest["speed"],
+                                acceptedRequest["intelligence"],
+                                acceptedRequest["money"]);
+        Request requestAux2 = {
+            acceptedRequest["request"]["description"],
+            acceptedRequest["request"]["itemName"],
+            acceptedRequest["request"]["status"],
+        };
+        botInmateAux2.setRequest(requestAux2);
+        playerInmateAux.acceptRequest(botInmateAux2);
+    }
+    playerInmateAux.moveTo(savedDatasJson["playerInmatePtr"]["currentLocation"]);
+    registerPlayerInmateInPrison(playerInmateAux);
+    drawItems();
+}
+
+void Prison::registerPlayerInmateInPrison(const PlayerInmate &player){
+    if (playerInmatePtr != 0){
+        delete playerInmatePtr;
+        playerInmatePtr = 0;
+        playerInmatePtr = new PlayerInmate(player);
+        return;
+    }
+    playerInmatePtr = new PlayerInmate(player);
 }
 
 void Prison::startPrisonTime(const Data &startDate, int startHour, int startMinute, int dayCounter, int currentDay){
@@ -180,9 +247,6 @@ void Prison::startPrisonTime(const Data &startDate, int startHour, int startMinu
 }
 
 void Prison::assignTasksToInmates(){
-    // Inicializa a semente para a função rand()
-    srand(time(0));
-
     for (int i = 0; i < prisonJobBoardPtr->getNextEntrieInTasks(); i++){
         prisonJobBoardPtr->unassignTask(i);
     }
@@ -316,22 +380,55 @@ void Prison::viewRoutinesToLocationsMap() const{
 
 void Prison::viewLocationInformation(string locationName) const{
     string botCurrentLocation;
+    int botID = 0;
     if (locations.find(locationName) != locations.end()){
-
+        cout << setw(15) << UNDERLINED << locationName << RESET << "\n";
         cout << "+" << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
         cout << "|" << left << setw(14) << "Local Inmates" << "|" << "\n";
         cout << "+" << right << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
 
         for (auto registeredBotInmate : registeredBotInmates){
             botCurrentLocation = registeredBotInmate->getCurrentLocation();
-            if (botCurrentLocation == locationName)
-                cout << "|" << left << setw(14) << registeredBotInmate->getName() << "|" << "\n";
+            if (botCurrentLocation == locationName){
+                cout << "| Bot ID: " << botID << left << setw(14) << registeredBotInmate->getName() << "|" << "\n";
+                botID++;
+            }
         }
         cout << "+" << right << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
+
+        for (auto item : items){
+            if (item->getCurrentLocation() == locationName){
+                item->viewInfos();
+            }
+        }
     }else{
         cout << "non-existent location\n";
     }
     
+}
+
+Item Prison::getItemFromPlayerInmateLocation(string itemName){
+    for (int i=0; i < items.size(); i++){
+        if (playerInmatePtr->getCurrentLocation() == items[i]->getCurrentLocation()){
+            Item returnedItem(itemName, playerInmatePtr->getName(), playerInmatePtr->getCurrentLocation());
+            delete items[i];
+            items.erase(items.begin() + i);
+            return returnedItem;
+        }
+    }
+    throw std::out_of_range("🚫 \033[31m\x1b[1;4mInvalid Item Name!\033[m\x1b[0m 🚫 Item name not found with name: " + itemName);
+}
+
+BotInmate Prison::getBotInmateByName(string name) const{
+    for (auto registeredBotInmate : registeredBotInmates){
+        if (name == registeredBotInmate->getName() && 
+            registeredBotInmate->getCurrentLocation() == playerInmatePtr->getCurrentLocation()){
+            BotInmate returnedBotInmate(*registeredBotInmate);
+            return returnedBotInmate;
+        }
+    }
+
+    throw std::out_of_range("🚫 \033[31m\x1b[1;4mInvalid Inmate Name!\033[m\x1b[0m 🚫 Inmate not found with name: " + name);
 }
 
 void Prison::viewAllLocationInformation() const{
@@ -350,6 +447,11 @@ void Prison::viewAllLocationInformation() const{
                 cout << "|" << left << setw(14) << registeredBotInmate->getName() << "|" << "\n";
         }
         cout << "+" << right << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
+        for (auto item : items){
+            if (item->getCurrentLocation() == locationName){
+                item->viewInfos();
+            }
+        }
     }
 }
 
@@ -452,11 +554,12 @@ void Prison::registerRoutineToLocation(string routineName, string locationName){
 
 void Prison::displayAllPrisonLocations() const {
     string access;
-    cout << "Locais da prisão: \n";
+    cout << setfill('-') << setw(45)  << "\x1b[1;4mPRISON LOCATIONS\x1b[0m" << setfill('-') << setw(20) << "\n";
     for (auto pair: locations){
-        access = (pair.second) ? "free access" : "restricted access";
-        cout << pair.first << ": " << access << "\n";
+        access = (pair.second) ? "🔓 \033[32mfree access\033[m" : "🔒 \033[31mrestricted access\033[m";
+        cout << "\x1b[1m" << pair.first << "\x1b[0m" << ": " << access << "\n";
     }
+    cout << setfill('-') << setw(55) << "\n" << setfill(' ');
 }
 
 void Prison::setLevel(int level){
@@ -557,6 +660,9 @@ json Prison::toJson(string objectName) const{
     //Saving prisonName [string]
     prisonJson[objectName]["prisonName"] = prisonName;
 
+    //Saving playerInmatePtr [PlayerInmate*]
+    prisonJson[objectName]["playerInmatePtr"] = playerInmatePtr->toFullJson();
+    
     // Saving Inmates [vector]
     for (const auto& inmate : registeredInmates) {
         prisonJson[objectName]["registeredInmates"].push_back(inmate->toJson());
@@ -564,7 +670,7 @@ json Prison::toJson(string objectName) const{
 
     // Saving BotInmates [vector]
     for (const auto& botInmate : registeredBotInmates) {
-        prisonJson[objectName]["registeredBotInmates"].push_back(botInmate->toJson());
+        prisonJson[objectName]["registeredBotInmates"].push_back(botInmate->toFullJson());
     } 
 
     // Saving locationsPtr [Map]
@@ -617,8 +723,71 @@ json Prison::toJson(string objectName) const{
         routinesToLocationsJson[pair.first] = pair.second;
         prisonJson[objectName]["routinesToLocations"].push_back(routinesToLocationsJson);
     }
-    
+
     return prisonJson;
+}
+
+void Prison::movePlayerInmate(string newLocation){
+    bool locationIsValid = false;
+    for (auto location : locations){
+        if (newLocation == location.first){
+            if (!location.second){
+                cout << "🚧 \033[31m\x1b[1;4mRestricted Access!\033[31m\x1b[0m 🚧 This area requires a key for entry. 🔑\n";
+                return ;
+            }
+            playerInmatePtr->moveTo(newLocation);
+            playerInmatePtr->refreshStoredItemsLocations();
+            playerInmatePtr->refreshOutfitLocation();
+            break;
+        }
+    }
+}
+
+void Prison::addItemToPlayerInmateInventory(const Item &item){
+    playerInmatePtr->addItem(item);
+}
+
+void Prison::putPlayerInmateToSleep(){
+    playerInmatePtr->sleep();
+}
+
+void Prison::makePlayerInmateAcceptRequest(const BotInmate &botInmate){
+    playerInmatePtr->acceptRequest(botInmate);
+}
+
+void Prison::dropItemFromPlayerInmateInventory(int itemID){
+    try {
+        items.push_back(new Item(playerInmatePtr->dropItem(itemID)));
+    }catch(const std::exception& e){
+        std::cerr << e.what() << "\n";
+    }
+}
+
+void Prison::showPlayerInmateInventory() const{
+    playerInmatePtr->showInventory();
+}
+
+Item Prison::makePlayerInmateGiveItemTo(int itemID, const BotInmate& botInmate){ /* USAR try catch*/
+    try {
+        return (playerInmatePtr->giveItemTo(itemID, botInmate));
+    }catch (const std::exception& e){
+        std::cerr << e.what() << "\n";
+        throw std::out_of_range(e.what());
+    }
+}
+
+void Prison::showAcceptedRequestsFromPlayerInmate() const{
+    playerInmatePtr->showAcceptedRequests();
+}
+
+void Prison::drawItems(int amount){
+    int randomIndex;
+    for (int i = 0; i < amount; i++){
+        randomIndex = rand() % locations.size();
+        auto it = locations.begin();
+        advance(it, randomIndex);
+        items.push_back(new Item("", "", it->first));
+    }
 }
 
 ostream &operator<<(ostream &out, const Prison &prison){
@@ -742,9 +911,17 @@ Prison::~Prison(){
     delete [] dailyRoutinePtr;
     // delete [] locationsPtr;
     delete prisonTimePtr;
+    delete playerInmatePtr;
+
     prisonTimePtr=0;
     delete prisonJobBoardPtr;
     for (int i=0; i < registeredInmates.size(); i++){
         delete registeredInmates[i];
+    }
+    for (int i=0; i < registeredBotInmates.size(); i++){
+        delete registeredBotInmates[i];
+    }
+    for (int i=0; i < items.size(); i++){
+        delete items[i];
     }
 }

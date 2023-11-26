@@ -283,10 +283,15 @@ void createInfos( int prisonID = 1 )
       for (auto location : prisonLocations){
           centerPerks.registerLocationInPrison(location.first, location.second);
       }
+    
+      centerPerks.drawItems();
 
       int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
       int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
       centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
+      centerPerks.registerPlayerInmateInPrison(PlayerInmate(inmateName));
+      // MOVENDO O PRISIONEIRO PARA O QUARTO DELE
+      centerPerks.movePlayerInmate(inmateName + "'s room");
       json centerPerksJson = centerPerks.toJson("centerPerks");
       saveConfigs(centerPerksJson);
     }else if (prisonID == 2){
@@ -297,11 +302,11 @@ void createInfos( int prisonID = 1 )
                                 "ARNIE", "KRIMEWAVE", 
                                 "DOGEKIT", "PHIL"};
       map <string, bool> prisonLocations = {
-                                    {"Forest Clearing", 1}, {"Wilderness Training Ground", 1}, {"Outdoor Fitness Area", 1}, 
+                                    {"Forest Clearing", 1}, {"Wilderness Training Ground", 1}, {"Outdoor Exercise Area", 1}, 
                                     {"Rustic Workshop", 1}, {"Riverbank Laundry", 1}, {"Jungle Surveillance Center", 0}, 
                                     {"Storage Hut", 1}, {"Deep Forest Solitude", 0}, {"Canopy Kitchen", 1}, 
                                     {"Treetop Gathering Hall", 1}, {"Canopy Observation Tower", 0}, {"Jungle Supplies Depot", 1},
-                                    {"Canopy Library", 1}, {"Riverbank Bathhouse", 1}
+                                    {"Canopy Library", 1}, {"Shower by the River", 1}
                                     };
 
       // CARREGANDO O ARQUIVO DE CONFIGURAÇÕES CONTENDO AS INFORMACOES DAS TASKS
@@ -341,8 +346,8 @@ void createInfos( int prisonID = 1 )
       jungleCompound.registerRoutineToLocation("Mid-day Roll Call", "Treetop Gathering Hall");
       jungleCompound.registerRoutineToLocation("Free Period", "");
       jungleCompound.registerRoutineToLocation("Dinner", "Forest Clearing");
-      jungleCompound.registerRoutineToLocation("Exercise Period", "Outdoor Fitness Area");
-      jungleCompound.registerRoutineToLocation("Shower", "Riverbank Bathhouse");
+      jungleCompound.registerRoutineToLocation("Exercise Period", "Outdoor Exercise Area");
+      jungleCompound.registerRoutineToLocation("Shower", "Shower by the River");
       jungleCompound.registerRoutineToLocation("Evening Roll Call", "Treetop Gathering Hall");
       jungleCompound.registerRoutineToLocation("Lights Out", "");
 
@@ -355,6 +360,7 @@ void createInfos( int prisonID = 1 )
       for (auto location : prisonLocations){
           jungleCompound.registerLocationInPrison(location.first, location.second);
       }
+
       int startHour = jungleCompound.getDailyRoutineAtIndex(0).startHour;
       int startMinute = jungleCompound.getDailyRoutineAtIndex(0).startMinute;
       jungleCompound.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);

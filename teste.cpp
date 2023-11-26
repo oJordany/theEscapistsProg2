@@ -23,6 +23,19 @@ using std::right;
 #include <map>
 using std::map;
 
+#include <cstdlib>
+using std::srand;
+using std::rand;
+
+#include <ctime>
+using std::time;
+
+#include <regex>
+using std::regex;
+using std::regex_constants::icase;
+using std::regex_search;
+
+
 // #include "../include/Item.h"
 
 void showFigure(string figureName){
@@ -64,7 +77,33 @@ void showFigure(string figureName){
     }
 }
 
+#include <iostream>
+
+class MyClass {
+public:
+    int value;
+
+    MyClass(int v) : value(v) {}
+    inline int getValue() const{return value;} ;
+    // Outros membros e métodos...
+};
+
+#include <iostream>
+
 int main() {
-    showFigure("hoe.txt");
+    try {
+        // Código que pode lançar uma exceção
+        throw std::runtime_error("Exceção ocorreu!");
+
+        // Este código não será executado se uma exceção for lançada
+        std::cout << "Este código não será executado." << std::endl;
+    } catch (const std::exception& e) {
+        // Lidar com a exceção
+        std::cerr << "Erro: " << e.what() << std::endl;
+    }
+
+    // O programa continua a partir daqui após o bloco try-catch
+    std::cout << "O programa continua após o bloco try-catch." << std::endl;
+
     return 0;
 }

@@ -12,6 +12,8 @@ using std::vector;
 #include "JobBoard.h"
 #include "Data.h"
 #include "BotInmate.h"
+#include "Item.h"
+#include "PlayerInmate.h"
 
 #include <iostream>
 using std::ostream;
@@ -40,6 +42,7 @@ class Prison{
         void registerDailyPrisonRoutine(Routine);
         void registerInmateInPrison(const Inmate &);
         void registerBotInmateInPrison(const BotInmate &);
+        void registerPlayerInmateInPrison(const PlayerInmate &);
         void registerLocationInPrison(string, bool);
         void registerRoutineToLocation(string, string);
 
@@ -61,9 +64,24 @@ class Prison{
         void viewAllBotInmates() const;
         void viewRoutinesToLocationsMap() const;
         void moveBotInmates();
+        BotInmate getBotInmateByName(string) const;
+        Item getItemFromPlayerInmateLocation(string);
+
+        void movePlayerInmate(string newLocation);
+        void addItemToPlayerInmateInventory(const Item&);
+        void putPlayerInmateToSleep();
+        void makePlayerInmateAcceptRequest(const BotInmate&);
+        void dropItemFromPlayerInmateInventory(int);
+        void showPlayerInmateInventory() const;
+        Item makePlayerInmateGiveItemTo(int itemID, const BotInmate&);
+        void showAcceptedRequestsFromPlayerInmate() const;
+        inline string getCurrentLocationPlayerInmate() { return playerInmatePtr->getCurrentLocation();}
+        inline void makePlayerInmateBathe(){playerInmatePtr->bathe();};
+        inline void makePlayerInmateWorkOut(){playerInmatePtr->workOut();};
 
         Routine getDailyRoutineAtIndex(int) const;
         inline int getNextEntrieInDailyRoutine() const {return nextEntrieInDailyRoutine;}
+        void drawItems(int=40);
 
         const Prison & operator=(const Prison &);
         bool operator==(const Prison &) const;
@@ -76,8 +94,10 @@ class Prison{
         Routine *dailyRoutinePtr;
         vector <Inmate *> registeredInmates;
         vector <BotInmate *> registeredBotInmates;
+        vector <Item *> items;
         map <string, bool> locations;
         map <string, string> routinesToLocations;
+        PlayerInmate *playerInmatePtr;
 
         Time *prisonTimePtr;
         Data prisonDate;

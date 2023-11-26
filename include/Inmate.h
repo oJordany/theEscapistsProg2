@@ -58,6 +58,8 @@ public:
 
     void viewProfile() const;
     void readBook(int = 1);
+    void bathe(int=5);
+    void workOut(int=1);
 
 private:
     string name;

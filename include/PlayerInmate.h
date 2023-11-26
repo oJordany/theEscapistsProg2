@@ -4,14 +4,22 @@
 #include "Inmate.h"
 
 #include <string>
-using std::string
+using std::string;
 
 #include <iostream>
 using std::ostream;
-using std::out;
+using std::cout;
 
+#include <vector>
+using std::vector;
+
+#include "Inmate.h"
 #include "Item.h"
 #include "BotInmate.h"
+#include "Time.h"
+
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 class PlayerInmate: public Inmate
 {
@@ -27,24 +35,37 @@ class PlayerInmate: public Inmate
                     double = 0.0);
         PlayerInmate(const PlayerInmate&);
         ~PlayerInmate();
+        json toFullJson() const;
         const PlayerInmate & operator=(const PlayerInmate &);
         bool operator==(const PlayerInmate &) const;
         bool operator!=(const PlayerInmate &) const;
         bool operator!() const;
         void refreshStoredItemsLocations();
-        void refreshStoredItemsLocations();
+        void refreshOutfitLocation();
         void addItem(const Item&);
-        const Item& dropItem(int);
-        void showInventory();
-        const Item& giveItemTo(const BotInmate&);
-        void 
+        void sleep();
+        void acceptRequest(const BotInmate&);
+        inline void setOutfit(const Item &newOutfit){outfit = newOutfit;};
+        Item dropItem(int);
+        // const Weapon& dropWeapon(int);
+        // const Shovel& dropShovel(int);
+        // const Key& dropKey(int);
+        void showInventory() const;
+        Item giveItemTo(int itemID, const BotInmate&); // Toda vez que for dar um item, verificar se ele mata uma request
         void showAcceptedRequests() const;
+        inline int getStoredItemsSize() const {return storedItems.size();};
+        inline int getMAXNUMITEMS() const {return MAXNUMITEMS;};
     private:
-        int totalItems;
         Item outfit;
-        const static MAXNUMITEMS = 6;
-        Item storedItems[MAXNUMITEMS];
-        vector <*BotInmate> acceptedRequests;
-}
+        const static int MAXNUMITEMS = 3;
+        // const static int MAXNUMWEAPONS = 3;
+        // const static int MAXNUMSHOVELS = 3;
+        // const static int MAXNUMKEYS = 3;
+        vector <Item*> storedItems;
+        // vector <*Weapons> storedWeapons;
+        // vector <*Shovel> storedShovels;
+        // vector <*Key> storedKeys;
+        vector <BotInmate*> acceptedRequests;
+};
 
 #endif //PLAYERINMATE_H
