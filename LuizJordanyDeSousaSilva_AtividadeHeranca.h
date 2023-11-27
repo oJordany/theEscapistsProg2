@@ -898,5 +898,5 @@ Sem o diagrama UML, a saída do programa e o vídeo, o trabalho não será avali
 
     //Link arquivo de configuração no repositório
         // Meu arquivo util.h: https://github.com/oJordany/theEscapistsProg2/blob/main/include/util.h
-        // Arquivo json pré pronto para iniciar o jogo a partir de um progresso já salvo: 
+        // Arquivo json pré pronto para iniciar o jogo a partir de um progresso já salvo: https://github.com/oJordany/theEscapistsProg2/blob/main/saves.json
     //Link vídeo mostrando a execução do código usando o arquivo de configuração
