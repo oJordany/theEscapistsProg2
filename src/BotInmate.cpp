@@ -89,10 +89,10 @@ ostream &operator<<(ostream &out, const BotInmate &botInmate){
 }
 
 const BotInmate & BotInmate::operator=(const BotInmate &botInmateOnTheRight){
-    static_cast<Inmate>(*this) = static_cast<Inmate>(botInmateOnTheRight);
-    this->request.description == botInmateOnTheRight.request.description;
-    this->request.itemName == botInmateOnTheRight.request.itemName;
-    this->request.status == botInmateOnTheRight.request.status;
+    *static_cast<Inmate*>(this) = static_cast<Inmate>(botInmateOnTheRight);
+    this->request.description = botInmateOnTheRight.request.description;
+    this->request.itemName = botInmateOnTheRight.request.itemName;
+    this->request.status = botInmateOnTheRight.request.status;
     return *this;
 }
 
@@ -103,7 +103,7 @@ bool BotInmate::operator==(const BotInmate &botInmateOnTheRight) const{
         return false;
     if (this->request.itemName != botInmateOnTheRight.request.itemName)
         return false;
-    if (this->request.status == botInmateOnTheRight.request.status)
+    if (this->request.status != botInmateOnTheRight.request.status)
         return false;
     return true;
 }

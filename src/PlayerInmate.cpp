@@ -216,6 +216,70 @@ json PlayerInmate::toFullJson() const{
     return playerInmateJson;
 }
 
+ostream &operator<<(ostream &out, const PlayerInmate &playerInmate){
+    out << static_cast<Inmate>(playerInmate);
+    out << "outfit: " << playerInmate.outfit << "\n"; 
+    out << "\033[1mstored items: \033[0m\n"; 
+    for (auto storedItem : playerInmate.storedItems)
+        out << *storedItem << "\n";
+    out << "\n\033[1maccepted requests: \033[0m\n"; 
+    for (auto acceptedRequest : playerInmate.acceptedRequests){
+        cout << acceptedRequest->getName() << "'s request:\n";
+        acceptedRequest->showRequest();
+        cout << "\n";
+    }
+
+    return out;
+}
+
+const PlayerInmate & PlayerInmate::operator=(const PlayerInmate &playerInmateOnTheRight){
+    *static_cast<Inmate*>(this) = static_cast<Inmate>(playerInmateOnTheRight);
+    this->outfit = playerInmateOnTheRight.outfit;
+    for (int i=0; i < this->storedItems.size(); i++){
+        delete this->storedItems[i];
+    }
+    this->storedItems.resize(0);
+    for (auto storedItem : playerInmateOnTheRight.storedItems){
+        this->storedItems.push_back(new Item(*storedItem));
+    }
+    for (int i=0; i < this->acceptedRequests.size(); i++){
+        delete this->acceptedRequests[i];
+    }
+    this->acceptedRequests.resize(0);
+    for (auto acceptedRequest : playerInmateOnTheRight.acceptedRequests){
+        this->acceptedRequests.push_back(new BotInmate(*acceptedRequest));
+    }
+    return *this;
+}
+
+bool PlayerInmate::operator==(const PlayerInmate &playerInmateOnTheRight) const{
+    if (static_cast<Inmate>(*this) != static_cast<Inmate>(playerInmateOnTheRight))
+        return false;
+    if (this->outfit != playerInmateOnTheRight.outfit)
+        return false;
+    if (this->storedItems.size() != playerInmateOnTheRight.storedItems.size())
+        return false;
+    if (this->acceptedRequests.size() != playerInmateOnTheRight.acceptedRequests.size())
+        return false;
+    for (int i=0; i < this->storedItems.size(); i++){
+        if (this->storedItems[i] != playerInmateOnTheRight.storedItems[i])
+            return false;
+    }
+    for (int i=0; i < this->acceptedRequests.size(); i++){
+        if (this->acceptedRequests[i] != playerInmateOnTheRight.acceptedRequests[i])
+            return false;
+    }
+    return true;
+}
+
+bool PlayerInmate::operator!=(const PlayerInmate &playerInmateOnTheRight) const{
+    return (*this == playerInmateOnTheRight);
+}
+
+bool PlayerInmate::operator!() const{
+    return (!static_cast<Inmate>(*this));
+}
+
 PlayerInmate::~PlayerInmate(){
     for (int i=0; i < storedItems.size(); i++){
         delete storedItems[i];

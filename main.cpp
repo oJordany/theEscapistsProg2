@@ -469,6 +469,7 @@ int main(){
                                                 break;
                                             case 8:
                                                 prison->showPlayerInmateInventory();
+                                                clear = false;
                                                 break;
                                             case 9:
                                                 cout << "Insira o nome do prisioneiro que você deseja aceitar o pedido: ";
@@ -651,6 +652,7 @@ int main(){
                                             break;
                                         case 8:
                                             prison->showPlayerInmateInventory();
+                                            clear = false;
                                             break;
                                         case 9:
                                             cout << "Insira o nome do prisioneiro que você deseja aceitar o pedido: ";
