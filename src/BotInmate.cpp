@@ -55,12 +55,12 @@ BotInmate::BotInmate(const BotInmate &other)
     this->request = other.request;
 }
 
-bool BotInmate::completeRequest(const Item &item){
+double BotInmate::completeRequest(const Item &item){
     if (item.getItemName() == request.itemName){
         request.status = 1;
-        return true;
+        return REWARDVALUE;
     }
-    return false;
+    return 0.0;
 }
 
 void BotInmate::showRequest() const{

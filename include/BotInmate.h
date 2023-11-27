@@ -47,7 +47,7 @@ class BotInmate: public Inmate
         bool operator!() const;
         void showRequest() const;
         inline Request getRequest() const {return request;}
-        bool completeRequest(const Item&);
+        double completeRequest(const Item&);
         void setRequest(Request);
         Request drawRequest() const;
     private:

@@ -286,12 +286,12 @@ void createInfos( int prisonID = 1 )
     
       centerPerks.drawItems();
 
-      int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
-      int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
-      centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
       centerPerks.registerPlayerInmateInPrison(PlayerInmate(inmateName));
       // MOVENDO O PRISIONEIRO PARA O QUARTO DELE
       centerPerks.movePlayerInmate(inmateName + "'s room");
+      int startHour = centerPerks.getDailyRoutineAtIndex(0).startHour;
+      int startMinute = centerPerks.getDailyRoutineAtIndex(0).startMinute;
+      centerPerks.startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
       json centerPerksJson = centerPerks.toJson("centerPerks");
       saveConfigs(centerPerksJson);
     }else if (prisonID == 2){

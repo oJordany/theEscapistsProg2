@@ -64,20 +64,27 @@ class Prison{
         void viewAllBotInmates() const;
         void viewRoutinesToLocationsMap() const;
         void moveBotInmates();
+        double giveItemToBotInmate(const Item&, string);
+        void showBotInmateRequestByName(string) const;
+        void controlPlayerInmateCell();
         BotInmate getBotInmateByName(string) const;
         Item getItemFromPlayerInmateLocation(string);
 
-        void movePlayerInmate(string newLocation);
+        void movePlayerInmate(string);
         void addItemToPlayerInmateInventory(const Item&);
         void putPlayerInmateToSleep();
         void makePlayerInmateAcceptRequest(const BotInmate&);
         void dropItemFromPlayerInmateInventory(int);
         void showPlayerInmateInventory() const;
-        Item makePlayerInmateGiveItemTo(int itemID, const BotInmate&);
+        Item makePlayerInmateGiveItemTo(int, const BotInmate&);
         void showAcceptedRequestsFromPlayerInmate() const;
+        inline string getPlayerInmateName(){return playerInmatePtr->getName();}
         inline string getCurrentLocationPlayerInmate() { return playerInmatePtr->getCurrentLocation();}
         inline void makePlayerInmateBathe(){playerInmatePtr->bathe();};
         inline void makePlayerInmateWorkOut(){playerInmatePtr->workOut();};
+        inline void makePlayerInmateReadBook(){playerInmatePtr->readBook();};
+        inline void showPlayerInmateProfile(){playerInmatePtr->viewPlayerInmateProfile();}
+        inline void giveRewardToPlayerInmate(double reward) { playerInmatePtr->setMoney(reward + playerInmatePtr->getMoney());}
 
         Routine getDailyRoutineAtIndex(int) const;
         inline int getNextEntrieInDailyRoutine() const {return nextEntrieInDailyRoutine;}
@@ -90,6 +97,7 @@ class Prison{
 
     private:
         bool stopBotInmates;
+        bool stopControlPlayerInmateCell;
         string prisonName; 
         Routine *dailyRoutinePtr;
         vector <Inmate *> registeredInmates;
@@ -114,6 +122,7 @@ class Prison{
         void allocateDailyPrisonRoutine(Routine);
         // void allocateLocationInPrison(string);
         int searchInsertIndex(Routine);
+        void runAnimation(string, string) const;
 };
 
 #endif //PRISON_H

@@ -178,11 +178,11 @@ void Inmate::setSpeed(int speed){
     this->speed = 0;
 }
 
-void Inmate::setIntelligence(int intelligence){
-    if (intelligence >= 0 && intelligence <= 100){
-        this->intelligence = intelligence;
+void Inmate::setIntelligence(int newIntelligence){
+    if (newIntelligence >= 0 && newIntelligence <= 100){
+        this->intelligence = newIntelligence;
         return;
-    } else if (intelligence > 100){
+    } else if (newIntelligence > 100){
         this->intelligence = 100;
         return;
     }
@@ -226,23 +226,36 @@ void Inmate::viewProfile() const{
 void Inmate::readBook(int additionalIntelligence){
     regex pattern("Library", icase); // 'icase' torna a correspondência sem diferenciação de maiúsculas e minúsculas
 
-    if (this->energy >= 5 && regex_search(this->currentLocation, pattern)){
-        int newIntelligence = this->intelligence + additionalIntelligence;
-        int newEnergy = this->energy - 5;
-        setEnergy(newEnergy);
-        setIntelligence(newIntelligence);
+    if (regex_search(this->currentLocation, pattern)){
+        if (this->energy >= 5){
+            int newIntelligence = this->intelligence + additionalIntelligence;
+            int newEnergy = this->energy - 5;
+            setEnergy(newEnergy);
+            setIntelligence(newIntelligence);
+        }else{
+            cout << "😴\033[1m\033[4mYou are too tired to read now \033[0m😴 \n";
+        }
+    }else{
+        cout << "📚\033[1m\033[4m You should go to the library to read a book\033[0m📚\n";
     }
 }
 
 void Inmate::workOut(int additional){
     regex pattern("Exercise", icase); // 'icase' torna a correspondência sem diferenciação de maiúsculas e minúsculas
 
-    if (this->energy >= 5 && regex_search(this->currentLocation, pattern)){
-        int newStrength = this->strength + additional;
-        int newSpeed = this->speed + additional;
-        int newEnergy = this->energy - 5;
-        setEnergy(newEnergy);
-        setStrength(newStrength);
+    if (regex_search(this->currentLocation, pattern)){
+        if (this->energy >= 5){
+            int newStrength = this->strength + additional;
+            int newSpeed = this->speed + additional;
+            int newEnergy = this->energy - 5;
+            setEnergy(newEnergy);
+            setStrength(newStrength);
+            setSpeed(newSpeed);
+        }else{
+            cout << "😴\033[1m\033[4mYou are too tired to work out now \033[0m😴 \n";
+        }
+    }else{
+        cout << "🏋️ \033[1m\033[4mYou should go to the exercise room to work out \033[0m🏋️\n";
     }
 }
 
@@ -251,6 +264,8 @@ void Inmate::bathe(int additional){
     if (regex_search(this->currentLocation, pattern)){
         int newEnergy = this->energy + additional;
         setEnergy(newEnergy);
+    }else{
+        cout << "🚿\033[1m\033[4m You should go to the bathroom to bathe\033[0m🚿 \n";
     }
 }
 

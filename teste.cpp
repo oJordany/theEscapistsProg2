@@ -1,5 +1,6 @@
 #include <iostream>
 using std::cout;
+using std::flush;
 
 #include <fstream>
 using std::fstream;
@@ -35,6 +36,11 @@ using std::regex;
 using std::regex_constants::icase;
 using std::regex_search;
 
+#include <thread>
+using std::this_thread::sleep_for;
+
+#include <chrono>
+using std::chrono::milliseconds;
 
 // #include "../include/Item.h"
 
@@ -77,33 +83,79 @@ void showFigure(string figureName){
     }
 }
 
+#include <thread>
+#include <chrono>
+
+void runAnimation(string destination, string origin) {
+    const int totalFrames = 5;
+
+    for (int frame = 0; frame < totalFrames; ++frame) {
+        cout << destination;
+
+        for (int i = 0; i < totalFrames - frame - 1; ++i) {
+            cout << ' ';
+        }
+
+        cout << "🏃";
+
+        for (int i = 0; i < frame; ++i) {
+            cout << '-';
+        }
+
+        cout << origin << flush;
+        sleep_for(milliseconds(500));
+        cout << '\r';  // Retorna para o início da linha
+    }
+    cout << "\n";  // Adiciona uma quebra de linha no final
+}
+
+
+
 #include <iostream>
+#include <cmath>
 
 class MyClass {
 public:
-    int value;
-
-    MyClass(int v) : value(v) {}
-    inline int getValue() const{return value;} ;
-    // Outros membros e métodos...
-};
-
-#include <iostream>
-
-int main() {
-    try {
-        // Código que pode lançar uma exceção
-        throw std::runtime_error("Exceção ocorreu!");
-
-        // Este código não será executado se uma exceção for lançada
-        std::cout << "Este código não será executado." << std::endl;
-    } catch (const std::exception& e) {
-        // Lidar com a exceção
-        std::cerr << "Erro: " << e.what() << std::endl;
+    int getItemAtIndex(int index) {
+        if (index < 0 || index >= items.size()) {
+            throw std::out_of_range("Index out of range");
+        }
+        return items[index];
     }
 
-    // O programa continua a partir daqui após o bloco try-catch
-    std::cout << "O programa continua após o bloco try-catch." << std::endl;
+private:
+    std::vector<int> items = {1, 2, 3, 4, 5};
+};
+
+int main() {
+    MyClass myObject;
+    int index;
+
+    std::cout << "Enter an index: ";
+    std::cin >> index;
+
+    switch (index) {
+        case 1:
+        case 2:
+        case 3:
+        case 4:
+        case 5:
+            try {
+                int result = myObject.getItemAtIndex(index - 1); // Adjust index to match vector indexing
+                std::cout << "Item at index " << index << ": " << result << std::endl;
+            } catch (const std::out_of_range& e) {
+                std::cerr << "Caught out_of_range exception: " << e.what() << std::endl;
+            } catch (const std::exception& e) {
+                std::cerr << "Caught exception: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Caught an unknown exception" << std::endl;
+            }
+            break;
+        default:
+            std::cerr << "Invalid index. Please enter a number between 1 and 5." << std::endl;
+    }
+
+    cout << "\033[1m\033[4m😴 You are too tired to read now 😴\033[0m \n";
 
     return 0;
 }
