@@ -1,0 +1,489 @@
+{
+    "centerPerks": {
+        "dailyRoutinePtr": [
+            {
+                "endHour": 4,
+                "endMinute": 59,
+                "routineName": "Lights Out",
+                "startHour": 0,
+                "startMinute": 0
+            },
+            {
+                "endHour": 5,
+                "endMinute": 59,
+                "routineName": "Wake Up Call, Roll Call",
+                "startHour": 5,
+                "startMinute": 0
+            },
+            {
+                "endHour": 6,
+                "endMinute": 59,
+                "routineName": "Breakfast Time",
+                "startHour": 6,
+                "startMinute": 0
+            },
+            {
+                "endHour": 8,
+                "endMinute": 59,
+                "routineName": "Job Time",
+                "startHour": 7,
+                "startMinute": 0
+            },
+            {
+                "endHour": 9,
+                "endMinute": 59,
+                "routineName": "Exercise Time",
+                "startHour": 9,
+                "startMinute": 0
+            },
+            {
+                "endHour": 11,
+                "endMinute": 59,
+                "routineName": "Free Time",
+                "startHour": 10,
+                "startMinute": 0
+            },
+            {
+                "endHour": 12,
+                "endMinute": 59,
+                "routineName": "Lunch Time",
+                "startHour": 12,
+                "startMinute": 0
+            },
+            {
+                "endHour": 13,
+                "endMinute": 59,
+                "routineName": "Roll Call",
+                "startHour": 13,
+                "startMinute": 0
+            },
+            {
+                "endHour": 15,
+                "endMinute": 59,
+                "routineName": "Job Time",
+                "startHour": 14,
+                "startMinute": 0
+            },
+            {
+                "endHour": 16,
+                "endMinute": 59,
+                "routineName": "Shower Time",
+                "startHour": 16,
+                "startMinute": 0
+            },
+            {
+                "endHour": 17,
+                "endMinute": 59,
+                "routineName": "Dinner Time",
+                "startHour": 17,
+                "startMinute": 0
+            },
+            {
+                "endHour": 18,
+                "endMinute": 59,
+                "routineName": "Free Time",
+                "startHour": 18,
+                "startMinute": 0
+            },
+            {
+                "endHour": 23,
+                "endMinute": 59,
+                "routineName": "Lights Out",
+                "startHour": 19,
+                "startMinute": 0
+            }
+        ],
+        "level": 0,
+        "locations": [
+            {
+                "ARNIE's room": true
+            },
+            {
+                "CAMEO's room": true
+            },
+            {
+                "CARL's room": true
+            },
+            {
+                "Cleaning Room": true
+            },
+            {
+                "Clive's room": true
+            },
+            {
+                "DOGEKIT's room": true
+            },
+            {
+                "Deposit": true
+            },
+            {
+                "Dining Room": true
+            },
+            {
+                "Exercise Room": true
+            },
+            {
+                "Gymnasium": true
+            },
+            {
+                "Isolation": false
+            },
+            {
+                "JACKALL's room": true
+            },
+            {
+                "KELAUCE's room": true
+            },
+            {
+                "KEV's room": true
+            },
+            {
+                "KRIMEWAVE's room": true
+            },
+            {
+                "Kitchen": true
+            },
+            {
+                "Laundry": true
+            },
+            {
+                "Library": true
+            },
+            {
+                "Meeting Room": true
+            },
+            {
+                "PHIL's room": true
+            },
+            {
+                "Pantry": true
+            },
+            {
+                "Prison Gate": false
+            },
+            {
+                "Security Room": false
+            },
+            {
+                "Shower Room": true
+            },
+            {
+                "Watch-tower": false
+            }
+        ],
+        "playerInmatePtr": {
+            "acceptedRequests": [],
+            "currentLocation": "Laundry",
+            "energy": 100,
+            "health": 100,
+            "intelligence": 40,
+            "money": 0.0,
+            "name": "Clive",
+            "outfit": {
+                "currentLocation": "Laundry",
+                "itemName": "inmate outfit",
+                "ownerName": "Clive"
+            },
+            "speed": 40,
+            "storedItems": [
+                {
+                    "currentLocation": "Laundry",
+                    "itemName": "soap",
+                    "ownerName": "Clive"
+                }
+            ],
+            "strength": 40
+        },
+        "prisonDate": {
+            "ano": 2023,
+            "dia": 31,
+            "mes": 12
+        },
+        "prisonJobBoard": [
+            {
+                "taskDetails": "Clean up your act and clean up our floors whilst you're at it! I want you to make those floors, the foundations of YOUR reform, look the best. Grab a mop from the storage room and use them to clean at least 5 compartments of the prison..",
+                "taskName": "Janitor position"
+            },
+            {
+                "taskDetails": "Embark on a quick culinary adventure by taking on the task of washing five knives. In the heart of the kitchen, delve into the art of cleaning as you restore those blades to their shining glory. Take the knives from the kitchen cabinet and after washing, store them in the drawer",
+                "taskName": "Kitchen position"
+            },
+            {
+                "taskDetails": "Your criminal attitude stinks, and so do your overalls! Phew! The only thing I want to smell on you inmates is the fresh scent of justice.Take dirty outfits from the bin and place them into the washer. Once spun, take them out and put them into the clean outfit container.The washing machines flash a yellow colour and make a noise when they have finished washing the outfit you put in.",
+                "taskName": "Laundry position"
+            },
+            {
+                "taskDetails": "I hate to be the bearer of bad news, which is why I'm asking you to do it for me. Collect mail from the mail room and deliver it to the inmates it's addressed to.",
+                "taskName": "Mail man position"
+            },
+            {
+                "taskDetails": "The automotive industry is booming! The only booming you will hear is the sound of license plates being pressed. The harder you work, the sooner I get my sporty little convertible.Take metal sheets from the container in the metalshop and use them on the presses to create 5 license plates. Put the finished plates in the relevant container.",
+                "taskName": "Metal shop position"
+            }
+        ],
+        "prisonName": "Center Perks",
+        "prisonTimePtr": {
+            "currentDay": 0,
+            "dayCounter": 0,
+            "startDate": {
+                "ano": 2023,
+                "dia": 31,
+                "mes": 12
+            },
+            "startHour": 6,
+            "startMinute": 38
+        },
+        "registeredBotInmates": [
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "KEV",
+                "request": {
+                    "description": "Trying to fix this contraption. I need \u001b[31mpliers\u001b[m, and I need them fast!",
+                    "itemName": "pliers",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "KELAUCE",
+                "request": {
+                    "description": "Trying to fix this contraption. I need \u001b[31mpliers\u001b[m, and I need them fast!",
+                    "itemName": "pliers",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "CARL",
+                "request": {
+                    "description": "Got a bit of gardening to do. Pass me a \u001b[31mhoe\u001b[m, will you?",
+                    "itemName": "hoe",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "CAMEO",
+                "request": {
+                    "description": "Hungry as ever. How about some \u001b[31mfood\u001b[m to keep me going?",
+                    "itemName": "food",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "JACKALL",
+                "request": {
+                    "description": "Need to scrub down this mess. A \u001b[31mmop\u001b[m would be a lifesaver!",
+                    "itemName": "mop",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "ARNIE",
+                "request": {
+                    "description": "Trying to fix this contraption. I need \u001b[31mpliers\u001b[m, and I need them fast!",
+                    "itemName": "pliers",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "KRIMEWAVE",
+                "request": {
+                    "description": "Hungry as ever. How about some \u001b[31mfood\u001b[m to keep me going?",
+                    "itemName": "food",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "DOGEKIT",
+                "request": {
+                    "description": "Bored out of my mind. Lend me a \u001b[31mbook\u001b[m, would you?",
+                    "itemName": "book",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "PHIL",
+                "request": {
+                    "description": "Need to scrub down this mess. A \u001b[31mmop\u001b[m would be a lifesaver!",
+                    "itemName": "mop",
+                    "status": false
+                },
+                "speed": 40,
+                "strength": 40
+            }
+        ],
+        "registeredInmates": [
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "Clive",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "KEV",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "KELAUCE",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "CARL",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "CAMEO",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "JACKALL",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "ARNIE",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "KRIMEWAVE",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "DOGEKIT",
+                "speed": 40,
+                "strength": 40
+            },
+            {
+                "energy": 100,
+                "health": 100,
+                "intelligence": 40,
+                "money": 0.0,
+                "name": "PHIL",
+                "speed": 40,
+                "strength": 40
+            }
+        ],
+        "routinesToLocations": [
+            {
+                "Breakfast Time": "Dining Room"
+            },
+            {
+                "Dinner Time": "Dining Room"
+            },
+            {
+                "Exercise Time": "Exercise Room"
+            },
+            {
+                "Free Time": ""
+            },
+            {
+                "Job Time": ""
+            },
+            {
+                "Lights Out": ""
+            },
+            {
+                "Lunch Time": "Dining Room"
+            },
+            {
+                "Roll Call": "Meeting Room"
+            },
+            {
+                "Shower Time": "Shower Room"
+            },
+            {
+                "Wake Up Call, Roll Call": "Meeting Room"
+            }
+        ]
+    }
+}
