@@ -37,7 +37,7 @@ class Prison{
         Prison(const json &);
         ~Prison();
 
-        json toJson(string objectName) const;
+        json toJson(string) const;
 
         void registerDailyPrisonRoutine(Routine);
         void registerInmateInPrison(const Inmate &);
@@ -59,17 +59,18 @@ class Prison{
         void assignTasksToInmates();
         void displayPrisonJobBoard() const;
         void viewPrisonTaskDetails(int) const;
+        
         void viewLocationInformation(string) const;
         void viewAllLocationInformation() const;
-        void viewAllBotInmates() const;
         void viewRoutinesToLocationsMap() const;
+        void viewAllBotInmates() const;
         void moveBotInmates();
         double giveItemToBotInmate(const Item&, string);
         void showBotInmateRequestByName(string) const;
         void controlPlayerInmateCell();
         BotInmate getBotInmateByName(string) const;
-        Item getItemFromPlayerInmateLocation(string);
 
+        Item getItemFromPlayerInmateLocation(string);
         void movePlayerInmate(string);
         void addItemToPlayerInmateInventory(const Item&);
         void putPlayerInmateToSleep();

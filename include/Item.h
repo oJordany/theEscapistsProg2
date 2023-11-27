@@ -44,7 +44,7 @@ class Item{
         string ownerName;
         string currentLocation;
         const static int MAXNUMITEMTYPES = 24;
-        const static string ITEMTYPESPTR[MAXNUMITEMTYPES];
+        const static string ITEMTYPES[MAXNUMITEMTYPES];
         string drawItem() const;
         void setItemName(string);
         string strip(const string&) const;

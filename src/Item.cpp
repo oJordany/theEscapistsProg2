@@ -44,7 +44,7 @@ using std::system;
 #define CYAN    "\033[36m"      
 #define WHITE   "\033[37m" 
 
-const string Item::ITEMTYPESPTR[MAXNUMITEMTYPES] = {"shovel", "brass knuckles", "key1", 
+const string Item::ITEMTYPES[MAXNUMITEMTYPES] = {"shovel", "brass knuckles", "key1", 
                                                     "key2", "key3", "key4", 
                                                     "key5", "plastic key1", "plastic key2",
                                                     "plastic key3", "plastic key4", "plastic key5", 
@@ -77,7 +77,7 @@ Item::Item(const Item &other){
 
 void Item::setItemName(string item){
     bool isValidItemType = false;
-    for (auto itemType : ITEMTYPESPTR){
+    for (auto itemType : ITEMTYPES){
         if (toLowerCase(itemType) == toLowerCase(item)){
             isValidItemType = true;
             break;
@@ -167,22 +167,22 @@ string Item::drawItem() const{
     vector <string> ruffleItems;
 
     for (int i = 0; i < MAXNUMITEMTYPES; i++){
-        if (ITEMTYPESPTR[i] != "shovel" &&
-            ITEMTYPESPTR[i] != "brass knuckles" &&
-            ITEMTYPESPTR[i] != "key1" &&
-            ITEMTYPESPTR[i] != "key2" &&
-            ITEMTYPESPTR[i] != "key3" &&
-            ITEMTYPESPTR[i] != "key4" &&
-            ITEMTYPESPTR[i] != "key5" &&
-            ITEMTYPESPTR[i] != "plastic key1" &&
-            ITEMTYPESPTR[i] != "plastic key2" &&
-            ITEMTYPESPTR[i] != "plastic key3" &&
-            ITEMTYPESPTR[i] != "plastic key4" &&
-            ITEMTYPESPTR[i] != "plastic key5" &&
-            ITEMTYPESPTR[i] != "correspondence letter" &&
-            ITEMTYPESPTR[i] != "knife"
+        if (ITEMTYPES[i] != "shovel" &&
+            ITEMTYPES[i] != "brass knuckles" &&
+            ITEMTYPES[i] != "key1" &&
+            ITEMTYPES[i] != "key2" &&
+            ITEMTYPES[i] != "key3" &&
+            ITEMTYPES[i] != "key4" &&
+            ITEMTYPES[i] != "key5" &&
+            ITEMTYPES[i] != "plastic key1" &&
+            ITEMTYPES[i] != "plastic key2" &&
+            ITEMTYPES[i] != "plastic key3" &&
+            ITEMTYPES[i] != "plastic key4" &&
+            ITEMTYPES[i] != "plastic key5" &&
+            ITEMTYPES[i] != "correspondence letter" &&
+            ITEMTYPES[i] != "knife"
             )
-            ruffleItems.push_back(ITEMTYPESPTR[i]);
+            ruffleItems.push_back(ITEMTYPES[i]);
     }  
 
         randomIndex = rand() % ruffleItems.size();

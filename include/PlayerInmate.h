@@ -52,7 +52,7 @@ class PlayerInmate: public Inmate
         // const Key& dropKey(int);
         void showInventory() const;
         void viewPlayerInmateProfile() const;
-        Item giveItemTo(int itemID, const BotInmate&); // Toda vez que for dar um item, verificar se ele mata uma request
+        Item giveItemTo(int, const BotInmate&); // Toda vez que for dar um item, verificar se ele mata uma request
         void showAcceptedRequests() const;
         inline int getStoredItemsSize() const {return storedItems.size();};
         inline int getMAXNUMITEMS() const {return MAXNUMITEMS;};
