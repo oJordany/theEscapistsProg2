@@ -23,6 +23,10 @@ using std::chrono::milliseconds;
 
 // #include "util.h"
 
+#include <stdexcept>
+using std::stoi;
+using std::invalid_argument;
+
 #include <thread>
 using std::thread;
 using std::this_thread::sleep_for;
@@ -68,11 +72,12 @@ int main(){
     // Item teste;
     // teste.viewInfos();
     int returnSystem;
+    string input;
     int option = -1;
     int option2 = -1;
     int option3 = -1;
     bool hasCheckpoint = false;
-    bool clear;
+    bool clear = true;
     bool wasSaved;
     string nameLocation;
     string itemName;
@@ -184,12 +189,21 @@ int main(){
     while(option != 0){
         option2 = -1;
         json savedPrisons = loadSaves("saves.json");            // Objeto JSON com as prisões salvas
-        returnSystem = system("clear");
+        if (clear)
+            returnSystem = system("clear");
         showFigure("prisonsFigure.txt");                        // Imagem das prisões
         cout << "\nEscolha uma prisão [0 para sair do jogo]: ";
+        getline(cin, input);
 
+        try {                                          // Seleção da prisão
+            option = stoi(input);                      // Converte a string para um inteiro
+            clear = true;
+        } catch (const invalid_argument&){
+            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+            clear = false;
+            continue;
+        }
 
-        cin >> option;                                          // Seleção da prisão
         switch (option)
         {
             case 0:                                             // Sai do jogo
@@ -198,11 +212,12 @@ int main(){
 
 
             /******************************************** CENTER PERKS ********************************************/   
-            case 1:                                             
+            case 1:
                 option2 = -1;
-                returnSystem = system("clear");
+                if (clear)
+                    returnSystem = system("clear");
 
-                if (savedPrisons.dump() != "null"){                         // Varifica se existem prisões salvas
+                if (savedPrisons.dump() != "null"){                         // Verifica se existem prisões salvas
                     hasCheckpoint = false;
                     for (auto savedPrison : savedPrisons.items( )){         // Verifica se Center Perks tem checkpoint
                         if (savedPrison.key() == "centerPerks"){
@@ -215,7 +230,17 @@ int main(){
                         /***************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (CENTER PERKS) ********************/
                         while(option2 != 0){
                             cout << "\nEscolha uma opção [0 para voltar]: ";
-                            cin >> option2;                                 // Seleção: Novo jogo Ou Continuar ou Sair
+                            getline(cin, input);                            // Seleção: Novo jogo Ou Continuar ou Sair
+                                                             
+                            try {                                          
+                                option2 = stoi(input);                      // Converte a string para um inteiro
+                                clear = true;
+                            } catch (const invalid_argument&){
+                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                clear = false;
+                                continue;
+                            }
+                                
                             switch (option2)
                             {
                                 case 0:                                     // Sai do menu de Center Perks
@@ -245,6 +270,8 @@ int main(){
 
                                             /**************** MENU DE SELEÇÃO DAS AÇÕES EM CENTER PERKS ***************/
                                             while(option3 != 0){
+                                                if (clear) 
+                                                    returnSystem = system("clear");
                                                 cout << "\n[1] - Exibir todos os locais da prisão\n";
                                                 cout << "[2] - Exibir informações do local\n";
                                                 cout << "[3] - Exibir informações de todos os locais\n";
@@ -263,7 +290,15 @@ int main(){
                                                 cout << "[16] - Fazer " << prison->getPlayerInmateName() << " ler um livro \n";
                                                 cout << "[17] - Salvar progresso atual\n";
                                                 cout << "Escolha uma opção [0 para voltar]: ";
-                                                cin >> option3;
+                                                getline(cin, input);
+                                                try{
+                                                    option3 = stoi(input);
+                                                    clear = true;
+                                                catch (const invalid_argument&){
+                                                    cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                    clear = false;
+                                                    continue;
+                                                }
                                                 switch (option3)
                                                 {   
                                                     case 0:
@@ -376,7 +411,7 @@ int main(){
                                                         clear = false;
                                                         break;
                                                     default:
-                                                        cout << "Insira uma opção válida!\n";
+                                                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida.\033[m\033[0m";
                                                         break;
                                                 }
                                             }
@@ -384,7 +419,6 @@ int main(){
                                     }
                                     break;
                                 case 2:                                         // Continua o jogo a partir do que tava salvo
-                                    clear = true;
                                     option3 = -1;
                                     cout << "Continuando jogo...\n";
                                     prison = new Prison(savedPrisons["centerPerks"]);
@@ -418,7 +452,15 @@ int main(){
                                         cout << "[16] - Fazer " << prison->getPlayerInmateName() << " ler um livro \n";
                                         cout << "[17] - Salvar progresso atual\n";
                                         cout << "Escolha uma opção [0 para voltar]: ";
-                                        cin >> option3;                             // Seleção das opções de ação na prisão
+                                        if (!(cin >> option3)){            // Seleção das opções de ação na prisão
+                                            // Se a leitura falhar, limpa o estado do cin e o buffer de entrada
+                                            cin.clear();
+                                            cin.ignore();
+                                            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                            option3 = -1;
+                                            clear = false;
+                                            continue;
+                                        }                             
                                         switch (option3)
                                         {   
                                             case 0:                                 
@@ -540,7 +582,7 @@ int main(){
                                                 clear = false;
                                                 break;
                                             default:
-                                                cout << "Insira uma opção válida!\n";
+                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                                 break;
                                         }
                                     }                                                    
@@ -557,7 +599,14 @@ int main(){
                 while(option2 != 0){
                     showFigure("newGameFigure.txt");                                // Printa botão New game
                     cout << "\nEscolha uma opção [0 para voltar]: ";
-                    cin >> option2;                                                 // Seleção: Novo jogo ou sair
+                    if (!(cin >> option2)){                                 // Seleção: Novo jogo Ou Continuar ou Sair
+                        cin.clear();
+                        cin.ignore();
+                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                        option = -1;
+                        clear = false;
+                        continue;
+                    }                                                 
                     switch (option2)
                     {
                     case 0:
@@ -600,7 +649,15 @@ int main(){
                                     cout << "[16] - Fazer " << prison->getPlayerInmateName() << " ler um livro \n";
                                     cout << "[17] - Salvar progresso atual\n";
                                     cout << "Escolha uma opção [0 para voltar]: ";
-                                    cin >> option3;
+                                    if (!(cin >> option3)){            // Seleção das opções de ação na prisão
+                                        // Se a leitura falhar, limpa o estado do cin e o buffer de entrada
+                                        cin.clear();
+                                        cin.ignore();
+                                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                        option3 = -1;
+                                        clear = false;
+                                        continue;
+                                    }  
                                     switch (option3)
                                     {   
                                         case 0:
@@ -723,7 +780,7 @@ int main(){
                                                 clear = false;
                                                 break;
                                         default:
-                                            cout << "Insira uma opção válida!\n";
+                                            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                             break;
                                     }
                                 }
@@ -731,7 +788,7 @@ int main(){
                         }
                         break;
                     default:
-                        cout << "Insira uma opção válida!\n";
+                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                         break;
                     }
                 }
@@ -799,7 +856,7 @@ int main(){
                                                         cout << "Testando";
                                                         break;
                                                     default:
-                                                        cout << "Insira uma opção válida!\n";
+                                                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                                         break;
                                                 }
                                             }
@@ -836,7 +893,7 @@ int main(){
                                                 cout << "Testando";
                                                 break;
                                             default:
-                                                cout << "Insira uma opção válida!\n";
+                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                                 break;
                                         }
                                     }                                                    
@@ -890,7 +947,7 @@ int main(){
                                             cout << "Testando";
                                             break;
                                         default:
-                                            cout << "Insira uma opção válida!\n";
+                                            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                             break;
                                     }
                                 }
@@ -898,7 +955,7 @@ int main(){
                         }
                         break;
                     default:
-                        cout << "Insira uma opção válida!\n";
+                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                         break;
                     }
                 }
@@ -965,7 +1022,7 @@ int main(){
                                                         cout << "Testando";
                                                         break;
                                                     default:
-                                                        cout << "Insira uma opção válida!\n";
+                                                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                                         break;
                                                 }
                                             }
@@ -1001,7 +1058,7 @@ int main(){
                                                 cout << "Testando";
                                                 break;
                                             default:
-                                                cout << "Insira uma opção válida!\n";
+                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                                 break;
                                         }
                                     }                                                    
@@ -1055,7 +1112,7 @@ int main(){
                                             cout << "Testando";
                                             break;
                                         default:
-                                            cout << "Insira uma opção válida!\n";
+                                            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                             break;
                                     }
                                 }
@@ -1063,7 +1120,7 @@ int main(){
                         }
                         break;
                     default:
-                        cout << "Insira uma opção válida!\n";
+                        cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                         break;
                     }
                 }
@@ -1071,7 +1128,7 @@ int main(){
                 break;
 
             default:
-                cout << "Insira uma opção válida!\n";
+                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                 break;
         }
     }
@@ -1157,7 +1214,7 @@ int main(){
     //         loadSaves("saves.json");
 
     //     default:
-    //         cout << "Insira uma opção válida!\n";
+    //         cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
     //         break;
     //     }
     // }
