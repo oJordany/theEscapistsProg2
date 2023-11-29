@@ -183,6 +183,9 @@ playerInmatePtr(0){
             botInmate["request"]["status"],
         };
         botInmateAux.setRequest(requestAux);
+        botInmateAux.setItemForSale(botInmate["itemForSalePtr"]["itemName"]);
+        botInmateAux.setRewardValue(botInmate["rewardValue"]);
+        botInmateAux.setItemPrice(botInmate["itemPrice"]);
         registerBotInmateInPrison(botInmateAux);
     }
 
@@ -393,7 +396,7 @@ void Prison::viewLocationInformation(string locationName) const{
         for (auto registeredBotInmate : registeredBotInmates){
             botCurrentLocation = registeredBotInmate->getCurrentLocation();
             if (botCurrentLocation == locationName){
-                cout << "|" << left << setw(16) << registeredBotInmate->getName() << "|" << "\n";
+                cout << "|" << left << setw(15) << registeredBotInmate->getName() << "|" << "\n";
             }
         }
         cout << "+" << right << setw(16) << setfill('-') << "+" << setfill(' ') << "\n";
@@ -433,22 +436,43 @@ BotInmate Prison::getBotInmateByName(string name) const{
     throw std::out_of_range("🚫 \033[31m\x1b[1;4mInvalid Inmate Name!\033[m\x1b[0m 🚫 Inmate not found with name: " + name);
 }
 
+void Prison::makePlayerInmateBuyItemFromBotInmate(string botInmateSellerName){\
+    try {
+        BotInmate botInmateSeller(getBotInmateByName(botInmateSellerName));
+        int playerInmateMoney = playerInmatePtr->getMoney();
+        double itemPrice = botInmateSeller.getItemPrice();
+        if (itemPrice <= playerInmateMoney);
+            playerInmatePtr->setMoney(playerInmateMoney - itemPrice);
+        playerInmatePtr->addItem((botInmateSeller.sellItemTo(static_cast<Inmate>(*playerInmatePtr))));
+        for (int i=0; i < registeredBotInmates.size(); i++){
+            if (botInmateSeller.getName() == registeredBotInmates[i]->getName()){
+                delete registeredBotInmates[i];
+                registeredBotInmates[i] = new BotInmate(botInmateSeller);
+            }
+        }
+    }catch(const std::exception& e){
+        std::cerr << e.what() << "\n";
+    }
+}
+
 void Prison::viewAllLocationInformation() const{
     string botCurrentLocation;
     string locationName;;
     for (auto location : locations){
         locationName = location.first;
-        cout << setw(15) << UNDERLINED << locationName << RESET << "\n";
-        cout << "+" << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
-        cout << "|" << left << setw(14) << "Local Inmates" << "|" << "\n";
-        cout << "+" << right << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
+        cout << setw(16) << UNDERLINED << locationName << RESET << "\n";
+        cout << "+" << setw(16) << setfill('-') << "+" << setfill(' ') << "\n";
+        cout << "|" << left << setw(15) << "Local Inmates" << "|" << "\n";
+        cout << "+" << right << setw(16) << setfill('-') << "+" << setfill(' ') << "\n";
+        if (locationName == playerInmatePtr->getCurrentLocation())
+            cout << "|" << left << setw(10) << playerInmatePtr->getName() << "(You)|" << "\n";
 
         for (auto registeredBotInmate : registeredBotInmates){
             botCurrentLocation = registeredBotInmate->getCurrentLocation();
             if (botCurrentLocation == locationName)
-                cout << "|" << left << setw(14) << registeredBotInmate->getName() << "|" << "\n";
+                cout << "|" << left << setw(15) << registeredBotInmate->getName() << "|" << "\n";
         }
-        cout << "+" << right << setw(15) << setfill('-') << "+" << setfill(' ') << "\n";
+        cout << "+" << right << setw(16) << setfill('-') << "+" << setfill(' ') << "\n";
         for (auto item : items){
             if (item->getCurrentLocation() == locationName){
                 item->viewInfos();
@@ -496,6 +520,7 @@ void Prison::moveBotInmates(){
                 random = false;
                 for (auto botInmate : registeredBotInmates){
                     botInmate->moveTo(destination);
+                    botInmate->refreshItemForSaleLocation();
                     locations[botInmate->getName()+"'s" + " room"] = 1;
                     // cout << *botInmate << "\n";
                 }
@@ -508,12 +533,14 @@ void Prison::moveBotInmates(){
                         advance(it, rand() % releasedLocations.size());
                         destination = it->first;
                         botInmate->moveTo(destination);
+                        botInmate->refreshItemForSaleLocation();
                         locations[botInmate->getName()+"'s" + " room"] = 1;
                         // cout << *botInmate << "\n";
                     }
                 } else {
                     for (auto botInmate : registeredBotInmates){
                         botInmate->moveTo(botInmate->getName()+"'s" + " room");
+                        botInmate->refreshItemForSaleLocation();
                         locations[botInmate->getName()+"'s" + " room"] = 0;
                     }
                 }
@@ -814,8 +841,8 @@ void Prison::putPlayerInmateToSleep(){
     playerInmatePtr->sleep();
 }
 
-void Prison::makePlayerInmateAcceptRequest(const BotInmate &botInmate){
-    playerInmatePtr->acceptRequest(botInmate);
+bool Prison::makePlayerInmateAcceptRequest(const BotInmate &botInmate){
+    return playerInmatePtr->acceptRequest(botInmate);
 }
 
 void Prison::dropItemFromPlayerInmateInventory(int itemID){

@@ -38,6 +38,7 @@ class Item{
         inline void setCurrentLocation(string location){currentLocation = location;};
         inline string getItemName() const {return itemName;};
         inline string getCurrentLocation() const {return currentLocation;};
+        inline string getOwnerName() const {return ownerName;};
 
     private:
         string itemName;

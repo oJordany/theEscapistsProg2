@@ -85,7 +85,6 @@ int main(){
     int itemID;
     Prison *prison;
     prison = 0;
-    // BotInmate bi = BotInmate();
     // bi.moveTo("Meeting Room");
     // cout << bi.getCurrentLocation() << "\n";
     // string itemName;
@@ -288,13 +287,15 @@ int main(){
                                                 cout << "[14] - Fazer " << prison->getPlayerInmateName() << " tomar banho \n";
                                                 cout << "[15] - Fazer " << prison->getPlayerInmateName() << " se exercitar \n";
                                                 cout << "[16] - Fazer " << prison->getPlayerInmateName() << " ler um livro \n";
-                                                cout << "[17] - Salvar progresso atual\n";
+                                                cout << "[17] - Ver item de venda de um prisioneiro\n";
+                                                cout << "[18] - Comprar item de venda de um prisioneiro\n";
+                                                cout << "[19] - Salvar progresso atual\n";
                                                 cout << "Escolha uma opção [0 para voltar]: ";
                                                 getline(cin, input);
                                                 try{
                                                     option3 = stoi(input);
                                                     clear = true;
-                                                catch (const invalid_argument&){
+                                                }catch (const invalid_argument&){
                                                     cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
                                                     clear = false;
                                                     continue;
@@ -321,7 +322,6 @@ int main(){
                                                     case 4:
                                                         cout << "Local atual: " << prison->getCurrentLocationPlayerInmate() << "\n";
                                                         cout << "Insira o local de destino: ";
-                                                        cin.ignore();
                                                         getline(cin, nameLocation);
                                                         prison->movePlayerInmate(nameLocation);
                                                         break;
@@ -330,7 +330,6 @@ int main(){
                                                         break;
                                                     case 6:
                                                         cout << "Insira o nome do item que você deseja pegar: ";
-                                                        cin.ignore();
                                                         getline(cin, itemName);
                                                         try{
                                                             prison->addItemToPlayerInmateInventory(prison->getItemFromPlayerInmateLocation(itemName));
@@ -346,31 +345,44 @@ int main(){
                                                         break;
                                                     case 9:
                                                         cout << "Insira o nome do prisioneiro que você deseja aceitar o pedido: ";
-                                                        cin.ignore();
                                                         getline(cin, botInmateName);
                                                         try{
-                                                            prison->makePlayerInmateAcceptRequest(prison->getBotInmateByName(botInmateName));
-                                                            cout << "\033[32mO pedido de " << botInmateName << " foi aceito com sucesso!\033[m \n";
+                                                            bool accepted = prison->makePlayerInmateAcceptRequest(prison->getBotInmateByName(botInmateName));
+                                                            if (accepted)
+                                                                cout << "\033[32mO pedido de " << botInmateName << " foi aceito com sucesso!\033[m \n";
                                                         }catch(const std::exception& e){
                                                             std::cerr << e.what() << "\n";
                                                         }
                                                         break;
                                                     case 10:
                                                         cout << "Insira o ID do item que você deseja soltar: ";
-                                                        cin >> itemID;
+                                                        try{
+                                                            itemID = stoi(input);
+                                                        }catch(invalid_argument&){
+                                                            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                            clear = false;
+                                                            continue;
+                                                        }
                                                         prison->dropItemFromPlayerInmateInventory(itemID);
                                                         clear = false;
                                                         break;
                                                     case 11:
                                                         cout << "Insira o nome do prisioneiro que você deseja dar o item: ";
-                                                        cin.ignore();
                                                         getline(cin, botInmateName);
                                                         cout << "Insira o ID do item que você deseja dar: ";
-                                                        cin >> itemID;
+                                                        getline(cin, input);
                                                         try{
+                                                            itemID = stoi(input);
+                                                        }catch(invalid_argument&){
+                                                            cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                            clear = false;
+                                                            continue;
+                                                        }
+                                                        try{
+                                                            bool accepted = prison->requestWasAcceptedByPlayerInmate(prison->getBotInmateByName(botInmateName));
                                                             Item itemAux(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
                                                             double reward = prison->giveItemToBotInmate(itemAux, botInmateName);
-                                                            if (reward){
+                                                            if (reward && accepted){
                                                                 cout << "\033[32mVocê completou o pedido de " << botInmateName;
                                                                 cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m";
                                                                 prison->giveRewardToPlayerInmate(reward);
@@ -382,7 +394,6 @@ int main(){
                                                         break;
                                                     case 12:
                                                         cout << "Insira o nome do prisioneiro que você deseja ver o pedido: ";
-                                                        cin.ignore();
                                                         getline(cin, botInmateName);
                                                         prison->showBotInmateRequestByName(botInmateName);
                                                         clear = false;
@@ -403,6 +414,26 @@ int main(){
                                                         clear = false;
                                                         break;
                                                     case 17:
+                                                        cout << "Insira o nome do prisioneiro que você deseja ver o item de venda: ";
+                                                        getline(cin, botInmateName);
+                                                        try{
+                                                            prison->showBotInmateItemForSale(prison->getBotInmateByName(botInmateName));
+                                                        }catch(const std::exception& e){
+                                                            std::cerr << e.what() << "\n";
+                                                        }
+                                                        clear = false;
+                                                        break;
+                                                    case 18:
+                                                        cout << "Insira o nome do prisioneiro que você deseja comprar o item: ";
+                                                        getline(cin, botInmateName);
+                                                        try{
+                                                            prison->makePlayerInmateBuyItemFromBotInmate(botInmateName);
+                                                        }catch(const std::exception& e){
+                                                            std::cerr << e.what() << "\n";
+                                                        }
+                                                        clear = false;
+                                                        break;
+                                                    case 19:
                                                         wasSaved = saveConfigs(prison->toJson("centerPerks"));
                                                         if (wasSaved)
                                                             cout << "💾\033[1m\033[4m Data saved successfully! \033[0m💾\n";
@@ -412,6 +443,7 @@ int main(){
                                                         break;
                                                     default:
                                                         cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida.\033[m\033[0m";
+                                                        clear = false;
                                                         break;
                                                 }
                                             }
@@ -450,17 +482,19 @@ int main(){
                                         cout << "[14] - Fazer " << prison->getPlayerInmateName() << " tomar banho \n";
                                         cout << "[15] - Fazer " << prison->getPlayerInmateName() << " se exercitar \n";
                                         cout << "[16] - Fazer " << prison->getPlayerInmateName() << " ler um livro \n";
-                                        cout << "[17] - Salvar progresso atual\n";
+                                        cout << "[17] - Ver item de venda de um prisioneiro\n";
+                                        cout << "[18] - Comprar item de venda de um prisioneiro\n";
+                                        cout << "[19] - Salvar progresso atual\n";
                                         cout << "Escolha uma opção [0 para voltar]: ";
-                                        if (!(cin >> option3)){            // Seleção das opções de ação na prisão
-                                            // Se a leitura falhar, limpa o estado do cin e o buffer de entrada
-                                            cin.clear();
-                                            cin.ignore();
+                                        getline(cin, input);
+                                        try{
+                                            option3 = stoi(input);
+                                            clear = true;
+                                        }catch (const invalid_argument&){
                                             cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
-                                            option3 = -1;
                                             clear = false;
                                             continue;
-                                        }                             
+                                        }                            
                                         switch (option3)
                                         {   
                                             case 0:                                 
@@ -486,7 +520,6 @@ int main(){
                                             case 4:
                                                 cout << "Local atual: " << prison->getCurrentLocationPlayerInmate() << "\n";
                                                 cout << "Insira o local de destino: ";
-                                                cin.ignore();
                                                 getline(cin, nameLocation);
                                                 prison->movePlayerInmate(nameLocation);
                                                 clear = false;
@@ -496,7 +529,6 @@ int main(){
                                                 break;
                                             case 6:
                                                 cout << "Insira o nome do item que você deseja pegar: ";
-                                                cin.ignore();
                                                 getline(cin, itemName);
                                                 try{
                                                     prison->addItemToPlayerInmateInventory(prison->getItemFromPlayerInmateLocation(itemName));
@@ -515,11 +547,11 @@ int main(){
                                                 break;
                                             case 9:
                                                 cout << "Insira o nome do prisioneiro que você deseja aceitar o pedido: ";
-                                                cin.ignore();
                                                 getline(cin, botInmateName);
                                                 try{
-                                                    prison->makePlayerInmateAcceptRequest(prison->getBotInmateByName(botInmateName));
-                                                    cout << "\033[32mO pedido de " << botInmateName << " foi aceito com sucesso!\033[m \n";
+                                                    bool accepted = prison->makePlayerInmateAcceptRequest(prison->getBotInmateByName(botInmateName));
+                                                    if (accepted)
+                                                        cout << "\033[32mO pedido de " << botInmateName << " foi aceito com sucesso!\033[m \n";
                                                 }catch(const std::exception& e){
                                                     std::cerr << e.what() << "\n";
                                                 }
@@ -527,20 +559,33 @@ int main(){
                                                 break;
                                             case 10:
                                                 cout << "Insira o ID do item que você deseja soltar: ";
-                                                cin >> itemID;
+                                                try{
+                                                itemID = stoi(input);
+                                            }catch(invalid_argument&){
+                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                clear = false;
+                                                continue;
+                                            }
                                                 prison->dropItemFromPlayerInmateInventory(itemID);
                                                 clear = false;
                                                 break;
                                             case 11:
                                                 cout << "Insira o nome do prisioneiro que você deseja dar o item: ";
-                                                cin.ignore();
                                                 getline(cin, botInmateName);
                                                 cout << "Insira o ID do item que você deseja dar: ";
-                                                cin >> itemID;
+                                                getline(cin, input);
                                                 try{
+                                                    itemID = stoi(input);
+                                                }catch(invalid_argument&){
+                                                    cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                    clear = false;
+                                                    continue;
+                                                }
+                                                try{
+                                                    bool accepted = prison->requestWasAcceptedByPlayerInmate(prison->getBotInmateByName(botInmateName));
                                                     Item itemAux(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
                                                     double reward = prison->giveItemToBotInmate(itemAux, botInmateName);
-                                                    if (reward){
+                                                    if (reward && accepted){
                                                         cout << "\033[32mVocê completou o pedido de " << botInmateName;
                                                         cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m";
                                                         prison->giveRewardToPlayerInmate(reward);
@@ -552,7 +597,6 @@ int main(){
                                                 break;
                                             case 12:
                                                 cout << "Insira o nome do prisioneiro que você deseja ver o pedido: ";
-                                                cin.ignore();
                                                 getline(cin, botInmateName);
                                                 prison->showBotInmateRequestByName(botInmateName);
                                                 clear = false;
@@ -574,6 +618,26 @@ int main(){
                                                 clear = false;
                                                 break;
                                             case 17:
+                                                cout << "Insira o nome do prisioneiro que você deseja ver o item de venda: ";
+                                                getline(cin, botInmateName);
+                                                try{
+                                                    prison->showBotInmateItemForSale(prison->getBotInmateByName(botInmateName));
+                                                }catch(const std::exception& e){
+                                                    std::cerr << e.what() << "\n";
+                                                }
+                                                clear = false;
+                                                break;
+                                            case 18:
+                                                cout << "Insira o nome do prisioneiro que você deseja comprar o item: ";
+                                                getline(cin, botInmateName);
+                                                try{
+                                                    prison->makePlayerInmateBuyItemFromBotInmate(botInmateName);
+                                                }catch(const std::exception& e){
+                                                    std::cerr << e.what() << "\n";
+                                                }
+                                                clear = false;
+                                                break;
+                                            case 19:
                                                 wasSaved = saveConfigs(prison->toJson("centerPerks"));
                                                 if (wasSaved)
                                                     cout << "💾\033[1m\033[4m Data saved successfully! \033[0m💾\n";
@@ -583,11 +647,14 @@ int main(){
                                                 break;
                                             default:
                                                 cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                clear = false;
                                                 break;
                                         }
                                     }                                                    
                                     break;
                                 default:
+                                    cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                    clear = false;
                                     break;
                             }
                         }
@@ -595,18 +662,18 @@ int main(){
                 }
                 /***************************** CASO NÃO TENHA CHECKPOINT PARA CENTER PERKS *******************************/
                 cout << "não há jogo salvo\n";
-                /********************** MENU DE SELEÇÃO NOVO JOGO/CONTINUAR (CENTER PERKS) *******************************/
+                /*************************** MENU DE SELEÇÃO NOVO JOGO (CENTER PERKS) ************************************/
                 while(option2 != 0){
                     showFigure("newGameFigure.txt");                                // Printa botão New game
-                    cout << "\nEscolha uma opção [0 para voltar]: ";
-                    if (!(cin >> option2)){                                 // Seleção: Novo jogo Ou Continuar ou Sair
-                        cin.clear();
-                        cin.ignore();
+                    getline(cin, input);                                            // Seleção: Novo Jogo ou Sair
+                    try{
+                        option2 = stoi(input);
+                        clear = true;
+                    }catch (const invalid_argument&){
                         cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
-                        option = -1;
                         clear = false;
                         continue;
-                    }                                                 
+                    }                                                
                     switch (option2)
                     {
                     case 0:
@@ -647,14 +714,16 @@ int main(){
                                     cout << "[14] - Fazer " << prison->getPlayerInmateName() << " tomar banho \n";
                                     cout << "[15] - Fazer " << prison->getPlayerInmateName() << " se exercitar \n";
                                     cout << "[16] - Fazer " << prison->getPlayerInmateName() << " ler um livro \n";
-                                    cout << "[17] - Salvar progresso atual\n";
+                                    cout << "[17] - Ver item de venda de um prisioneiro\n";
+                                    cout << "[18] - Comprar item de venda de um prisioneiro\n";
+                                    cout << "[19] - Salvar progresso atual\n";
                                     cout << "Escolha uma opção [0 para voltar]: ";
-                                    if (!(cin >> option3)){            // Seleção das opções de ação na prisão
-                                        // Se a leitura falhar, limpa o estado do cin e o buffer de entrada
-                                        cin.clear();
-                                        cin.ignore();
+                                    getline(cin, input);                                // Seleção das opções de ação no jogo
+                                    try{
+                                        option3 = stoi(input);
+                                        clear = true;
+                                    }catch (const invalid_argument&){
                                         cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
-                                        option3 = -1;
                                         clear = false;
                                         continue;
                                     }  
@@ -684,7 +753,6 @@ int main(){
                                         case 4:
                                             cout << "Local atual: " << prison->getCurrentLocationPlayerInmate() << "\n";
                                             cout << "Insira o local de destino: ";
-                                            cin.ignore();
                                             getline(cin, nameLocation);
                                             prison->movePlayerInmate(nameLocation);
                                             clear = false;
@@ -694,7 +762,6 @@ int main(){
                                             break;
                                         case 6:
                                             cout << "Insira o nome do item que você deseja pegar: ";
-                                            cin.ignore();
                                             getline(cin, itemName);
                                             try{
                                                 prison->addItemToPlayerInmateInventory(prison->getItemFromPlayerInmateLocation(itemName));
@@ -713,11 +780,11 @@ int main(){
                                             break;
                                         case 9:
                                             cout << "Insira o nome do prisioneiro que você deseja aceitar o pedido: ";
-                                            cin.ignore();
                                             getline(cin, botInmateName);
                                             try{
-                                                prison->makePlayerInmateAcceptRequest(prison->getBotInmateByName(botInmateName));
-                                                cout << "\033[32mO pedido de " << botInmateName << " foi aceito com sucesso!\033[m \n";
+                                                bool accepted = prison->makePlayerInmateAcceptRequest(prison->getBotInmateByName(botInmateName));
+                                                if (accepted)
+                                                    cout << "\033[32mO pedido de " << botInmateName << " foi aceito com sucesso!\033[m \n";
                                             }catch(const std::exception& e){
                                                 std::cerr << e.what() << "\n";
                                             }
@@ -725,20 +792,33 @@ int main(){
                                             break;
                                         case 10:
                                             cout << "Insira o ID do item que você deseja soltar: ";
-                                            cin >> itemID;
+                                            try{
+                                                itemID = stoi(input);
+                                            }catch(invalid_argument&){
+                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                clear = false;
+                                                continue;
+                                            }
                                             prison->dropItemFromPlayerInmateInventory(itemID);
                                             clear = false;
                                             break;
                                         case 11:
                                             cout << "Insira o nome do prisioneiro que você deseja dar o item: ";
-                                            cin.ignore();
                                             getline(cin, botInmateName);
                                             cout << "Insira o ID do item que você deseja dar: ";
-                                            cin >> itemID;
+                                            getline(cin,input);
                                             try{
+                                                itemID = stoi(input);
+                                            }catch(invalid_argument&){
+                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                clear = false;
+                                                continue;
+                                            }
+                                            try{
+                                                bool accepted = prison->requestWasAcceptedByPlayerInmate(prison->getBotInmateByName(botInmateName));
                                                 Item itemAux(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
                                                 double reward = prison->giveItemToBotInmate(itemAux, botInmateName);
-                                                if (reward){
+                                                if (reward && accepted){
                                                     cout << "\033[32mVocê completou o pedido de " << botInmateName;
                                                     cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m";
                                                     prison->giveRewardToPlayerInmate(reward);
@@ -750,7 +830,6 @@ int main(){
                                             break;
                                         case 12:
                                                 cout << "Insira o nome do prisioneiro que você deseja ver o pedido: ";
-                                                cin.ignore();
                                                 getline(cin, botInmateName);
                                                 prison->showBotInmateRequestByName(botInmateName);
                                                 clear = false;
@@ -772,6 +851,26 @@ int main(){
                                             clear = false;
                                             break;
                                         case 17:
+                                            cout << "Insira o nome do prisioneiro que você deseja ver o item de venda: ";
+                                            getline(cin, botInmateName);
+                                            try{
+                                                prison->showBotInmateItemForSale(prison->getBotInmateByName(botInmateName));
+                                            }catch(const std::exception& e){
+                                                std::cerr << e.what() << "\n";
+                                            }
+                                            clear = false;
+                                            break;
+                                        case 18:
+                                            cout << "Insira o nome do prisioneiro que você deseja comprar o item: ";
+                                            getline(cin, botInmateName);
+                                            try{
+                                                prison->makePlayerInmateBuyItemFromBotInmate(botInmateName);
+                                            }catch(const std::exception& e){
+                                                std::cerr << e.what() << "\n";
+                                            }
+                                            clear = false;
+                                            break;
+                                        case 19:
                                                 wasSaved = saveConfigs(prison->toJson("centerPerks"));
                                                 if (wasSaved)
                                                     cout << "💾\033[1m\033[4m Data saved successfully! \033[0m💾\n";
@@ -781,6 +880,7 @@ int main(){
                                                 break;
                                         default:
                                             cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                            clear = false;
                                             break;
                                     }
                                 }
@@ -789,6 +889,7 @@ int main(){
                         break;
                     default:
                         cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                        clear = false;
                         break;
                     }
                 }
@@ -1129,6 +1230,7 @@ int main(){
 
             default:
                 cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                clear = false;
                 break;
         }
     }

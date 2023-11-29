@@ -7,6 +7,12 @@ using std::ostream;
 #include <string>
 using std::string;
 
+#include <iomanip>
+using std::setw;
+using std::setfill;
+using std::fixed;
+using std::setprecision;
+
 #include <cmath>
 using std::ceil;
 
@@ -37,6 +43,9 @@ const Request BotInmate::REQUESTS[MAXNUMREQUESTS] = {
 BotInmate::BotInmate()
 :Inmate(){
     request = drawRequest();
+    drawItemForSale();
+    drawItemPrice();
+    drawRewardValue();
 }
 
 BotInmate::BotInmate(string name,
@@ -48,17 +57,23 @@ BotInmate::BotInmate(string name,
                     double money)
 :Inmate(name, health, energy, strength, speed, intelligence, money){
     request = drawRequest();
+    drawItemForSale();
+    drawItemPrice();
+    drawRewardValue();
 }
 
 BotInmate::BotInmate(const BotInmate &other)
 :Inmate(static_cast<Inmate>(other)){
     this->request = other.request;
+    this->itemForSalePtr = new Item(*other.itemForSalePtr);
+    this->itemPrice = other.itemPrice;
+    this->rewardValue = other.rewardValue;
 }
 
 double BotInmate::completeRequest(const Item &item){
     if (item.getItemName() == request.itemName){
         request.status = 1;
-        return REWARDVALUE;
+        return rewardValue;
     }
     return 0.0;
 }
@@ -77,6 +92,29 @@ void BotInmate::setRequest(Request newRequest){
     request.itemName = newRequest.itemName;
     request.description = newRequest.description;
     request.status = newRequest.status;
+}
+
+Item BotInmate::sellItemTo(const Inmate& inmate){
+    if (itemPrice <= inmate.getMoney()){
+        if (this->getCurrentLocation() == inmate.getCurrentLocation()){
+            itemForSalePtr->setOwnerName(inmate.getName());
+            itemForSalePtr->setCurrentLocation(inmate.getCurrentLocation());
+            Item itemAux(*itemForSalePtr);
+            drawItemForSale();
+            drawItemPrice();
+            return itemAux;
+        }
+        throw std::runtime_error("🚫 \033[31m\x1b[1;4mInmate not found!\033[m\x1b[0m 🚫\n");
+    }
+    throw std::runtime_error("\033[1mYou don't have enough money to buy this item.\033[0m 💸😕");
+}
+
+void BotInmate::showItemForSale() const{
+    cout << "                           ___________\n";
+    cout << "                          ╱          ｜\n";
+    cout << "                         ｜○  \033[32m$" << fixed << setprecision(2) << setw(5) << setfill('0') << itemPrice << setfill(' ') << "\033[m ｜\n";
+    cout << "                          ╲__________｜\n";
+    itemForSalePtr->viewInfos();
 }
 
 ostream &operator<<(ostream &out, const BotInmate &botInmate){
@@ -124,9 +162,16 @@ json BotInmate::toFullJson() const{
     requestJson["itemName"] = request.itemName;
     requestJson["status"] = request.status;
     botInmateJson["request"] = requestJson;
+    json itemForSaleAux;
+    itemForSaleAux["itemName"] = itemForSalePtr->getItemName();
+    itemForSaleAux["currentLocation"] = itemForSalePtr->getCurrentLocation();
+    itemForSaleAux["ownerName"] = itemForSalePtr->getOwnerName();
+    botInmateJson["itemForSalePtr"] = itemForSaleAux;
+    botInmateJson["itemPrice"] = itemPrice;
+    botInmateJson["rewardValue"] = rewardValue;
     return botInmateJson;
 }
 
 BotInmate::~BotInmate(){
-    //...
+    delete itemForSalePtr;
 }

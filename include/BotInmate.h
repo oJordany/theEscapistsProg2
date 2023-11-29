@@ -17,6 +17,9 @@ using std::vector;
 #include "Inmate.h"
 #include "Item.h"
 
+#include <cstdlib>
+using std::rand;
+
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -50,11 +53,23 @@ class BotInmate: public Inmate
         double completeRequest(const Item&);
         void setRequest(Request);
         Request drawRequest() const;
+        Item sellItemTo(const Inmate&);
+        inline void setItemForSale(string itemName){itemForSalePtr = new Item(itemName, this->getName(), this->getCurrentLocation());}
+        inline void setItemPrice(double price){itemPrice = price;}
+        inline void setRewardValue(double reward){rewardValue = reward;}
+        inline void drawItemForSale(){itemForSalePtr = new Item("", this->getName(), this->getCurrentLocation());}
+        inline void drawItemPrice(){itemPrice = rand() % 16 + 5;}
+        inline void drawRewardValue(){rewardValue = rand() % 6 + 5;}
+        inline double getItemPrice() const {return itemPrice;}
+        void showItemForSale() const;
+        void refreshItemForSaleLocation(){itemForSalePtr->setCurrentLocation(this->getCurrentLocation());}
     private:
         const static int MAXNUMREQUESTS = 11;
         const static Request REQUESTS[MAXNUMREQUESTS];
-        const double REWARDVALUE = 5.0;
+        double rewardValue;
+        double itemPrice;
         Request request;
+        Item *itemForSalePtr;
 };
 
 

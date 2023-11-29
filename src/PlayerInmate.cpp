@@ -106,11 +106,20 @@ void PlayerInmate::sleep(){
     cout << "Oops! 😮 You can't sleep yet. It's not bedtime! 🌙⏰\n";
 }
 
-void PlayerInmate::acceptRequest(const BotInmate &botInmate){
-    if (botInmate.getCurrentLocation() == this->getCurrentLocation())
+bool PlayerInmate::acceptRequest(const BotInmate &botInmate){
+    if (botInmate.getCurrentLocation() == this->getCurrentLocation()){
+        for (auto acceptedRequest : acceptedRequests){
+            if (*acceptedRequest == botInmate){
+                cout << "🚫 \033[31m\x1b[1;4mOops! This request has already been accepted! Please conclude it.\033[m\x1b[0m 🚫\n";
+                return false;
+            }
+        } 
         acceptedRequests.push_back(new BotInmate(botInmate));
-    else    
+        return true;
+    }else{    
         cout << "🚫 \033[31m\x1b[1;4mInmate not found!\033[m\x1b[0m 🚫\n";
+        return false;
+    }
 }
 
 Item PlayerInmate::dropItem(int itemID){
@@ -164,11 +173,17 @@ void PlayerInmate::viewPlayerInmateProfile() const{
     cout << setfill('-') << setw(57) << "\n" << setfill(' ');
 }
 
+bool PlayerInmate::requestWasAccepted(const BotInmate& botInmate){
+    for (int i = 0; i < acceptedRequests.size(); i++){
+        if (acceptedRequests[i]->getName() == botInmate.getName())
+            return true;
+    }
+    return false;
+}
+
 Item PlayerInmate::giveItemTo(int itemID, const BotInmate &botInmate){
     if (itemID >= 0 && itemID <= storedItems.size()){
-            Item releasedItem(storedItems[itemID]->getItemName(), botInmate, botInmate.getCurrentLocation());
-            delete storedItems[itemID];
-            storedItems.erase(storedItems.begin() + itemID);
+            Item releasedItem(storedItems[itemID]->getItemName(), static_cast<Inmate>(botInmate), botInmate.getCurrentLocation());
             for (int i = 0; i < acceptedRequests.size(); i++){
                 if (acceptedRequests[i]->getName() == botInmate.getName() && 
                     storedItems[itemID]->getItemName() == botInmate.getRequest().itemName){
@@ -177,6 +192,8 @@ Item PlayerInmate::giveItemTo(int itemID, const BotInmate &botInmate){
                     break;
                 }
             }
+            delete storedItems[itemID];
+            storedItems.erase(storedItems.begin() + itemID);
             return releasedItem;
         }
 

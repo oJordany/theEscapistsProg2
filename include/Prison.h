@@ -69,12 +69,15 @@ class Prison{
         void showBotInmateRequestByName(string) const;
         void controlPlayerInmateCell();
         BotInmate getBotInmateByName(string) const;
+        inline void showBotInmateItemForSale(const BotInmate&botInmateSeller) const{botInmateSeller.showItemForSale();}
 
         Item getItemFromPlayerInmateLocation(string);
+        bool requestWasAcceptedByPlayerInmate(const BotInmate& botInmate){return playerInmatePtr->requestWasAccepted(botInmate);}
         void movePlayerInmate(string);
+        void makePlayerInmateBuyItemFromBotInmate(string);
         void addItemToPlayerInmateInventory(const Item&);
         void putPlayerInmateToSleep();
-        void makePlayerInmateAcceptRequest(const BotInmate&);
+        bool makePlayerInmateAcceptRequest(const BotInmate&);
         void dropItemFromPlayerInmateInventory(int);
         void showPlayerInmateInventory() const;
         Item makePlayerInmateGiveItemTo(int, const BotInmate&);

@@ -127,35 +127,15 @@ private:
     std::vector<int> items = {1, 2, 3, 4, 5};
 };
 
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+
 int main() {
-    MyClass myObject;
-    int index;
-
-    std::cout << "Enter an index: ";
-    std::cin >> index;
-
-    switch (index) {
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-        case 5:
-            try {
-                int result = myObject.getItemAtIndex(index - 1); // Adjust index to match vector indexing
-                std::cout << "Item at index " << index << ": " << result << std::endl;
-            } catch (const std::out_of_range& e) {
-                std::cerr << "Caught out_of_range exception: " << e.what() << std::endl;
-            } catch (const std::exception& e) {
-                std::cerr << "Caught exception: " << e.what() << std::endl;
-            } catch (...) {
-                std::cerr << "Caught an unknown exception" << std::endl;
-            }
-            break;
-        default:
-            std::cerr << "Invalid index. Please enter a number between 1 and 5." << std::endl;
-    }
-
-    cout << "\033[1m\033[4m😴 You are too tired to read now 😴\033[0m \n";
+   cout << "  ___________\n";
+   cout << " ╱          ｜\n";
+   cout << "｜○  \033[32m$13.00\033[m ｜\n";
+   cout << " ╲_________⎯｜\n";
 
     return 0;
 }

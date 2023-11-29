@@ -44,7 +44,8 @@ class PlayerInmate: public Inmate
         void refreshOutfitLocation();
         void addItem(const Item&);
         void sleep();
-        void acceptRequest(const BotInmate&);
+        bool acceptRequest(const BotInmate&);
+        bool requestWasAccepted(const BotInmate&);
         inline void setOutfit(const Item &newOutfit){outfit = newOutfit;};
         Item dropItem(int);
         // const Weapon& dropWeapon(int);
