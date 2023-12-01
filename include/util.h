@@ -212,7 +212,7 @@ void createInfos( int prisonID = 1 )
     cout << "\t(_(||)-| S123-45 |-(||)_)\n";
     cout << "\t‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾‾\n";
     cout << "\t\033[30mINMATE NAME:\033[m ";
-    cin >> inmateName;
+    getline(cin, inmateName);
     if (prisonID == 1){
       map<string, string> tasksInfos;
       string inmateNames[INMATESNUMBER] = {inmateName, "KEV", 

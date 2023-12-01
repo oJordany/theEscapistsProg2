@@ -859,8 +859,9 @@ void Prison::showPlayerInmateInventory() const{
 }
 
 double Prison::giveItemToBotInmate(const Item& item, string botInmateName){
+    bool accepted = this->requestWasAcceptedByPlayerInmate(this->getBotInmateByName(botInmateName));
     for (auto botInmate : registeredBotInmates){
-        if (botInmate->getName() == botInmateName){
+        if (botInmate->getName() == botInmateName && accepted){
             double reward = botInmate->completeRequest(item);
             return reward;
         }

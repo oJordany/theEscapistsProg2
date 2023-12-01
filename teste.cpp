@@ -127,15 +127,18 @@ private:
     std::vector<int> items = {1, 2, 3, 4, 5};
 };
 
-#include <iostream>
 #include <cstdlib>
-#include <ctime>
+using std::system;
+
+
 
 int main() {
-   cout << "  ___________\n";
-   cout << " ╱          ｜\n";
-   cout << "｜○  \033[32m$13.00\033[m ｜\n";
-   cout << " ╲_________⎯｜\n";
-
+    int status;
+    status = system("bash teste.bash");
+    while (status != 0) {
+        status = system("bash teste.bash");
+    }
+    system("clear");
+    cout << "Apos\n";
     return 0;
 }

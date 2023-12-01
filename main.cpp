@@ -252,7 +252,12 @@ int main(){
                                 case 1:                                     // Inicia um novo jogo em Center Perks
                                     cout << "Iniciando novo jogo...\n";
                                     option3 = -1;                           // Seleção das opções de ação na prisão
-                                    createInfos(1);                         // Cria uma prisão inicial (no arquivo saves.json)
+                                    createInfos(1);
+                                    returnSystem = system("clear");                         // Cria uma prisão inicial (no arquivo saves.json)
+                                    returnSystem = system("bash ../utils/gifs/loading.bash");
+                                    while (returnSystem != 0){
+                                        returnSystem = system("bash ../utils/gifs/loading.bash");
+                                    }
                                     {
                                         /* abre o arquivo saves.json e cria centerPerks a partir dele */
                                         ifstream inputFile("saves.json");   
@@ -262,8 +267,8 @@ int main(){
                                         }else{
                                             inputFile >> savedPrisons;
                                             prison = new Prison(savedPrisons["centerPerks"]);
-                                            int startHour = prison->getDailyRoutineAtIndex(0).startHour;
-                                            int startMinute = prison->getDailyRoutineAtIndex(0).startMinute;
+                                            int startHour = prison->getDailyRoutineAtIndex(1).startHour;
+                                            int startMinute = prison->getDailyRoutineAtIndex(1).startMinute;
                                             prison->startPrisonTime(Data(31, 12, 2023), startHour, startMinute);
                                             
 
@@ -308,16 +313,20 @@ int main(){
                                                             prison = 0;
                                                         };
                                                         option2 = 0;
+                                                        clear = false;
                                                         break;
                                                     case 1:
                                                         // EXIBINDO TODOS OS LOCAIS DA PRISÃO
                                                         prison->displayAllPrisonLocations();
+                                                        clear = false;
                                                         break;
                                                     case 2:
                                                         prison->viewLocationInformation(prison->getCurrentLocationPlayerInmate());
+                                                        clear = false;
                                                         break;
                                                     case 3:
                                                         prison->viewAllLocationInformation();
+                                                        clear = false;
                                                         break;
                                                     case 4:
                                                         cout << "Local atual: " << prison->getCurrentLocationPlayerInmate() << "\n";
@@ -336,12 +345,15 @@ int main(){
                                                         } catch (const std::exception& e) {
                                                             std::cerr << e.what() << "\n";
                                                         }
+                                                        clear = false;
                                                         break;
                                                     case 7:
                                                         prison->showPlayerInmateProfile();
+                                                        clear = false;
                                                         break;  
                                                     case 8:
                                                         prison->showPlayerInmateInventory();
+                                                        clear = false;
                                                         break;
                                                     case 9:
                                                         cout << "Insira o nome do prisioneiro que você deseja aceitar o pedido: ";
@@ -353,9 +365,11 @@ int main(){
                                                         }catch(const std::exception& e){
                                                             std::cerr << e.what() << "\n";
                                                         }
+                                                        clear = false;
                                                         break;
                                                     case 10:
                                                         cout << "Insira o ID do item que você deseja soltar: ";
+                                                        getline(cin, input);
                                                         try{
                                                             itemID = stoi(input);
                                                         }catch(invalid_argument&){
@@ -559,13 +573,14 @@ int main(){
                                                 break;
                                             case 10:
                                                 cout << "Insira o ID do item que você deseja soltar: ";
+                                                getline(cin, input);
                                                 try{
-                                                itemID = stoi(input);
-                                            }catch(invalid_argument&){
-                                                cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
-                                                clear = false;
-                                                continue;
-                                            }
+                                                    itemID = stoi(input);
+                                                }catch(invalid_argument&){
+                                                    cout << "\033[1m\033[31mEntrada Inválida! Por favor, insira uma opção válida\033[m\033[0m\n";
+                                                    clear = false;
+                                                    continue;
+                                                }
                                                 prison->dropItemFromPlayerInmateInventory(itemID);
                                                 clear = false;
                                                 break;
@@ -680,7 +695,12 @@ int main(){
                         break;
                     case 1:
                         option3 = -1;
-                        createInfos(1);                                   // Cria uma prisão inicial (no arquivo saves.json)
+                        createInfos(1);
+                        returnSystem = system("clear");                                   // Cria uma prisão inicial (no arquivo saves.json)
+                        returnSystem = system("bash ../utils/gifs/loading.bash");
+                        while (returnSystem != 0){
+                            returnSystem = system("bash ../utils/gifs/loading.bash");
+                        }
                         {
                             /* abre o arquivo saves.json pra leitura e cria centerPerks a partir dele */
                             ifstream inputFile("saves.json");
@@ -792,6 +812,7 @@ int main(){
                                             break;
                                         case 10:
                                             cout << "Insira o ID do item que você deseja soltar: ";
+                                            getline(cin, input);
                                             try{
                                                 itemID = stoi(input);
                                             }catch(invalid_argument&){

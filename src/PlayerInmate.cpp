@@ -183,19 +183,19 @@ bool PlayerInmate::requestWasAccepted(const BotInmate& botInmate){
 
 Item PlayerInmate::giveItemTo(int itemID, const BotInmate &botInmate){
     if (itemID >= 0 && itemID <= storedItems.size()){
-            Item releasedItem(storedItems[itemID]->getItemName(), static_cast<Inmate>(botInmate), botInmate.getCurrentLocation());
-            for (int i = 0; i < acceptedRequests.size(); i++){
-                if (acceptedRequests[i]->getName() == botInmate.getName() && 
-                    storedItems[itemID]->getItemName() == botInmate.getRequest().itemName){
-                    delete acceptedRequests[i];
-                    acceptedRequests.erase(acceptedRequests.begin() + i);
-                    break;
-                }
+        Item releasedItem(storedItems[itemID]->getItemName(), static_cast<Inmate>(botInmate), botInmate.getCurrentLocation());
+        for (int i = 0; i < acceptedRequests.size(); i++){
+            if (acceptedRequests[i]->getName() == botInmate.getName() && 
+                storedItems[itemID]->getItemName() == botInmate.getRequest().itemName){
+                delete acceptedRequests[i];
+                acceptedRequests.erase(acceptedRequests.begin() + i);
+                break;
             }
-            delete storedItems[itemID];
-            storedItems.erase(storedItems.begin() + itemID);
-            return releasedItem;
         }
+        delete storedItems[itemID];
+        storedItems.erase(storedItems.begin() + itemID);
+        return releasedItem;
+    }
 
     throw std::out_of_range("🚫 \033[31m\x1b[1;4mInvalid Item ID!\033[m\x1b[0m 🚫 Item not found with ID: " + std::to_string(itemID));
 }
