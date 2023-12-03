@@ -108,14 +108,19 @@ void PlayerInmate::sleep(){
 
 bool PlayerInmate::acceptRequest(const BotInmate &botInmate){
     if (botInmate.getCurrentLocation() == this->getCurrentLocation()){
-        for (auto acceptedRequest : acceptedRequests){
-            if (*acceptedRequest == botInmate){
-                cout << "🚫 \033[31m\x1b[1;4mOops! This request has already been accepted! Please conclude it.\033[m\x1b[0m 🚫\n";
-                return false;
-            }
-        } 
-        acceptedRequests.push_back(new BotInmate(botInmate));
-        return true;
+        if (!botInmate.getRequest().status){
+            for (auto acceptedRequest : acceptedRequests){
+                if (*acceptedRequest == botInmate){
+                    cout << "🚫 \033[31m\x1b[1;4mOops! This request has already been accepted! Please conclude it.\033[m\x1b[0m 🚫\n";
+                    return false;
+                }
+            } 
+            acceptedRequests.push_back(new BotInmate(botInmate));
+            return true;
+        }else{
+            cout << "🚫 \033[31m\x1b[1;4mOops! This request has already been completed!\033[m\x1b[0m 🚫\n";
+            return false;
+        }
     }else{    
         cout << "🚫 \033[31m\x1b[1;4mInmate not found!\033[m\x1b[0m 🚫\n";
         return false;
@@ -182,11 +187,13 @@ bool PlayerInmate::requestWasAccepted(const BotInmate& botInmate){
 }
 
 Item PlayerInmate::giveItemTo(int itemID, const BotInmate &botInmate){
-    if (itemID >= 0 && itemID <= storedItems.size()){
+    if (itemID >= 0 && itemID < storedItems.size()){
         Item releasedItem(storedItems[itemID]->getItemName(), static_cast<Inmate>(botInmate), botInmate.getCurrentLocation());
         for (int i = 0; i < acceptedRequests.size(); i++){
             if (acceptedRequests[i]->getName() == botInmate.getName() && 
                 storedItems[itemID]->getItemName() == botInmate.getRequest().itemName){
+                    if (botInmate.getRequest().status)
+                        throw std::runtime_error("🚫 \033[31m\x1b[1;4mThis request has already been completed!\033[m\x1b[0m 🚫");
                 delete acceptedRequests[i];
                 acceptedRequests.erase(acceptedRequests.begin() + i);
                 break;

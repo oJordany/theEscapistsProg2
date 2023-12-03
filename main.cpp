@@ -394,12 +394,15 @@ int main(){
                                                         }
                                                         try{
                                                             bool accepted = prison->requestWasAcceptedByPlayerInmate(prison->getBotInmateByName(botInmateName));
-                                                            Item itemAux(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
-                                                            double reward = prison->giveItemToBotInmate(itemAux, botInmateName);
-                                                            if (reward && accepted){
+                                                            Item *itemAux = new Item(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
+                                                            if (accepted){
+                                                                double reward = prison->giveItemToBotInmate(*itemAux, botInmateName);
                                                                 cout << "\033[32mVocê completou o pedido de " << botInmateName;
-                                                                cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m";
+                                                                cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m\n";
                                                                 prison->giveRewardToPlayerInmate(reward);
+                                                            }else{
+                                                                cout << "\033[1mO item foi dado para o prisioneiro e foi removido do seu inventário\033[0m\n";
+                                                                delete itemAux;
                                                             }
                                                         }catch(const std::exception& e){
                                                             std::cerr << e.what() << "\n";
@@ -598,12 +601,15 @@ int main(){
                                                 }
                                                 try{
                                                     bool accepted = prison->requestWasAcceptedByPlayerInmate(prison->getBotInmateByName(botInmateName));
-                                                    Item itemAux(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
-                                                    double reward = prison->giveItemToBotInmate(itemAux, botInmateName);
-                                                    if (reward && accepted){
+                                                    Item *itemAux = new Item(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
+                                                    if (accepted){
+                                                        double reward = prison->giveItemToBotInmate(*itemAux, botInmateName);
                                                         cout << "\033[32mVocê completou o pedido de " << botInmateName;
-                                                        cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m";
+                                                        cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m\n";
                                                         prison->giveRewardToPlayerInmate(reward);
+                                                    }else{
+                                                        cout << "\033[1mO item foi dado para o prisioneiro e foi removido do seu inventário\033[0m\n";
+                                                        delete itemAux;
                                                     }
                                                 }catch(const std::exception& e){
                                                     std::cerr << e.what() << "\n";
@@ -837,12 +843,15 @@ int main(){
                                             }
                                             try{
                                                 bool accepted = prison->requestWasAcceptedByPlayerInmate(prison->getBotInmateByName(botInmateName));
-                                                Item itemAux(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
-                                                double reward = prison->giveItemToBotInmate(itemAux, botInmateName);
-                                                if (reward && accepted){
+                                                Item *itemAux = new Item(prison->makePlayerInmateGiveItemTo(itemID, prison->getBotInmateByName(botInmateName)));
+                                                if (accepted){
+                                                    double reward = prison->giveItemToBotInmate(*itemAux, botInmateName);
                                                     cout << "\033[32mVocê completou o pedido de " << botInmateName;
-                                                    cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m";
+                                                    cout << " e ganhou $" << std::fixed << std::setprecision(2) << reward << "\033[m\n";
                                                     prison->giveRewardToPlayerInmate(reward);
+                                                }else{
+                                                    cout << "\033[1mO item foi dado para o prisioneiro e foi removido do seu inventário\033[0m\n";
+                                                    delete itemAux;
                                                 }
                                             }catch(const std::exception& e){
                                                 std::cerr << e.what() << "\n";
