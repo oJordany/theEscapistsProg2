@@ -5,7 +5,7 @@
 #include "Inmate.h"
 
 class ScapeTool : public Item {
-    friend ostream &operator<<(ostream &, const ScapeTool &)
+    friend ostream &operator<<(ostream &, const ScapeTool &);
 public:
     ScapeTool();
     ScapeTool(string, string="", string="", int=100);
@@ -19,11 +19,16 @@ public:
     bool operator!() const;
 
     void setDurability(int);
-    int getDurability() const;
+    inline int getDurability() const {return durability;}
     void viewScapeToolInfos() const;
+    inline string getScapeLocation() const{return scapeLocation;}
+    inline void setScapeLocation(string location){scapeLocation = location;} 
+    inline bool checkUsage(string currentLocation) const {return (currentLocation == scapeLocation) ? true : false;}
+
 
 private:
     int durability;
+    string scapeLocation;
     const static int MAX_DURABILITY = 100;
 };
 

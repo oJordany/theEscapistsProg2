@@ -44,7 +44,7 @@ using std::system;
 #define CYAN    "\033[36m"      
 #define WHITE   "\033[37m" 
 
-const string Item::ITEMTYPES[MAXNUMITEMTYPES] = {"shovel", "brass knuckles", "key1", 
+const string Item::ITEMTYPES[MAXNUMITEMTYPES] = {   "shovel", "brass knuckles", "key1", 
                                                     "key2", "key3", "key4", 
                                                     "key5", "plastic key1", "plastic key2",
                                                     "plastic key3", "plastic key4", "plastic key5", 
@@ -179,7 +179,6 @@ string Item::drawItem() const{
             ITEMTYPES[i] != "plastic key3" &&
             ITEMTYPES[i] != "plastic key4" &&
             ITEMTYPES[i] != "plastic key5" &&
-            ITEMTYPES[i] != "correspondence letter" &&
             ITEMTYPES[i] != "knife"
             )
             ruffleItems.push_back(ITEMTYPES[i]);

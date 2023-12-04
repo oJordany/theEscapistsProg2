@@ -132,13 +132,14 @@ using std::system;
 
 
 
+#include <ncurses.h>
+
 int main() {
-    int status;
-    status = system("bash teste.bash");
-    while (status != 0) {
-        status = system("bash teste.bash");
-    }
-    system("clear");
-    cout << "Apos\n";
+    initscr(); // Inicializa a tela
+    printw("Hello, world!"); // Imprime na tela
+    refresh(); // Atualiza a tela
+    getch(); // Aguarda uma entrada do usuário
+    endwin(); // Encerra a tela
+
     return 0;
 }

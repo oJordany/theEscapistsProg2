@@ -1,23 +1,28 @@
 #include "ScapeTool.h"
 
-ScapeTool::ScapeTool() : Item(), durability(100) {}
+#include <iostream>
+using std::cout;
+
+#include <fstream>
+using std::ifstream;
+using std::ofstream;
+
+ScapeTool::ScapeTool() : Item("shovel"), durability(100), scapeLocation("") {}
 
 ScapeTool::ScapeTool(string itemName, string ownerName, string currentLocation, int durability)
-    : Item(itemName, ownerName, currentLocation), durability(durability) {
+    : Item(itemName, ownerName, currentLocation), scapeLocation(""){
     setDurability(durability);
 }
 
 ScapeTool::ScapeTool(string itemName, const Inmate& ownerName, string currentLocation, int durability)
-    : Item(itemName, ownerName, currentLocation), durability(durability) {
+    : Item(itemName, ownerName, currentLocation), scapeLocation(""){
     setDurability(durability);
 }
 
-ScapeTool::ScapeTool(string itemName, string ownerName, string currentLocation, int durability)
-    : Item(itemName, ownerName, currentLocation), durability(durability) {
-    setDurability(durability);
-}
+ScapeTool::ScapeTool(const ScapeTool& other) 
+    : Item(static_cast<Item>(other)), durability(other.durability), scapeLocation(other.scapeLocation){
 
-ScapeTool::ScapeTool(const ScapeTool& other) : Item(other), durability(other.durability) {}
+}
 
 
 void ScapeTool::setDurability(int newDurability) {
@@ -29,15 +34,11 @@ void ScapeTool::setDurability(int newDurability) {
     }
 }
 
-int ScapeTool::getDurability() const {
-    return durability;
-}
 
-void Item::viewScapeToolInfos() const{
-    ifstream inputFile("../utils/Items/"+itemName+".txt");
+void ScapeTool::viewScapeToolInfos() const{
+    ifstream inputFile("../utils/Items/"+this->getItemName()+".txt");
     int counter = 0;
     int startInfo;
-    int widthItemImg = 30;
     if (inputFile.is_open()){
         string line;
         while (getline(inputFile, line))
@@ -47,20 +48,22 @@ void Item::viewScapeToolInfos() const{
     }else{
         cout << "Erro ao abrir o arquivo para leitura!\n";
     }
-    startInfo = (counter / 2) - 2;
+    startInfo = (counter / 2) - 3;
     counter = 0;
-    inputFile.open("../utils/Items/"+itemName+".txt");
+    inputFile.open("../utils/Items/"+this->getItemName()+".txt");
     if (inputFile.is_open()){
         string line;
         while (getline(inputFile, line)){
             if (counter == startInfo)
-                cout << line << "    🏷️  | Name: " << itemName << "\n";
+                cout << line << "    🏷️  | Name: " << this->getItemName() << "\n";
             else if(counter == startInfo+1)
-                cout << line << "    👤 | Owner Name: " << ((ownerName == "") ? "null" : ownerName) << "\n";
+                cout << line << "    👤 | Owner Name: " << ((this->getOwnerName() == "") ? "null" : this->getOwnerName()) << "\n";
             else if(counter == startInfo+2)
-                cout << line << "    📍 | Current Location: " << ((currentLocation == "") ? "null" : currentLocation) << "\n";
+                cout << line << "    📍 | Current Location: " << ((this->getCurrentLocation() == "") ? "null" : this->getCurrentLocation()) << "\n";
             else if(counter == startInfo+3)
                 cout << line << "    🔋 | Durability: " << durability << "\n";
+            else if(counter == startInfo+4)
+                cout << line << "    📍 | Scape Location: " << scapeLocation << "\n";
             else
                 cout << line << "\n";
             counter++;
@@ -75,6 +78,7 @@ ostream &operator<<(ostream &out, const ScapeTool &scapeTool) {
     out << static_cast<const Item&>(scapeTool);
 
     out << "durability: " << scapeTool.getDurability() << "\n";
+    out << "scapeLocation: " << ((scapeTool.getScapeLocation() == "") ? "null" : scapeTool.getScapeLocation()) << "\n";
 
     return out;
 }
@@ -83,6 +87,7 @@ const ScapeTool& ScapeTool::operator=(const ScapeTool &scapeToolOnTheRight) {
     static_cast<Item>(*this) = static_cast<Item>(scapeToolOnTheRight);
 
     this->durability = scapeToolOnTheRight.durability;
+    this->scapeLocation = scapeToolOnTheRight.scapeLocation;
 
     return *this;
 }
@@ -91,7 +96,7 @@ bool ScapeTool::operator==(const ScapeTool &scapeToolOnTheRight) const {
     if (!(static_cast<Item>(*this) == static_cast<Item>(scapeToolOnTheRight)))
         return false;
 
-    return this->durability == scapeToolOnTheRight.durability;
+    return (this->durability == scapeToolOnTheRight.durability && this->scapeLocation == scapeToolOnTheRight.scapeLocation);
 }
 
 bool ScapeTool::operator!=(const ScapeTool &scapeToolOnTheRight) const {

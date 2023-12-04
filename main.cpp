@@ -17,6 +17,7 @@ using std::system;
 #include "BotInmate.h"
 #include "PlayerInmate.h"
 #include "Item.h"
+#include "ScapeTool.h"
 
 #include <chrono>
 using std::chrono::milliseconds;
