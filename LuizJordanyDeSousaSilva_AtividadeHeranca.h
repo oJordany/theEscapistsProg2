@@ -891,6 +891,74 @@ Sem o diagrama UML, a saída do programa e o vídeo, o trabalho não será avali
              ///E assim por diante
 
 //// Carregamento e salvamento de arquivos
+    // Carregamento:
+
+    json loadSaves( string nameFile )
+    {
+
+        ifstream inputFile(nameFile);
+
+        json storage;
+        
+        if ( !inputFile.is_open() ) 
+        {
+            cerr << "Error opening file." << '\n';
+            return storage; // Exit with an error code
+        }
+
+        inputFile >> storage;
+
+        inputFile.close();
+
+        return storage;
+
+    }
+
+    // Salvamento:
+
+    bool saveConfigs( const json& datas, string nameFile="saves.json" )
+    {
+        // abre o arquivo pra leitura
+        ifstream inputFile(nameFile);
+        if (!inputFile.is_open()) {
+            cerr << "Erro ao abrir aquivo para leitura! Tentando criá-lo ..." << '\n';
+            // abre o arquivo para escrita
+            ofstream outputFile(nameFile);
+            if (!outputFile.is_open()) {
+                cerr << "Erro ao abrir aquivo para escrita!" << '\n';
+                return false; 
+            }
+
+            outputFile << datas.dump(4);
+
+            outputFile.close();
+            return true; 
+        }
+
+        json storage;
+
+        inputFile >> storage;
+
+        for (auto data : datas.items()){
+            storage[data.key()] = data.value();
+        }
+        inputFile.close();
+
+        // abre o arquivo para escrita
+        ofstream outputFile(nameFile);
+        if (!outputFile.is_open()) {
+            cerr << "Erro ao abrir aquivo para escrita!" << '\n';
+            return false; 
+        }
+
+        outputFile << storage.dump(4);
+
+        outputFile.close();
+        cout << "Dados salvos com sucesso!" << '\n';
+        return true;
+    }
+
+
     /*É necessário ter a funcionalidade: 1. 
       leitura de arquivos para configuração das suas classes e variáveis de status, 2. 
       processamento das variáveis de status e 3. salvamento dessas variáveis. 
@@ -900,3 +968,5 @@ Sem o diagrama UML, a saída do programa e o vídeo, o trabalho não será avali
         // Meu arquivo util.h: https://github.com/oJordany/theEscapistsProg2/blob/main/include/util.h
         // Arquivo json pré pronto para iniciar o jogo a partir de um progresso já salvo: https://github.com/oJordany/theEscapistsProg2/blob/main/saves.json
     //Link vídeo mostrando a execução do código usando o arquivo de configuração
+    https://drive.google.com/file/d/1ZRk9U5RJCDlYsG1YxcFKIhnbF3gJeTDp/view
+    https://drive.google.com/file/d/1mxnpOKWJ313d2sUxYDD04-VFYaU5hrHM/view
